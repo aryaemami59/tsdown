@@ -6,7 +6,10 @@ import { underline } from 'ansis'
 import { init, isSupported } from 'import-without-cache'
 import isInCi from 'is-in-ci'
 import { createDebug } from 'obug'
-import { createConfigCoreLoader } from 'unconfig-core'
+import {
+  createConfigCoreLoader,
+  type CoreLoadConfigSource,
+} from 'unconfig-core'
 import { fsStat } from '../utils/fs.ts'
 import { toArray } from '../utils/general.ts'
 import { globalLogger } from '../utils/logger.ts'
@@ -57,15 +60,21 @@ const configPrefix = 'tsdown.config'
 export async function loadConfigFile(
   inlineConfig: InlineConfig,
   workspace?: string,
-): Promise<{
-  configs: UserConfig[]
-  file?: string
-}> {
+): Promise<
+  | {
+      configs: [{}]
+      file?: undefined
+    }
+  | {
+      configs: (UserConfig & Required<Pick<UserConfig, 'cwd'>>)[]
+      file?: string | undefined
+    }
+> {
   let cwd = inlineConfig.cwd || process.cwd()
   let overrideConfig = false
 
   let { config: filePath } = inlineConfig
-  if (filePath === false) return { configs: [{}] }
+  if (filePath === false) return { configs: [{} as const satisfies UserConfig] }
 
   if (typeof filePath === 'string') {
     const stats = await fsStat(filePath)
@@ -85,22 +94,22 @@ export async function loadConfigFile(
   debug('Using config loader:', loader)
 
   const parser = createParser(loader)
-  const sources = overrideConfig
-    ? [
+  const sources: CoreLoadConfigSource<UserConfigExport>[] = overrideConfig
+    ? ([
         {
           files: [filePath as string],
           extensions: [],
           parser,
         },
-      ]
-    : [
+      ] as const satisfies CoreLoadConfigSource<UserConfigExport>[])
+    : ([
         {
           files: [configPrefix],
           extensions: ['ts', 'mts', 'cts', 'js', 'mjs', 'cjs', 'json'],
           parser,
         },
         { files: ['package.json'], parser },
-      ]
+      ] as const satisfies CoreLoadConfigSource<UserConfigExport>[])
 
   const [result] = await createConfigCoreLoader<UserConfigExport>({
     sources,
@@ -143,7 +152,7 @@ export async function loadConfigFile(
   }
 }
 
-type Parser = 'native' | 'unrun'
+type Parser = Exclude<NonNullable<InlineConfig['configLoader']>, 'auto'>
 
 const isBun = !!process.versions.bun
 const nativeTS = process.features.typescript || process.versions.deno
@@ -167,22 +176,22 @@ function createParser(loader: Parser) {
       basename === configPrefix || isPkgJson || basename.endsWith('.json')
     if (isJSON) {
       const contents = await readFile(filepath, 'utf8')
-      const parsed = JSON.parse(contents)
+      const parsed: UserConfig & { tsdown?: UserConfig } = JSON.parse(contents)
       if (isPkgJson) {
         return parsed?.tsdown
       }
-      return parsed
+      return parsed satisfies UserConfig
     }
 
     if (loader === 'native') {
-      return nativeImport(filepath)
+      return nativeImport<UserConfigExport>(filepath)
     }
 
-    return unrunImport(filepath)
+    return unrunImport<UserConfigExport>(filepath)
   }
 }
 
-async function nativeImport(id: string) {
+async function nativeImport<T>(id: string) {
   const url = pathToFileURL(id)
   const importAttributes: Record<string, string> = Object.create(null)
   if (isSupported) {
@@ -206,13 +215,13 @@ async function nativeImport(id: string) {
       throw error
     }
   })
-  const config = mod.default || mod
+  const config: T = mod.default || mod
   return config
 }
 
-async function unrunImport(id: string) {
+async function unrunImport<T>(id: string) {
   const { unrun } = await import('unrun')
-  const { module } = await unrun({
+  const { module } = await unrun<T>({
     path: pathToFileURL(id).href,
   })
   return module

@@ -30,7 +30,7 @@ cli
   .option('--external <module>', 'Mark dependencies as external')
   .option('--minify', 'Minify output')
   .option('--debug', 'Enable debug mode')
-  .option('--debug-logs [feat]', 'Show debug logs')
+  .option('--debug-logs [feat]', 'Show debug logs', { default: false })
   .option('--target <target>', 'Bundle target, e.g "es2015", "esnext"')
   .option('-l, --logLevel <level>', 'Set log level: info, warn, error, silent')
   .option('--fail-on-warn', 'Fail on warnings', { default: true })
@@ -123,8 +123,11 @@ export async function runCLI(): Promise<void> {
 
   try {
     await cli.runMatchedCommand()
-  } catch (error: any) {
-    globalLogger.error(String(error.stack || error.message))
+  } catch (error) {
+    if (error instanceof Error) {
+      globalLogger.error(String(error.stack || error.message))
+    }
+
     process.exit(1)
   }
 }

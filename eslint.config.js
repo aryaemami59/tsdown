@@ -15,9 +15,14 @@ export default sxzz(
     },
   },
   {
-    files: ['docs/**/*.md/**'],
     rules: {
-      'unicorn/prefer-node-protocol': 'off',
+      'no-duplicate-imports': ['error', { allowSeparateTypeImports: true }],
     },
   },
+  // {
+  //   files: ['docs/**/*.md/**'],
+  //   rules: {
+  //     'unicorn/prefer-node-protocol': 'off',
+  //   },
+  // },
 )

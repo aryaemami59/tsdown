@@ -494,7 +494,7 @@ export interface UserConfig {
    * **[experimental]** Enable workspace mode.
    * This allows you to build multiple packages in a monorepo.
    */
-  workspace?: Workspace | Arrayable<string> | true
+  workspace?: Workspace | Arrayable<string> | boolean
 }
 
 export interface InlineConfig extends UserConfig {
@@ -508,6 +508,47 @@ export interface InlineConfig extends UserConfig {
    * @default 'auto'
    */
   configLoader?: 'auto' | 'native' | 'unrun'
+
+  /**
+   * - `true` is equivalent to `'*'` which enables all debug logs.
+   * - `false` disables all debug logs.
+   * - A string or array of strings can be used to enable specific debug logs.
+   *
+   * @example
+   *
+   * ```bash
+   * tsdown --debug-logs 'config,rolldown'
+   * ```
+   *
+   * @example
+   *
+   * ```ts
+   * {
+   *   debugLogs: ['config', 'rolldown']
+   * }
+   * ```
+   *
+   * @default false
+   */
+  debugLogs?:
+    | boolean
+    | Arrayable<
+        | '*'
+        | 'attw'
+        | 'clean'
+        | 'config:*'
+        | 'config:file'
+        | 'config:options'
+        | 'config:workspace'
+        | 'config'
+        | 'debug'
+        | 'external'
+        | 'package'
+        | 'publint'
+        | 'report'
+        | 'rolldown'
+        | (string & {})
+      >
 
   /**
    * Filter configs by cwd or name.

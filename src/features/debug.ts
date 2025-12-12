@@ -1,5 +1,6 @@
 import { createDebug, enable, namespaces } from 'obug'
 import { resolveComma, toArray } from '../utils/general.ts'
+import type { InlineConfig } from '../config/types.ts'
 import type { StartOptions } from '@vitejs/devtools/cli-commands'
 import type { InputOptions } from 'rolldown'
 
@@ -21,23 +22,28 @@ export interface DebugOptions extends NonNullable<InputOptions['debug']> {
   clean?: boolean
 }
 
-export function enableDebugLog(cliOptions: Record<string, any>): void {
-  const { debugLogs } = cliOptions
+export function enableDebugLog(cliOptions: InlineConfig): void {
+  const { debugLogs = false } = cliOptions
   if (!debugLogs) return
 
-  let namespace: string
-  if (debugLogs === true) {
-    namespace = 'tsdown:*'
-  } else {
-    // support debugging multiple flags with comma-separated list
-    namespace = resolveComma(toArray(debugLogs))
-      .map((v) => `tsdown:${v}`)
-      .join(',')
-  }
+  const namespace =
+    debugLogs === true
+      ? ('tsdown:*' as const)
+      : // support debugging multiple flags with comma-separated list
+        resolveComma(toArray(debugLogs))
+          .map((v) => `tsdown:${v}` as const)
+          .join(',')
 
   const ns = namespaces()
-  if (ns) namespace += `,${ns}`
 
-  enable(namespace)
-  debug('Debugging enabled', namespace)
+  const namespacesToBeEnabled = ns ? `${namespace},${ns}` : namespace
+
+  enable(namespacesToBeEnabled)
+
+  debug.extend(namespacesToBeEnabled)(
+    'Debugging enabled',
+    namespacesToBeEnabled,
+  )
+
+  debug('Debugging enabled', namespacesToBeEnabled)
 }

@@ -30,6 +30,7 @@ catalogs:
     prettier: ^3.8.0
     rolldown-plugin-dts-snapshot: ^0.3.2
     rolldown-plugin-require-cjs: ^0.3.3
+    ts-json-schema-generator: 2.5.0-next.16
     typescript: ~5.9.3
     unplugin-ast: ^0.15.4
     vitest: ^4.0.17

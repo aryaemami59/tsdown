@@ -67,6 +67,9 @@ catalogs:
     rolldown-plugin-require-cjs:
       specifier: ^0.3.3
       version: 0.3.3
+    ts-json-schema-generator:
+      specifier: 2.5.0-next.16
+      version: 2.5.0-next.16
     typescript:
       specifier: ~5.9.3
       version: 5.9.3
@@ -331,6 +334,9 @@ importers:
       rolldown-plugin-require-cjs:
         specifier: catalog:dev
         version: 0.3.3(rolldown@1.0.0-beta.60)
+      ts-json-schema-generator:
+        specifier: catalog:dev
+        version: 2.5.0-next.16
       typescript:
         specifier: catalog:dev
         version: 5.9.3
@@ -1973,6 +1979,10 @@ packages:
   comma-separated-tokens@2.0.3:
     resolution: {integrity: sha512-Fu4hJdvzeylCfQPp9SGWidpzrMs7tTrlu6Vb8XGaRGck8QSNZJJp538Wrb60Lax4fPwR64ViY468OIUTbRlGZg==}
 
+  commander@14.0.2:
+    resolution: {integrity: sha512-TywoWNNRbhoD0BXs1P3ZEScW8W5iKrnbithIl0YH+uCmBd0QpPOA8yc82DS3BIE5Ma6FnBVUsJ7wVUDz4dvOWQ==}
+    engines: {node: '>=20'}
+
   comment-parser@1.4.1:
     resolution: {integrity: sha512-buhp5kePrmda3vhc5B9t7pUQXAb2Tnd0qgpkIhPhkHXxJpiPJ11H0ZEU0oBpJ2QztSbzG/ZxMj/CHsYJqRHmyg==}
     engines: {node: '>= 12.0.0'}
@@ -3372,6 +3382,10 @@ packages:
     resolution: {integrity: sha512-xal3CZX1Xlo/k4ApwCFrHVACi9fBqJ7V+mwhBsuf/1IOKbBy098Fex+Wa/5QMubw09pSZ/u8EY8PWgevJsXp1A==}
     engines: {node: '>=6'}
 
+  safe-stable-stringify@2.5.0:
+    resolution: {integrity: sha512-b3rppTKm9T+PsVCBEOUR46GWI7fdOs00VKZ1+9c1EWDaDMvjQc6tUwuFyIprgGgTcWoVHSKrU8H31ZHA2e0RHA==}
+    engines: {node: '>=10'}
+
   scslre@0.3.0:
     resolution: {integrity: sha512-3A6sD0WYP7+QrjbfNA2FN3FsOaGGFoekCVgTyypy53gPxhbkCIjtO6YWgdrfM+n/8sI8JeXZOIxsHjMTNxQ4nQ==}
     engines: {node: ^14.0.0 || >=16.0.0}
@@ -3557,6 +3571,11 @@ packages:
     resolution: {integrity: sha512-EDyGAwH1gO0Ausm9gV6T2nUvBgXT5kGoCMJPllOaooZ+4VvJiKBdZE7wK18N1deEowhcUptS+5GXZK8U/fvpwA==}
     peerDependencies:
       typescript: '>=4.0.0'
+
+  ts-json-schema-generator@2.5.0-next.16:
+    resolution: {integrity: sha512-apWrG1TYhR8K06bi6Zwo4n+r6g1Pc8OtAwo+goOadtUuzjjO8eRQ6orsc/4Dfx4Jh45PYDtiVl3nwe6UWkjl7w==}
+    engines: {node: '>=22.0.0'}
+    hasBin: true
 
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
@@ -5705,6 +5724,8 @@ snapshots:
 
   comma-separated-tokens@2.0.3: {}
 
+  commander@14.0.2: {}
+
   comment-parser@1.4.1: {}
 
   comment-parser@1.4.4: {}
@@ -7274,6 +7295,8 @@ snapshots:
     dependencies:
       mri: 1.2.0
 
+  safe-stable-stringify@2.5.0: {}
+
   scslre@0.3.0:
     dependencies:
       '@eslint-community/regexpp': 4.12.2
@@ -7425,6 +7448,16 @@ snapshots:
   ts-declaration-location@1.0.7(typescript@5.9.3):
     dependencies:
       picomatch: 4.0.3
+      typescript: 5.9.3
+
+  ts-json-schema-generator@2.5.0-next.16:
+    dependencies:
+      '@types/json-schema': 7.0.15
+      commander: 14.0.2
+      json5: 2.2.3
+      normalize-path: 3.0.0
+      safe-stable-stringify: 2.5.0
+      tslib: 2.8.1
       typescript: 5.9.3
 
   tslib@2.8.1: {}

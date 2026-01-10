@@ -105,6 +105,7 @@ export interface Workspace {
   /**
    * Exclude directories from workspace.
    * Defaults to all `node_modules`, `dist`, `test`, `tests`, `temp`, and `tmp` directories.
+   * @default ['**\/node_modules/**', '**\/dist/**', '**\/test?(s)/**', '**\/t?(e)mp/**']
    */
   exclude?: Arrayable<string>
 
@@ -145,6 +146,7 @@ export interface UserConfig {
    *   "hooks/*": ["./src/hooks/*.ts", "!./src/hooks/index.ts"],
    * }
    * ```
+   * @default 'src/index.ts'
    */
   entry?: TsdownInputOption
 

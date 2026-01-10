@@ -32,6 +32,7 @@ catalogs:
     prettier: ^3.8.3
     rolldown-plugin-require-cjs: ^0.4.0
     sass: ^1.99.0
+    ts-json-schema-generator: 2.9.1-next.13
     tsnapi: ^0.3.2
     typescript: ~6.0.3
     unplugin-ast: ^0.16.0

@@ -1,8 +1,10 @@
 import type { UserConfig } from '../../src/config.ts'
 
-export default {
+const tsdownConfig = {
   entry: ['./src/{index,run}.ts'],
   exports: {
     bin: true,
   },
-} satisfies UserConfig
+} satisfies UserConfig as UserConfig
+
+export default tsdownConfig

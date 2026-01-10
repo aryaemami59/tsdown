@@ -3,6 +3,7 @@ import { dim } from 'ansis'
 import { createDebug } from 'obug'
 import { importWithError, slash } from '../../utils/general.ts'
 import type { ResolvedConfig } from '../../config/index.ts'
+import type * as Attw from '@arethetypeswrong/core'
 import type {
   CheckPackageOptions,
   Problem,
@@ -29,7 +30,7 @@ const problemFlags: Record<ProblemKind, string> = {
 }
 
 export interface AttwOptions extends CheckPackageOptions {
-  module?: typeof import('@arethetypeswrong/core')
+  module?: typeof Attw
 
   /**
    * Profiles select a set of resolution modes to require/ignore. All are evaluated but failures outside

@@ -77,7 +77,8 @@
   "scripts": {
     "lint": "eslint --cache --max-warnings 0 .",
     "lint:fix": "pnpm run lint --fix",
-    "build": "node -C dev ./src/run.ts",
+    "build": "node -C dev ./src/run.ts && pnpm run build-schema",
+    "build-schema": "node ./scripts/create-json-schema.mts",
     "dev": "pnpm run build",
     "test": "vitest",
     "typecheck": "tsgo --noEmit",
@@ -180,6 +181,7 @@
     "publint": "catalog:peer",
     "rolldown-plugin-require-cjs": "catalog:dev",
     "sass": "catalog:dev",
+    "ts-json-schema-generator": "catalog:dev",
     "tsnapi": "catalog:dev",
     "tsx": "catalog:dev",
     "typescript": "catalog:dev",

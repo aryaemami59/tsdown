@@ -3,7 +3,7 @@
  */
 // #region Interfaces
 export interface AttwOptions extends CheckPackageOptions {
-  module?: typeof _$_arethetypeswrong_core0;
+  module?: typeof Attw;
   profile?: "strict" | "node16" | "esm-only";
   level?: "error" | "warn";
   ignoreRules?: ("no-resolution" | "untyped-resolution" | "false-cjs" | "false-esm" | "cjs-resolves-to-esm" | "fallback-condition" | "cjs-only-exports-default" | "named-exports" | "false-export-default" | "missing-export-equals" | "unexpected-module-syntax" | "internal-resolution-error" | (string & {}))[];
@@ -86,7 +86,7 @@ export interface PackageJsonWithPath extends PackageJson {
   packageJsonPath: string;
 }
 export interface PublintOptions extends Omit<Options, "pack" | "pkgDir"> {
-  module?: [typeof _$publint, typeof _$publint_utils0];
+  module?: [Publint, PublintUtils];
 }
 export interface ReportOptions {
   gzip?: boolean;
@@ -259,7 +259,7 @@ export type UserConfigFn = (_: InlineConfig, _: {
   ci: boolean;
   rootConfig?: UserConfig;
 }) => Awaitable<Arrayable<UserConfig>>;
-export type WithEnabled<T> = boolean | undefined | CIOption | (T & {
+export type WithEnabled<T> = boolean | CIOption | (T & {
   enabled?: boolean | CIOption;
 });
 // #endregion

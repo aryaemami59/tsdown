@@ -2,15 +2,31 @@ import process from 'node:process'
 import readline from 'node:readline'
 import { bold, dim } from 'ansis'
 import { globalLogger } from '../utils/logger.ts'
+import type { Awaitable } from '../utils/types.ts'
 
 // Copied from https://github.com/vitejs/vite/blob/main/packages/vite/src/node/shortcuts.ts - MIT License
 
+/**
+ * A single keyboard shortcut registered in watch mode.
+ */
 export interface Shortcut {
   key: string
+
   description: string
-  action: () => void | Promise<void>
+
+  action: () => Awaitable<void>
 }
 
+/**
+ * Register `stdin` keyboard shortcuts for `watch` mode
+ * (<samp><kbd>r</kbd>+<kbd>Enter</kbd></samp> to reload config and rebuild,
+ * <samp><kbd>c</kbd>+<kbd>Enter</kbd></samp> to clear console,
+ * <samp><kbd>q</kbd>+<kbd>Enter</kbd></samp> to quit,
+ * <samp><kbd>h</kbd>+<kbd>Enter</kbd></samp> to list all shortcuts).
+ *
+ * @param restart - Callback invoked when the user presses `r`.
+ * @returns A cleanup function that closes the readline interface.
+ */
 export function shortcuts(restart: () => void): () => void {
   let actionRunning = false
   async function onInput(input: string) {

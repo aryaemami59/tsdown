@@ -18,7 +18,7 @@ export interface ChunkAddonObject {
   dts?: string;
 }
 export interface CopyEntry {
-  from: string | string[];
+  from: Arrayable<string>;
   to?: string;
   flatten?: boolean;
   verbose?: boolean;
@@ -81,11 +81,11 @@ export interface OutExtensionObject {
   js?: string;
   dts?: string;
 }
-export interface PackageJsonWithPath extends PackageJson {
+export interface PackageJsonWithPath extends PackageJsonTypes {
   packageJsonPath: string;
 }
 export interface PublintOptions extends Omit<Options, "pack" | "pkgDir"> {
-  module?: [typeof import("publint"), typeof import("publint/utils")];
+  module?: [publint: typeof import("publint"), publintUtils: typeof import("publint/utils")];
 }
 export interface ReportOptions {
   gzip?: boolean;
@@ -119,11 +119,11 @@ export interface TsdownBundle extends AsyncDisposable {
   inlinedDeps: Map<string, Set<string>>;
 }
 export interface TsdownHooks {
-  "build:prepare": (_: BuildContext) => void | Promise<void>;
-  "build:before": (_: BuildContext & RolldownContext) => void | Promise<void>;
+  "build:prepare": (_: BuildContext) => Awaitable<void>;
+  "build:before": (_: BuildContext & RolldownContext) => Awaitable<void>;
   "build:done": (_: BuildContext & {
     chunks: RolldownChunk[];
-  }) => void | Promise<void>;
+  }) => Awaitable<void>;
 }
 export interface TsdownPlugin<A = any> extends Plugin<A> {
   tsdownConfig?: (_: UserConfig, _: InlineConfig) => Awaitable<UserConfig | void | null>;
@@ -135,14 +135,14 @@ export interface UserConfig {
   alias?: Record<string, string>;
   tsconfig?: string | boolean;
   platform?: "node" | "neutral" | "browser";
-  target?: string | string[] | false;
+  target?: Arrayable<string> | false;
   env?: Record<string, any>;
   envFile?: string;
-  envPrefix?: string | string[];
-  define?: Record<string, string>;
+  envPrefix?: Arrayable<string>;
+  define?: TransformOptions["define"];
   shims?: boolean;
-  treeshake?: boolean | TreeshakingOptions;
-  loader?: ModuleTypes;
+  treeshake?: InputOptions["treeshake"];
+  loader?: InputOptions["moduleTypes"];
   nodeProtocol?: "strip" | boolean;
   checks?: ChecksOptions & {
     legacyCjs?: boolean;
@@ -151,13 +151,13 @@ export interface UserConfig {
   inputOptions?: InputOptions | ((_: InputOptions, _: NormalizedFormat, _: {
     cjsDts: boolean;
   }) => Awaitable<InputOptions | void | null>);
-  format?: Format | Format[] | Partial<Record<Format, Partial<ResolvedConfig>>>;
-  globalName?: string;
+  format?: Arrayable<Format> | Partial<Record<Format, Partial<ResolvedConfig>>>;
+  globalName?: OutputOptions["name"];
   outDir?: string;
-  write?: boolean;
-  sourcemap?: Sourcemap;
+  write?: BuildOptions["write"];
+  sourcemap?: OutputOptions["sourcemap"];
   clean?: boolean | string[];
-  minify?: boolean | "dce-only" | MinifyOptions;
+  minify?: OutputOptions["minify"];
   footer?: ChunkAddon;
   banner?: ChunkAddon;
   unbundle?: boolean;
@@ -179,7 +179,7 @@ export interface UserConfig {
   watch?: boolean | Arrayable<string>;
   ignoreWatch?: Arrayable<string | RegExp>;
   devtools?: WithEnabled<DevtoolsOptions>;
-  onSuccess?: string | ((_: ResolvedConfig, _: AbortSignal) => void | Promise<void>);
+  onSuccess?: string | ((_: ResolvedConfig, _: AbortSignal) => Awaitable<void>);
   dts?: WithEnabled<DtsOptions>;
   unused?: WithEnabled<UnusedOptions>;
   publint?: WithEnabled<PublintOptions>;
@@ -192,8 +192,8 @@ export interface UserConfig {
   hooks?: Partial<TsdownHooks> | ((_: Hookable<TsdownHooks>) => Awaitable<void>);
   exe?: WithEnabled<ExeOptions>;
   workspace?: Workspace | Arrayable<string> | true;
-  external?: ExternalOption;
-  noExternal?: Arrayable<string | RegExp> | NoExternalFn;
+  external?: DepsConfig["neverBundle"];
+  noExternal?: DepsConfig["alwaysBundle"];
 }
 export interface Workspace {
   include?: "auto" | (string & {}) | string[];
@@ -215,7 +215,7 @@ export type Format = ModuleFormat;
 export type NoExternalFn = (_: string, _: string | undefined) => boolean | null | undefined | void;
 export type NormalizedFormat = InternalModuleFormat;
 export type OutExtensionFactory = (_: OutExtensionContext) => OutExtensionObject | undefined;
-export type PackageType = "module" | "commonjs" | undefined;
+export type PackageType = NonNullable<PackageJsonTypes["type"]> | undefined;
 export type ResolvedConfig = Overwrite<MarkPartial<Omit<UserConfig, "workspace" | "fromVite" | "external" | "noExternal" | "logLevel" | "failOnWarn" | "suppressWarnings" | "customLogger" | "envFile" | "envPrefix">, "globalName" | "inputOptions" | "outputOptions" | "minify" | "define" | "alias" | "onSuccess" | "outExtensions" | "hooks" | "copy" | "loader" | "name" | "banner" | "footer" | "checks" | "css">, {
   entry: Record<string, string>;
   rawEntry?: TsdownInputOption;
@@ -254,7 +254,7 @@ export type UserConfigFn = (_: InlineConfig, _: {
   ci: boolean;
   rootConfig?: UserConfig;
 }) => Awaitable<Arrayable<UserConfig>>;
-export type WithEnabled<T> = boolean | undefined | CIOption | (T & {
+export type WithEnabled<T> = boolean | CIOption | (T & {
   enabled?: boolean | CIOption;
 });
 // #endregion

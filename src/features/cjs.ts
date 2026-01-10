@@ -3,6 +3,12 @@ import type { ResolvedConfig } from '../config/index.ts'
 
 const RANGE_REQUIRING_ESM = parseRange('^20.19.0 || >=22.12.0')
 
+/**
+ * Emit a one-time warning when the build targets a Node.js version that
+ * natively supports `require(ESM)`, recommending ESM over CJS.
+ *
+ * @param config - Resolved config; the warning fires only when `format` includes `'cjs'` and the resolved target satisfies `^20.19.0 || >=22.12.0`.
+ */
 export function warnLegacyCJS(config: ResolvedConfig): void {
   if (
     config.exe ||

@@ -10,21 +10,38 @@ import { writeExports } from './exports.ts'
 import { publint } from './publint.ts'
 import type { ResolvedConfig } from '../../config/types.ts'
 import type { ChunksByFormat, TsdownBundle } from '../../utils/chunks.ts'
+import type { Arrayable } from '../../utils/types.ts'
 import type { Buffer } from 'node:buffer'
 import type { DetectResult } from 'package-manager-detector'
 
 const debug = createDebug('tsdown:pkg')
 
+/**
+ * Per-package tracking map used to coordinate post-build steps (exports
+ * generation, publint, attw) that must run once all formats for a given
+ * package have finished building.
+ */
 export interface BundleByPkg {
   [pkgPath: string]: {
     promise: Promise<void>
+
     resolve: () => void
+
     count: number
+
     formats: Set<string>
+
     bundles: TsdownBundle[]
   }
 }
 
+/**
+ * Build the initial {@linkcode BundleByPkg} tracking map from a set of
+ * resolved configs, counting the expected number of format builds per package.
+ *
+ * @param configs - All resolved configs for the current build run.
+ * @returns A map keyed by `package.json` path; each entry counts expected builds and holds a deferred promise that resolves when they all complete.
+ */
 export function initBundleByPkg(configs: ResolvedConfig[]): BundleByPkg {
   const map: BundleByPkg = {}
 
@@ -50,6 +67,15 @@ export function initBundleByPkg(configs: ResolvedConfig[]): BundleByPkg {
   return map
 }
 
+/**
+ * Record a completed bundle in the {@linkcode BundleByPkg} map and, once all
+ * expected format builds for the same package have finished, run post-build
+ * steps: exports generation, publint, and attw checks.
+ *
+ * @param bundleByPkg - The tracking map created by {@linkcode initBundleByPkg}.
+ * @param bundle - The just-completed bundle to register.
+ * @throws An {@linkcode Error} when multiple conflicting `exports` options are found for the same package.
+ */
 export async function bundleDone(
   bundleByPkg: BundleByPkg,
   bundle: TsdownBundle,
@@ -170,7 +196,7 @@ function dedupeConfigs<K extends 'publint' | 'attw' | 'exports'>(
 
 function mergeInlinedDeps(
   bundles: TsdownBundle[],
-): Record<string, string | string[]> | undefined {
+): Record<string, Arrayable<string>> | undefined {
   const merged = new Map<string, Set<string>>()
   for (const bundle of bundles) {
     for (const [pkgName, versions] of bundle.inlinedDeps) {
@@ -186,7 +212,7 @@ function mergeInlinedDeps(
 
   const sorted = [...merged].toSorted(([a], [b]) => a.localeCompare(b))
 
-  const result: Record<string, string | string[]> = {}
+  const result: Record<string, Arrayable<string>> = {}
   for (const [pkgName, versions] of sorted) {
     result[pkgName] =
       versions.size === 1 ? [...versions][0] : [...versions].toSorted()

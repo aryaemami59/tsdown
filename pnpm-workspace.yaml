@@ -13,6 +13,7 @@ catalogs:
     '@clack/prompts': ^1.7.0
     giget: ^3.3.0
   dev:
+    '@sourcemeta/jsonschema': ^16.3.0
     '@sxzz/eslint-config': ^8.3.1
     '@sxzz/prettier-config': ^2.3.2
     '@sxzz/test-utils': ^0.5.18
@@ -33,6 +34,7 @@ catalogs:
     prettier: ^3.9.6
     rolldown-plugin-require-cjs: ^0.4.1
     sass: ^1.101.6
+    ts-json-schema-generator: 2.9.1-next.18
     tsnapi: ^1.2.0
     tsx: ^4.23.1
     typescript: ~6.0.3

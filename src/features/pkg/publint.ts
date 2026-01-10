@@ -9,9 +9,22 @@ const debug = createDebug('tsdown:publint')
 const label = dim`[publint]`
 
 export interface PublintOptions extends Omit<Options, 'pack' | 'pkgDir'> {
-  module?: [typeof import('publint'), typeof import('publint/utils')]
+  /**
+   * @hidden
+   */
+  module?: [
+    publint: typeof import('publint'),
+    publintUtils: typeof import('publint/utils'),
+  ]
 }
 
+/**
+ * Run `publint` against the packed tarball and report any issues via the
+ * build logger. Skips silently when `options.publint` is falsy.
+ *
+ * @param options - Resolved config; `publint` settings and logger are read from here.
+ * @param tarball - Pre-packed tarball buffer produced by the build pipeline.
+ */
 export async function publint(
   options: ResolvedConfig,
   tarball: Buffer<ArrayBuffer>,

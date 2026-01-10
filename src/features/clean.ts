@@ -11,6 +11,12 @@ const debug = createDebug('tsdown:clean')
 
 const RE_LAST_SLASH = /[/\\]$/
 
+/**
+ * Delete all files and directories matched by the `clean` globs in every
+ * resolved config, skipping files that equal the output directory itself.
+ *
+ * @param configs - All resolved configs for the current build; each contributes its own `clean` patterns and `outDir`.
+ */
 export async function cleanOutDir(configs: ResolvedConfig[]): Promise<void> {
   const removes = new Set<string>()
 
@@ -52,6 +58,16 @@ export async function cleanOutDir(configs: ResolvedConfig[]): Promise<void> {
   debug('Removed %d files', removes.size)
 }
 
+/**
+ * Normalize the {@linkcode UserConfig.clean | clean} option into a list of
+ * absolute glob patterns.
+ *
+ * @param clean - Raw {@linkcode UserConfig.clean | clean} value from the user config.
+ * @param outDir - Resolved output directory path (used when {@linkcode UserConfig.clean | clean} is `true`).
+ * @param cwd - Current working directory for resolving relative paths.
+ * @returns Array of resolved glob patterns to delete before the build.
+ * @throws An {@linkcode Error} when any pattern in {@linkcode UserConfig.clean | clean} resolves to the {@linkcode cwd} itself.
+ */
 export function resolveClean(
   clean: UserConfig['clean'],
   outDir: string,
@@ -72,6 +88,13 @@ export function resolveClean(
   return clean
 }
 
+/**
+ * Delete the output files corresponding to a set of Rolldown chunks - used
+ * in watch mode to remove stale outputs before each rebuild.
+ *
+ * @param outDir - Base output directory; chunk `fileName`s are resolved relative to this path.
+ * @param chunks - Rolldown output chunks whose files should be removed.
+ */
 export async function cleanChunks(
   outDir: string,
   chunks: Array<OutputAsset | OutputChunk>,

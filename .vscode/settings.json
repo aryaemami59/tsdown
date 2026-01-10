@@ -3,5 +3,11 @@
   "cSpell.words": ["rolldown", "tsdown"],
   "files.readonlyInclude": {
     "docs/**/reference/api/**": true
-  }
+  },
+  "json.schemas": [
+    {
+      "fileMatch": ["**/tsdown.config.json"],
+      "url": "./docs/public/tsdown.config.schema.json"
+    }
+  ]
 }

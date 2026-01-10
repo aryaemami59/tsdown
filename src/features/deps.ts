@@ -32,15 +32,34 @@ const RE_PACKAGE_SPECIFIER =
 
 type ResolveFn = () => Promise<ResolvedId | null>
 
-export type NoExternalFn = (
-  id: string,
-  importer: string | undefined,
-) => boolean | null | undefined | void
+/**
+ * A function that determines whether a given import should be force-bundled
+ * (not externalized). Return a truthy value to bundle the import; return a
+ * falsy value to let the default resolution continue.
+ *
+ * @param id - The import identifier being resolved.
+ * @param importer - The absolute path of the importing file, or `undefined` for entry points.
+ * @returns A truthy value to force-bundle the import, or a falsy value to continue with the default resolution strategy.
+ */
+export type NoExternalFn =
+  /**
+   * A function that determines whether a given import should be force-bundled
+   * (not externalized). Return a truthy value to bundle the import; return a
+   * falsy value to let the default resolution continue.
+   *
+   * @param id - The import identifier being resolved.
+   * @param importer - The absolute path of the importing file, or `undefined` for entry points.
+   * @returns A truthy value to force-bundle the import, or a falsy value to continue with the default resolution strategy.
+   */
+  (
+    id: string,
+    importer: string | undefined,
+  ) => boolean | null | undefined | void
 
 export interface DepsConfig {
   /**
-   * Mark dependencies as external (not bundled).
-   * Accepts strings, regular expressions, or Rolldown's
+   * Mark dependencies as external (not bundled). Accepts strings,
+   * {@linkcode RegExp | regular expressions}, or Rolldown's
    * {@linkcode ExternalOption}.
    *
    * Set to `true` to externalize **all** dependencies: every import that
@@ -50,13 +69,17 @@ export interface DepsConfig {
    * only if they resolve into `node_modules`; otherwise the resolved local
    * file is bundled.
    *
-   * Use {@linkcode alwaysBundle} to opt specific imports back into the bundle.
+   * Use {@linkcode DepsConfig.alwaysBundle | alwaysBundle} to opt specific
+   * imports back into the bundle.
    */
   neverBundle?: true | ExternalOption
+
   /**
-   * Force dependencies to be bundled, even if they are in `dependencies`, `peerDependencies`, or `optionalDependencies`.
+   * Force dependencies to be bundled, even if they are in `dependencies`,
+   * `peerDependencies`, or `optionalDependencies`.
    */
   alwaysBundle?: Arrayable<string | RegExp> | NoExternalFn
+
   /**
    * Whitelist of dependencies allowed to be bundled from `node_modules`.
    * Throws an error if any unlisted dependency is bundled.
@@ -68,6 +91,7 @@ export interface DepsConfig {
    * Note: Be sure to include all required sub-dependencies as well.
    */
   onlyBundle?: Arrayable<string | RegExp> | false
+
   /**
    * Whitelist of packages that the emitted output is allowed to import.
    * Matched against the package name, so subpath imports (e.g. `cac/deno`)
@@ -93,12 +117,24 @@ export interface DepsConfig {
   dts?: Pick<DepsConfig, 'alwaysBundle' | 'neverBundle'>
 }
 
+/**
+ * The resolved form of {@linkcode DepsConfig}, produced by
+ * {@linkcode resolveDepsConfig | resolveDepsConfig()}. Deprecated options are
+ * merged into their canonical fields so consumers can rely on a single,
+ * normalized shape. {@linkcode ResolvedDepsConfig.alwaysBundle | alwaysBundle}
+ * is always narrowed to a {@linkcode NoExternalFn} function (never an array),
+ * and
+ * {@linkcode ResolvedDepsConfig.onlyBundle | onlyBundle} is always an array
+ * when truthy.
+ */
 export interface ResolvedDepsConfig extends Pick<
   DepsConfig,
   'neverBundle' | 'resolveDepSubpath'
 > {
   alwaysBundle?: NoExternalFn
+
   onlyBundle?: Array<string | RegExp> | false
+
   onlyImport?: Array<string | RegExp>
 
   /**
@@ -107,6 +143,16 @@ export interface ResolvedDepsConfig extends Pick<
   dts: Pick<ResolvedDepsConfig, 'alwaysBundle' | 'neverBundle'>
 }
 
+/**
+ * Normalize the {@linkcode UserConfig.deps | config.deps} fields into a
+ * {@linkcode ResolvedDepsConfig | resolved dependency configuration} object.
+ *
+ * @param config - User config whose {@linkcode UserConfig.deps | deps} fields are read.
+ * @param [logger] - Optional {@linkcode Logger | logger} used to emit deprecation warnings.
+ * @returns The {@linkcode ResolvedDepsConfig | resolved dependency configuration} with deprecated shims applied.
+ * @throws A {@linkcode TypeError} when a deprecated option is combined with its replacement (e.g. `external` with `deps.neverBundle`, `noExternal` with `deps.alwaysBundle`, `deps.onlyAllowBundle` with `deps.onlyBundle`, `inlineOnly` with `deps.onlyBundle`, or `skipNodeModulesBundle` with `deps.skipNodeModulesBundle`).
+ * @throws A {@linkcode TypeError} when {@linkcode ResolvedDepsConfig.skipNodeModulesBundle | skipNodeModulesBundle} and {@linkcode ResolvedDepsConfig.alwaysBundle | alwaysBundle} are both set.
+ */
 export function resolveDepsConfig(
   config: UserConfig,
   logger?: Logger,
@@ -167,8 +213,27 @@ function normalizeDepsOptions(
   }
 }
 
+/**
+ * Rolldown {@linkcode Plugin | plugin} that manages dependency bundling
+ * behavior according to the {@linkcode UserConfig.deps | deps} option. It
+ * decides, for every resolved import, whether the module should be bundled or
+ * externalized based on the
+ * {@linkcode ResolvedDepsConfig.alwaysBundle | alwaysBundle},
+ * {@linkcode ResolvedDepsConfig.onlyBundle | onlyBundle},
+ * {@linkcode ResolvedDepsConfig.neverBundle | neverBundle}, and
+ * {@linkcode ResolvedDepsConfig.skipNodeModulesBundle | skipNodeModulesBundle}
+ * sub-options, and validates that bundled packages are listed as
+ * `dependencies` in `package.json`.
+ *
+ * @param resolvedConfig - The resolved config for the current build, used to access the dependency configuration and package information.
+ * @param tsdownBundle - The current {@linkcode TsdownBundle | bundle}, used to track inlined dependencies for validation.
+ * @returns A Rolldown {@linkcode Plugin | plugin} that enforces the configured bundling strategy.
+ */
 export function DepsPlugin(
-  {
+  resolvedConfig: ResolvedConfig,
+  tsdownBundle: TsdownBundle,
+): Plugin {
+  const {
     pkg,
     deps: {
       neverBundle,
@@ -181,9 +246,8 @@ export function DepsPlugin(
     logger,
     nameLabel,
     platform,
-  }: ResolvedConfig,
-  tsdownBundle: TsdownBundle,
-): Plugin {
+  } = resolvedConfig
+
   const deps = pkg && Array.from(getProductionDeps(pkg))
 
   return {
@@ -438,6 +502,28 @@ function getStaticString(value: ESTree.Expression): string | undefined {
   return cooked ?? raw
 }
 
+/**
+ * Split an npm package specifier into its package name and optional subpath.
+ *
+ * @example
+ * <caption>Unscoped package with subpath</caption>
+ *
+ * ```ts
+ * parsePackageSpecifier('lodash/merge');
+ * // => ['lodash', '/merge']
+ * ```
+ *
+ * @example
+ * <caption>Scoped package without subpath</caption>
+ *
+ * ```ts
+ * parsePackageSpecifier('@scope/pkg');
+ * // => ['@scope/pkg', '']
+ * ```
+ *
+ * @param id - The raw import identifier (e.g. `'lodash/merge'` or `'@scope/pkg/utils'`).
+ * @returns A `[name, subpath]` tuple where `name` is the package name and `subpath` is the trailing path (including the leading `/`), or an empty string if there is none.
+ */
 export function parsePackageSpecifier(
   id: string,
 ): [name: string, subpath: string] {
@@ -450,6 +536,22 @@ export function parsePackageSpecifier(
 }
 
 const NODE_MODULES = '/node_modules/'
+
+/**
+ * Extract the package name, subpath, and package root from an absolute
+ * `node_modules` file path.
+ *
+ * @example
+ * <caption>Resolve an absolute path inside node_modules</caption>
+ *
+ * ```ts
+ * parseNodeModulesPath('/project/node_modules/lodash/merge.js');
+ * // => ['lodash', '/merge.js', '/project/node_modules/lodash']
+ * ```
+ *
+ * @param id - An absolute file path, typically a resolved module ID.
+ * @returns A `[name, subpath, root]` tuple, or `undefined` when the path does not pass through a `node_modules` directory.
+ */
 export function parseNodeModulesPath(
   id: string,
 ): [name: string, subpath: string, root: string] | undefined {
@@ -481,6 +583,29 @@ async function readBundledDepInfo(
   } catch {}
 }
 
+/**
+ * Derive the corresponding `@types/` package name for a given npm package
+ * identifier.
+ *
+ * @example
+ * <caption>Scoped package</caption>
+ *
+ * ```ts
+ * getTypesPackageName('@scope/pkg');
+ * // => '@types/scope__pkg'
+ * ```
+ *
+ * @example
+ * <caption>Unscoped package</caption>
+ *
+ * ```ts
+ * getTypesPackageName('lodash');
+ * // => '@types/lodash'
+ * ```
+ *
+ * @param id - The npm package import identifier.
+ * @returns The corresponding `@types/` package name, or `undefined` when a package name cannot be parsed.
+ */
 export function getTypesPackageName(id: string): string | undefined {
   const name = parsePackageSpecifier(id)[0]
   if (!name) return
@@ -517,8 +642,17 @@ async function resolveDepSubpath(id: string, resolve: ResolveFn) {
   return result
 }
 
-/*
- * Production deps should be excluded from the bundle
+/**
+ * Production deps should be excluded from the bundle. This includes
+ * {@linkcode PackageJson.dependencies | dependencies},
+ * {@linkcode PackageJson.peerDependencies | peerDependencies}, and
+ * {@linkcode PackageJson.optionalDependencies | optionalDependencies} from
+ * `package.json`. This function extracts those dependencies into a set for
+ * easy lookup when determining whether an import should be bundled or
+ * externalized.
+ *
+ * @param pkg - The `package.json` object to extract dependencies from.
+ * @returns A set of dependency names that should be treated as external.
  */
 function getProductionDeps(pkg: PackageJson): Set<string> {
   return new Set([

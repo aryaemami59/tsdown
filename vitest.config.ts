@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config'
+import { defineConfig, type ViteUserConfig } from 'vitest/config'
 
 export default defineConfig({
   server: {
@@ -18,4 +18,4 @@ export default defineConfig({
       },
     },
   },
-})
+}) satisfies ViteUserConfig as ViteUserConfig

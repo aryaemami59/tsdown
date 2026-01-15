@@ -78,8 +78,6 @@ const tsProgram = ts.createProgram({
   options: compilerOptions,
 })
 
-const rootFileNames = tsProgram.getRootFileNames()
-
 const entries = {
   tsdownConfig: { outputFile: 'tsdown.config', type: ['UserConfig'] },
 } as const satisfies Record<string, { outputFile: string; type: string[] }>
@@ -131,84 +129,8 @@ const stringifiedSchemas = await Promise.all(
   }),
 )
 
-const stripPrivateFields: ts.TransformerFactory<ts.SourceFile | ts.Bundle> = (
-  ctx,
-) => {
-  const visitor = (node: ts.Node) => {
-    if (ts.isPropertySignature(node) && ts.isPrivateIdentifier(node.name)) {
-      return ctx.factory.updatePropertySignature(
-        node,
-        node.modifiers,
-        ctx.factory.createStringLiteral(node.name.text),
-        node.questionToken,
-        node.type,
-      )
-    }
-    return ts.visitEachChild(node, visitor, ctx)
-  }
-  return (sourceFile) =>
-    ts.visitNode(sourceFile, visitor, ts.isSourceFile) ?? sourceFile
-}
-
-const customTransformers: ts.CustomTransformers = {
-  afterDeclarations: [stripPrivateFields],
-}
-
-// console.log(
-//   tsProgram.getSourceFile(
-//     path.join(import.meta.dirname, 'scripts', 'schemas.ts'),
-//   ),
-// )
-
-// const typeChecker = tsProgram.getTypeChecker()
-// console.log(typeChecker)
-
-const sourceFile = tsProgram.getSourceFile(inputFilePath)
-
-const emitResult = tsProgram.emit(
-  // tsProgram.getSourceFile(path.join(ROOT_DIR, 'scripts', 'schemas.ts')),
-  sourceFile,
-  (fileName, code) => {
-    // console.log(ts.sys.resolvePath(sourceFile?.fileName))
-    // console.log(fileName)
-    if (fileName.endsWith('.map')) {
-      const map = JSON.parse(code)
-      // console.log(map)
-    } else if (ts.sys.resolvePath(fileName) === ts.sys.resolvePath(fileName)) {
-      console.log(fileName)
-      console.log(ts.sys.resolvePath(inputFilePath))
-      console.log(
-        ts.bundlerModuleNameResolver(
-          fileName,
-          inputFilePath,
-          compilerOptions,
-          ts.sys,
-          undefined,
-          undefined,
-        ).resolvedModule?.resolvedFileName,
-      )
-      ts.sys.writeFile(fileName, code)
-      // return code
-      // console.log(code)
-    }
-  },
-  undefined,
-  true,
-  customTransformers,
-  // @ts-expect-error private API: forceDtsEmit,
-  true,
+await Promise.all(
+  stringifiedSchemas.map(([outputFile, content]) =>
+    fs.writeFile(outputFile, content, { encoding: 'utf8' }),
+  ),
 )
-// console.dir(emitResult, {
-//   depth: 4,
-//   getters: false,
-//   sorted: false,
-// })
-
-if (!emitResult.emitSkipped) {
-  // console.log(emitResult.emittedFiles)
-  await Promise.all(
-    stringifiedSchemas.map(([outputFile, content]) =>
-      fs.writeFile(outputFile, content, { encoding: 'utf8' }),
-    ),
-  )
-}

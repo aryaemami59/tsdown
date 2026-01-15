@@ -40,7 +40,6 @@ import type {
   Awaitable,
   MarkPartial,
   Overwrite,
-  Simplify,
 } from '../utils/types.ts'
 
 export type Sourcemap = boolean | 'inline' | 'hidden'
@@ -317,7 +316,7 @@ export type UserConfig = {
 
   //#region Output Options
 
-  /** @default 'es' */
+  /** @default ['es'] */
   format?: Format | Format[] | Partial<Record<Format, Partial<ResolvedConfig>>>
   globalName?: string
   /** @default 'dist' */
@@ -371,7 +370,7 @@ export type UserConfig = {
    * Otherwise, it will depend on the package type.
    *
    * Defaults to `true` if `platform` is set to `node`, `false` otherwise.
-   * @default node.platform === 'node' ? true : false
+   * @default platform === 'node'
    */
   fixedExtension?: boolean
 
@@ -454,7 +453,7 @@ export type UserConfig = {
   /**
    * **[experimental]** Enable devtools.
    *
-   *DevTools is still under development, and this is for early testers only.
+   * DevTools is still under development, and this is for early testers only.
    *
    * This may slow down the build process significantly.
    *
@@ -521,6 +520,8 @@ export type UserConfig = {
    *
    * This will set the `main`, `module`, `types`, `exports` fields in `package.json`
    * to point to the generated files.
+   *
+   * @default false
    */
   exports?: WithEnabled<ExportsOptions>
 
@@ -585,62 +586,60 @@ export type UserConfigFn = (
 
 export type UserConfigExport = Awaitable<Arrayable<UserConfig> | UserConfigFn>
 
-export type ResolvedConfig = Simplify<
-  Overwrite<
-    MarkPartial<
-      Omit<
-        UserConfig,
-        | 'workspace' // merged
-        | 'fromVite' // merged
-        | 'publicDir' // deprecated
-        | 'bundle' // deprecated
-        | 'removeNodeProtocol' // deprecated
-        | 'logLevel' // merge to `logger`
-        | 'failOnWarn' // merge to `logger`
-        | 'customLogger' // merge to `logger`
-        | 'envFile' // merged to `env`
-        | 'envPrefix' // merged to `env`
-      >,
-      | 'globalName'
-      | 'inputOptions'
-      | 'outputOptions'
-      | 'minify'
-      | 'define'
-      | 'alias'
-      | 'external'
-      | 'onSuccess'
-      | 'outExtensions'
-      | 'hooks'
-      | 'copy'
-      | 'loader'
-      | 'name'
-      | 'banner'
-      | 'footer'
-      | 'checks'
+export type ResolvedConfig = Overwrite<
+  MarkPartial<
+    Omit<
+      UserConfig,
+      | 'workspace' // merged
+      | 'fromVite' // merged
+      | 'publicDir' // deprecated
+      | 'bundle' // deprecated
+      | 'removeNodeProtocol' // deprecated
+      | 'logLevel' // merge to `logger`
+      | 'failOnWarn' // merge to `logger`
+      | 'customLogger' // merge to `logger`
+      | 'envFile' // merged to `env`
+      | 'envPrefix' // merged to `env`
     >,
-    {
-      /** Resolved entry map (after glob expansion) */
-      entry: Record<string, string>
-      nameLabel: string | undefined
-      format: NormalizedFormat
-      target?: string[]
-      clean: string[]
-      pkg?: PackageJsonWithPath
-      nodeProtocol: 'strip' | boolean
-      logger: Logger
-      ignoreWatch: Array<string | RegExp>
-      noExternal?: NoExternalFn
-      inlineOnly?: Array<string | RegExp>
-      css: Required<CssOptions>
+    | 'globalName'
+    | 'inputOptions'
+    | 'outputOptions'
+    | 'minify'
+    | 'define'
+    | 'alias'
+    | 'external'
+    | 'onSuccess'
+    | 'outExtensions'
+    | 'hooks'
+    | 'copy'
+    | 'loader'
+    | 'name'
+    | 'banner'
+    | 'footer'
+    | 'checks'
+  >,
+  {
+    /** Resolved entry map (after glob expansion) */
+    entry: Record<string, string>
+    nameLabel: string | undefined
+    format: NormalizedFormat
+    target?: string[]
+    clean: string[]
+    pkg?: PackageJsonWithPath
+    nodeProtocol: 'strip' | boolean
+    logger: Logger
+    ignoreWatch: Array<string | RegExp>
+    noExternal?: NoExternalFn
+    inlineOnly?: Array<string | RegExp>
+    css: Required<CssOptions>
 
-      dts: false | DtsOptions
-      report: false | ReportOptions
-      tsconfig: false | string
-      exports: false | ExportsOptions
-      devtools: false | DevtoolsOptions
-      publint: false | PublintOptions
-      attw: false | AttwOptions
-      unused: false | UnusedOptions
-    }
-  >
+    dts: false | DtsOptions
+    report: false | ReportOptions
+    tsconfig: false | string
+    exports: false | ExportsOptions
+    devtools: false | DevtoolsOptions
+    publint: false | PublintOptions
+    attw: false | AttwOptions
+    unused: false | UnusedOptions
+  }
 >

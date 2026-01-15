@@ -5,12 +5,7 @@
     "UserConfig": {
       "type": "object",
       "properties": {
-        "entry": {
-          "$ref": "#/definitions/TsdownInputOption",
-          "description": "Defaults to `'src/index.ts'` if it exists.\n\nSupports glob patterns with negation to exclude files:",
-          "markdownDescription": "Defaults to `'src/index.ts'` if it exists.\n\nSupports glob patterns with negation to exclude files:",
-          "default": "src/index.ts"
-        },
+        "entry": { "type": "object", "properties": {} },
         "external": {
           "anyOf": [
             { "type": "string" },
@@ -26,24 +21,15 @@
             }
           ]
         },
-        "noExternal": {
-          "$ref": "#/definitions/Arrayable<(string|string479082557)>"
-        },
-        "inlineOnly": {
-          "$ref": "#/definitions/Arrayable<(string|string479082557)>",
-          "description": "Bundle only the dependencies listed here; throw an error if any others are missing.\n\nNote: Be sure to include all required sub-dependencies as well.",
-          "markdownDescription": "Bundle only the dependencies listed here; throw an error if any others are missing.\n\nNote: Be sure to include all required sub-dependencies as well."
-        },
+        "noExternal": { "type": "object", "properties": {} },
+        "inlineOnly": { "type": "object", "properties": {} },
         "skipNodeModulesBundle": {
           "type": "boolean",
           "description": "Skip bundling `node_modules`.",
           "markdownDescription": "Skip bundling `node_modules`.",
           "default": false
         },
-        "alias": {
-          "type": "object",
-          "additionalProperties": { "type": "string" }
-        },
+        "alias": { "type": "object", "properties": {} },
         "tsconfig": { "type": ["string", "boolean"] },
         "platform": {
           "type": "string",
@@ -61,12 +47,7 @@
           "description": "Specifies the compilation target environment(s).\n\nDetermines the JavaScript version or runtime(s) for which the code should be compiled. If not set, defaults to the value of `engines.node` in your project's `package.json`. If no `engines.node` field exists, no syntax transformations are applied.\n\nAccepts a single target (e.g., `'es2020'`, `'node18'`), an array of targets, or `false` to disable all transformations.",
           "markdownDescription": "Specifies the compilation target environment(s).\n\nDetermines the JavaScript version or runtime(s) for which the code should be compiled.\nIf not set, defaults to the value of `engines.node` in your project's `package.json`.\nIf no `engines.node` field exists, no syntax transformations are applied.\n\nAccepts a single target (e.g., `'es2020'`, `'node18'`), an array of targets, or `false` to disable all transformations."
         },
-        "env": {
-          "type": "object",
-          "description": "Compile-time env variables, which can be accessed via `import.meta.env` or `process.env`.",
-          "markdownDescription": "Compile-time env variables, which can be accessed via `import.meta.env` or `process.env`.",
-          "default": {}
-        },
+        "env": { "type": "object", "properties": {} },
         "envFile": {
           "type": "string",
           "description": "Path to env file providing compile-time env variables.",
@@ -81,10 +62,7 @@
           "markdownDescription": "When loading env variables from `envFile`, only include variables with these prefixes.",
           "default": "TSDOWN_"
         },
-        "define": {
-          "type": "object",
-          "additionalProperties": { "type": "string" }
-        },
+        "define": { "type": "object", "properties": {} },
         "shims": { "type": "boolean", "default": false },
         "treeshake": {
           "anyOf": [
@@ -164,28 +142,7 @@
           "markdownDescription": "Configure tree shaking options.",
           "default": true
         },
-        "loader": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "enum": [
-              "js",
-              "jsx",
-              "ts",
-              "tsx",
-              "json",
-              "text",
-              "base64",
-              "dataurl",
-              "binary",
-              "empty",
-              "css",
-              "asset"
-            ]
-          },
-          "description": "Sets how input files are processed. For example, use 'js' to treat files as JavaScript or 'base64' for images. Lets you import or require files like images or fonts.",
-          "markdownDescription": "Sets how input files are processed.\nFor example, use 'js' to treat files as JavaScript or 'base64' for images.\nLets you import or require files like images or fonts."
-        },
+        "loader": { "type": "object", "properties": {} },
         "removeNodeProtocol": {
           "type": "boolean",
           "description": "If enabled, strips the `node:` protocol prefix from import source.",
@@ -4255,7 +4212,7 @@
               "additionalProperties": false
             }
           ],
-          "default": "es"
+          "default": ["es"]
         },
         "globalName": { "type": "string" },
         "outDir": { "type": "string", "default": "dist" },
@@ -4503,7 +4460,7 @@
           "type": "boolean",
           "description": "Use a fixed extension for output files. The extension will always be `.cjs` or `.mjs`. Otherwise, it will depend on the package type.\n\nDefaults to `true` if `platform` is set to `node`, `false` otherwise.",
           "markdownDescription": "Use a fixed extension for output files.\nThe extension will always be `.cjs` or `.mjs`.\nOtherwise, it will depend on the package type.\n\nDefaults to `true` if `platform` is set to `node`, `false` otherwise.",
-          "default": "node.platform === 'node' ? true : false"
+          "default": "platform === 'node'"
         },
         "hash": {
           "type": "boolean",
@@ -5319,18 +5276,8 @@
           "markdownDescription": "Reuse config from Vite or Vitest (experimental)",
           "default": false
         },
-        "watch": {
-          "anyOf": [
-            { "type": "boolean" },
-            { "$ref": "#/definitions/Arrayable<string>" }
-          ],
-          "default": false
-        },
-        "ignoreWatch": {
-          "$ref": "#/definitions/Arrayable<(string|string479082557)>",
-          "description": "Files or patterns to not watch while in watch mode.",
-          "markdownDescription": "Files or patterns to not watch while in watch mode."
-        },
+        "watch": { "type": "object", "properties": {} },
+        "ignoreWatch": { "type": "object", "properties": {} },
         "devtools": {
           "anyOf": [
             { "type": "boolean" },
@@ -5382,293 +5329,264 @@
           "markdownDescription": "You can specify command to be executed after a successful build, specially useful for Watch mode"
         },
         "dts": {
-          "anyOf": [
-            { "type": "boolean" },
-            { "$ref": "#/definitions/CIOption" },
-            {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "enabled": {
-                  "anyOf": [
-                    { "type": "boolean" },
-                    { "$ref": "#/definitions/CIOption" }
-                  ],
-                  "default": true
-                },
-                "build": {
-                  "type": "boolean",
-                  "description": "Build mode for the TypeScript compiler:\n\n- If `true`, the plugin will use [`tsc -b`](https://www.typescriptlang.org/docs/handbook/project-references.html#build-mode-for-typescript) to build the project and all referenced projects before emitting `.d.ts` files.\n- If `false`, the plugin will use [`tsc`](https://www.typescriptlang.org/docs/handbook/compiler-options.html) to emit `.d.ts` files without building referenced projects.",
-                  "markdownDescription": "Build mode for the TypeScript compiler:\n\n- If `true`, the plugin will use [`tsc -b`](https://www.typescriptlang.org/docs/handbook/project-references.html#build-mode-for-typescript) to build the project and all referenced projects before emitting `.d.ts` files.\n- If `false`, the plugin will use [`tsc`](https://www.typescriptlang.org/docs/handbook/compiler-options.html) to emit `.d.ts` files without building referenced projects.",
-                  "default": false
-                },
-                "incremental": {
-                  "type": "boolean",
-                  "description": "If your tsconfig.json has [`references`](https://www.typescriptlang.org/tsconfig/#references) option, `rolldown-plugin-dts` will use [`tsc\n-b`](https://www.typescriptlang.org/docs/handbook/project-references.html#build-mode-for-typescript) to build the project and all referenced projects before emitting `.d.ts` files.\n\nIn such case, if this option is `true`, `rolldown-plugin-dts` will write down all built files into your disk, including [`.tsbuildinfo`](https://www.typescriptlang.org/tsconfig/#tsBuildInfoFile) and other built files. This is equivalent to running `tsc -b` in your project.\n\nOtherwise, if this option is `false`, `rolldown-plugin-dts` will write built files only into memory and leave a small footprint in your disk.\n\nEnabling this option will decrease the build time by caching previous build results. This is helpful when you have a large project with multiple referenced projects.\n\nBy default, `incremental` is `true` if your tsconfig has [`incremental`](https://www.typescriptlang.org/tsconfig/#incremental) or [`tsBuildInfoFile`](https://www.typescriptlang.org/tsconfig/#tsBuildInfoFile) enabled.\n\nThis option is only used when  {@link  Options.oxc }  is `false`.",
-                  "markdownDescription": "If your tsconfig.json has\n[`references`](https://www.typescriptlang.org/tsconfig/#references) option,\n`rolldown-plugin-dts` will use [`tsc\n-b`](https://www.typescriptlang.org/docs/handbook/project-references.html#build-mode-for-typescript)\nto build the project and all referenced projects before emitting `.d.ts`\nfiles.\n\nIn such case, if this option is `true`, `rolldown-plugin-dts` will write\ndown all built files into your disk, including\n[`.tsbuildinfo`](https://www.typescriptlang.org/tsconfig/#tsBuildInfoFile)\nand other built files. This is equivalent to running `tsc -b` in your\nproject.\n\nOtherwise, if this option is `false`, `rolldown-plugin-dts` will write\nbuilt files only into memory and leave a small footprint in your disk.\n\nEnabling this option will decrease the build time by caching previous build\nresults. This is helpful when you have a large project with multiple\nreferenced projects.\n\nBy default, `incremental` is `true` if your tsconfig has\n[`incremental`](https://www.typescriptlang.org/tsconfig/#incremental) or\n[`tsBuildInfoFile`](https://www.typescriptlang.org/tsconfig/#tsBuildInfoFile)\nenabled.\n\nThis option is only used when  {@link  Options.oxc }  is\n`false`."
-                },
-                "vue": {
-                  "type": "boolean",
-                  "description": "If `true`, the plugin will generate `.d.ts` files using `vue-tsc`.",
-                  "markdownDescription": "If `true`, the plugin will generate `.d.ts` files using `vue-tsc`."
-                },
-                "tsMacro": {
-                  "type": "boolean",
-                  "description": "If `true`, the plugin will generate `.d.ts` files using `@ts-macro/tsc`.",
-                  "markdownDescription": "If `true`, the plugin will generate `.d.ts` files using `@ts-macro/tsc`."
-                },
-                "parallel": {
-                  "type": "boolean",
-                  "description": "If `true`, the plugin will launch a separate process for `tsc` or `vue-tsc`. This enables processing multiple projects in parallel.",
-                  "markdownDescription": "If `true`, the plugin will launch a separate process for `tsc` or `vue-tsc`.\nThis enables processing multiple projects in parallel."
-                },
-                "eager": {
-                  "type": "boolean",
-                  "description": "If `true`, the plugin will prepare all files listed in `tsconfig.json` for `tsc` or `vue-tsc`.\n\nThis is especially useful when you have a single `tsconfig.json` for multiple projects in a monorepo.",
-                  "markdownDescription": "If `true`, the plugin will prepare all files listed in `tsconfig.json` for `tsc` or `vue-tsc`.\n\nThis is especially useful when you have a single `tsconfig.json` for multiple projects in a monorepo."
-                },
-                "newContext": {
-                  "type": "boolean",
-                  "description": "If `true`, the plugin will create a new isolated context for each build, ensuring that previously generated `.d.ts` code and caches are not reused.\n\nBy default, the plugin may reuse internal caches or incremental build artifacts to speed up repeated builds. Enabling this option forces a clean context, guaranteeing that all type definitions are generated from scratch.",
-                  "markdownDescription": "If `true`, the plugin will create a new isolated context for each build,\nensuring that previously generated `.d.ts` code and caches are not reused.\n\nBy default, the plugin may reuse internal caches or incremental build artifacts\nto speed up repeated builds. Enabling this option forces a clean context,\nguaranteeing that all type definitions are generated from scratch.",
-                  "default": false
-                },
-                "emitJs": {
-                  "type": "boolean",
-                  "description": "If `true`, the plugin will emit `.d.ts` files for `.js` files as well. This is useful when you want to generate type definitions for JavaScript files with JSDoc comments.\n\nEnabled by default when `allowJs` in compilerOptions is `true`. This option is only used when  {@link  Options.oxc }  is `false`.",
-                  "markdownDescription": "If `true`, the plugin will emit `.d.ts` files for `.js` files as well.\nThis is useful when you want to generate type definitions for JavaScript files with JSDoc comments.\n\nEnabled by default when `allowJs` in compilerOptions is `true`.\nThis option is only used when  {@link  Options.oxc }  is\n`false`."
-                },
-                "cwd": {
-                  "type": "string",
-                  "description": "The directory in which the plugin will search for the `tsconfig.json` file.",
-                  "markdownDescription": "The directory in which the plugin will search for the `tsconfig.json` file."
-                },
-                "dtsInput": {
-                  "type": "boolean",
-                  "description": "Set to `true` if your entry files are `.d.ts` files instead of `.ts` files.\n\nWhen enabled, the plugin will skip generating a `.d.ts` file for the entry point.",
-                  "markdownDescription": "Set to `true` if your entry files are `.d.ts` files instead of `.ts` files.\n\nWhen enabled, the plugin will skip generating a `.d.ts` file for the entry point."
-                },
-                "emitDtsOnly": {
-                  "type": "boolean",
-                  "description": "If `true`, the plugin will emit only `.d.ts` files and remove all other output chunks.\n\nThis is especially useful when generating `.d.ts` files for the CommonJS format as part of a separate build step.",
-                  "markdownDescription": "If `true`, the plugin will emit only `.d.ts` files and remove all other output chunks.\n\nThis is especially useful when generating `.d.ts` files for the CommonJS format as part of a separate build step."
-                },
-                "tsconfig": {
-                  "type": ["string", "boolean"],
-                  "description": "The path to the `tsconfig.json` file.\n\nIf set to `false`, the plugin will ignore any `tsconfig.json` file. You can still specify `compilerOptions` directly in the options.",
-                  "markdownDescription": "The path to the `tsconfig.json` file.\n\nIf set to `false`, the plugin will ignore any `tsconfig.json` file.\nYou can still specify `compilerOptions` directly in the options.",
-                  "default": "tsconfig.json"
-                },
-                "tsconfigRaw": {
+          "type": "object",
+          "properties": {
+            "oxc": {
+              "anyOf": [
+                { "type": "boolean" },
+                {
                   "type": "object",
                   "properties": {
-                    "watchOptions": {
-                      "$ref": "#/definitions/TsConfigJson.WatchOptions",
-                      "description": "Instructs the TypeScript compiler how to watch files.",
-                      "markdownDescription": "Instructs the TypeScript compiler how to watch files."
-                    },
-                    "typeAcquisition": {
-                      "$ref": "#/definitions/TsConfigJson.TypeAcquisition",
-                      "description": "Auto type (.d.ts) acquisition options for this project.",
-                      "markdownDescription": "Auto type (.d.ts) acquisition options for this project."
-                    },
-                    "compileOnSave": {
+                    "stripInternal": {
                       "type": "boolean",
-                      "description": "Enable Compile-on-Save for this project.",
-                      "markdownDescription": "Enable Compile-on-Save for this project."
-                    },
-                    "extends": {
-                      "anyOf": [
-                        { "type": "string" },
-                        { "type": "array", "items": { "type": "string" } }
-                      ],
-                      "description": "Path to base configuration file to inherit from.",
-                      "markdownDescription": "Path to base configuration file to inherit from."
-                    },
-                    "files": {
-                      "type": "array",
-                      "items": { "type": "string" },
-                      "description": "If no `files` or `include` property is present in a `tsconfig.json`, the compiler defaults to including all files in the containing directory and subdirectories except those specified by `exclude`. When a `files` property is specified, only those files and those specified by `include` are included.",
-                      "markdownDescription": "If no `files` or `include` property is present in a `tsconfig.json`, the compiler defaults to including all files in the containing directory and subdirectories except those specified by `exclude`. When a `files` property is specified, only those files and those specified by `include` are included."
-                    },
-                    "exclude": {
-                      "type": "array",
-                      "items": { "type": "string" },
-                      "description": "Specifies a list of files to be excluded from compilation. The `exclude` property only affects the files included via the `include` property and not the `files` property.\n\nGlob patterns require TypeScript version 2.0 or later.",
-                      "markdownDescription": "Specifies a list of files to be excluded from compilation. The `exclude` property only affects the files included via the `include` property and not the `files` property.\n\nGlob patterns require TypeScript version 2.0 or later."
-                    },
-                    "include": {
-                      "type": "array",
-                      "items": { "type": "string" },
-                      "description": "Specifies a list of glob patterns that match files to be included in compilation.\n\nIf no `files` or `include` property is present in a `tsconfig.json`, the compiler defaults to including all files in the containing directory and subdirectories except those specified by `exclude`.",
-                      "markdownDescription": "Specifies a list of glob patterns that match files to be included in compilation.\n\nIf no `files` or `include` property is present in a `tsconfig.json`, the compiler defaults to including all files in the containing directory and subdirectories except those specified by `exclude`."
-                    },
-                    "references": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/definitions/TsConfigJson.References"
-                      },
-                      "description": "Referenced projects.",
-                      "markdownDescription": "Referenced projects."
+                      "description": "Do not emit declarations for code that has an",
+                      "markdownDescription": "Do not emit declarations for code that has an"
                     }
                   },
-                  "additionalProperties": false,
-                  "description": "Pass a raw `tsconfig.json` object directly to the plugin.",
-                  "markdownDescription": "Pass a raw `tsconfig.json` object directly to the plugin."
-                },
-                "compilerOptions": {
-                  "$ref": "#/definitions/TsConfigJson.CompilerOptions",
-                  "description": "Override the `compilerOptions` specified in `tsconfig.json`.",
-                  "markdownDescription": "Override the `compilerOptions` specified in `tsconfig.json`."
-                },
-                "sourcemap": {
-                  "type": "boolean",
-                  "description": "If `true`, the plugin will generate declaration maps (`.d.ts.map`) for `.d.ts` files.",
-                  "markdownDescription": "If `true`, the plugin will generate declaration maps (`.d.ts.map`) for `.d.ts` files."
-                },
-                "resolver": {
-                  "type": "string",
-                  "enum": ["oxc", "tsc"],
-                  "description": "Specifies a resolver to resolve type definitions, especially for `node_modules`.\n\n- `'oxc'`: Uses Oxc's module resolution, which is faster and more efficient.\n- `'tsc'`: Uses TypeScript's native module resolution, which may be more compatible with complex setups, but slower.",
-                  "markdownDescription": "Specifies a resolver to resolve type definitions, especially for `node_modules`.\n\n- `'oxc'`: Uses Oxc's module resolution, which is faster and more efficient.\n- `'tsc'`: Uses TypeScript's native module resolution, which may be more compatible with complex setups, but slower.",
-                  "default": "oxc"
-                },
-                "cjsDefault": {
-                  "type": "boolean",
-                  "description": "Determines how the default export is emitted.\n\nIf set to `true`, and you are only exporting a single item using `export default ...`, the output will use `export = ...` instead of the standard ES module syntax. This is useful for compatibility with CommonJS.",
-                  "markdownDescription": "Determines how the default export is emitted.\n\nIf set to `true`, and you are only exporting a single item using `export default ...`,\nthe output will use `export = ...` instead of the standard ES module syntax.\nThis is useful for compatibility with CommonJS."
-                },
-                "sideEffects": {
-                  "type": "boolean",
-                  "description": "Indicates whether the generated `.d.ts` files have side effects.\n- If set to `true`, Rolldown will treat the `.d.ts` files as having side effects during tree-shaking.\n- If set to `false`, Rolldown may consider the `.d.ts` files as side-effect-free, potentially removing them if they are not imported.",
-                  "markdownDescription": "Indicates whether the generated `.d.ts` files have side effects.\n- If set to `true`, Rolldown will treat the `.d.ts` files as having side effects during tree-shaking.\n- If set to `false`, Rolldown may consider the `.d.ts` files as side-effect-free, potentially removing them if they are not imported.",
-                  "default": false
-                },
-                "oxc": {
-                  "anyOf": [
-                    { "type": "boolean" },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "stripInternal": {
-                          "type": "boolean",
-                          "description": "Do not emit declarations for code that has an",
-                          "markdownDescription": "Do not emit declarations for code that has an"
-                        }
-                      },
-                      "additionalProperties": false
-                    }
-                  ],
-                  "description": "If `true`, the plugin will generate `.d.ts` files using Oxc, which is significantly faster than the TypeScript compiler.\n\nThis option is automatically enabled when `isolatedDeclarations` in `compilerOptions` is set to `true`.",
-                  "markdownDescription": "If `true`, the plugin will generate `.d.ts` files using Oxc,\nwhich is significantly faster than the TypeScript compiler.\n\nThis option is automatically enabled when `isolatedDeclarations` in `compilerOptions` is set to `true`."
-                },
-                "tsgo": {
-                  "type": "boolean",
-                  "description": "**[Experimental]** Enables DTS generation using `tsgo`.\n\nTo use this option, make sure `@typescript/native-preview` is installed as a dependency.\n\n**Note:** This option is not yet recommended for production environments. `tsconfigRaw` and `isolatedDeclarations` options will be ignored when this option is enabled.",
-                  "markdownDescription": "**[Experimental]** Enables DTS generation using `tsgo`.\n\nTo use this option, make sure `@typescript/native-preview` is installed as a dependency.\n\n**Note:** This option is not yet recommended for production environments.\n`tsconfigRaw` and `isolatedDeclarations` options will be ignored when this option is enabled."
+                  "additionalProperties": false
                 }
-              }
-            }
-          ],
-          "description": "Enables generation of TypeScript declaration files (`.d.ts`).\n\nBy default, this option is auto-detected based on your project's `package.json`:\n- If the `types` field is present, or if the main `exports` contains a `types` entry, declaration file generation is enabled by default.\n- Otherwise, declaration file generation is disabled by default.",
-          "markdownDescription": "Enables generation of TypeScript declaration files (`.d.ts`).\n\nBy default, this option is auto-detected based on your project's `package.json`:\n- If the `types` field is present, or if the main `exports` contains a `types` entry, declaration file generation is enabled by default.\n- Otherwise, declaration file generation is disabled by default."
-        },
-        "unused": {
-          "anyOf": [
-            { "type": "boolean" },
-            { "$ref": "#/definitions/CIOption" },
-            {
+              ],
+              "description": "If `true`, the plugin will generate `.d.ts` files using Oxc, which is significantly faster than the TypeScript compiler.\n\nThis option is automatically enabled when `isolatedDeclarations` in `compilerOptions` is set to `true`.",
+              "markdownDescription": "If `true`, the plugin will generate `.d.ts` files using Oxc,\nwhich is significantly faster than the TypeScript compiler.\n\nThis option is automatically enabled when `isolatedDeclarations` in `compilerOptions` is set to `true`."
+            },
+            "tsgo": {
+              "type": "boolean",
+              "description": "**[Experimental]** Enables DTS generation using `tsgo`.\n\nTo use this option, make sure `@typescript/native-preview` is installed as a dependency.\n\n**Note:** This option is not yet recommended for production environments. `tsconfigRaw` and `isolatedDeclarations` options will be ignored when this option is enabled.",
+              "markdownDescription": "**[Experimental]** Enables DTS generation using `tsgo`.\n\nTo use this option, make sure `@typescript/native-preview` is installed as a dependency.\n\n**Note:** This option is not yet recommended for production environments.\n`tsconfigRaw` and `isolatedDeclarations` options will be ignored when this option is enabled."
+            },
+            "cwd": {
+              "type": "string",
+              "description": "The directory in which the plugin will search for the `tsconfig.json` file.",
+              "markdownDescription": "The directory in which the plugin will search for the `tsconfig.json` file."
+            },
+            "dtsInput": {
+              "type": "boolean",
+              "description": "Set to `true` if your entry files are `.d.ts` files instead of `.ts` files.\n\nWhen enabled, the plugin will skip generating a `.d.ts` file for the entry point.",
+              "markdownDescription": "Set to `true` if your entry files are `.d.ts` files instead of `.ts` files.\n\nWhen enabled, the plugin will skip generating a `.d.ts` file for the entry point."
+            },
+            "emitDtsOnly": {
+              "type": "boolean",
+              "description": "If `true`, the plugin will emit only `.d.ts` files and remove all other output chunks.\n\nThis is especially useful when generating `.d.ts` files for the CommonJS format as part of a separate build step.",
+              "markdownDescription": "If `true`, the plugin will emit only `.d.ts` files and remove all other output chunks.\n\nThis is especially useful when generating `.d.ts` files for the CommonJS format as part of a separate build step."
+            },
+            "tsconfig": {
+              "type": ["string", "boolean"],
+              "description": "The path to the `tsconfig.json` file.\n\nIf set to `false`, the plugin will ignore any `tsconfig.json` file. You can still specify `compilerOptions` directly in the options.",
+              "markdownDescription": "The path to the `tsconfig.json` file.\n\nIf set to `false`, the plugin will ignore any `tsconfig.json` file.\nYou can still specify `compilerOptions` directly in the options.",
+              "default": "tsconfig.json"
+            },
+            "tsconfigRaw": {
               "type": "object",
-              "additionalProperties": false,
               "properties": {
-                "enabled": {
-                  "anyOf": [
-                    { "type": "boolean" },
-                    { "$ref": "#/definitions/CIOption" }
-                  ],
-                  "default": true
+                "watchOptions": {
+                  "$ref": "#/definitions/TsConfigJson.WatchOptions",
+                  "description": "Instructs the TypeScript compiler how to watch files.",
+                  "markdownDescription": "Instructs the TypeScript compiler how to watch files."
                 },
-                "root": { "type": "string" },
-                "include": {
+                "typeAcquisition": {
+                  "$ref": "#/definitions/TsConfigJson.TypeAcquisition",
+                  "description": "Auto type (.d.ts) acquisition options for this project.",
+                  "markdownDescription": "Auto type (.d.ts) acquisition options for this project."
+                },
+                "compileOnSave": {
+                  "type": "boolean",
+                  "description": "Enable Compile-on-Save for this project.",
+                  "markdownDescription": "Enable Compile-on-Save for this project."
+                },
+                "extends": {
                   "anyOf": [
                     { "type": "string" },
-                    { "type": "string", "format": "regex" },
-                    {
-                      "type": "array",
-                      "items": {
-                        "anyOf": [
-                          { "type": "string" },
-                          { "type": "string", "format": "regex" }
-                        ]
-                      }
-                    }
+                    { "type": "array", "items": { "type": "string" } }
                   ],
-                  "description": "Array, or not yet",
-                  "markdownDescription": "Array, or not yet"
+                  "description": "Path to base configuration file to inherit from.",
+                  "markdownDescription": "Path to base configuration file to inherit from."
+                },
+                "files": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "If no `files` or `include` property is present in a `tsconfig.json`, the compiler defaults to including all files in the containing directory and subdirectories except those specified by `exclude`. When a `files` property is specified, only those files and those specified by `include` are included.",
+                  "markdownDescription": "If no `files` or `include` property is present in a `tsconfig.json`, the compiler defaults to including all files in the containing directory and subdirectories except those specified by `exclude`. When a `files` property is specified, only those files and those specified by `include` are included."
                 },
                 "exclude": {
-                  "anyOf": [
-                    { "type": "string" },
-                    { "type": "string", "format": "regex" },
-                    {
-                      "type": "array",
-                      "items": {
-                        "anyOf": [
-                          { "type": "string" },
-                          { "type": "string", "format": "regex" }
-                        ]
-                      }
-                    }
-                  ],
-                  "description": "Array, or not yet",
-                  "markdownDescription": "Array, or not yet"
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Specifies a list of files to be excluded from compilation. The `exclude` property only affects the files included via the `include` property and not the `files` property.\n\nGlob patterns require TypeScript version 2.0 or later.",
+                  "markdownDescription": "Specifies a list of files to be excluded from compilation. The `exclude` property only affects the files included via the `include` property and not the `files` property.\n\nGlob patterns require TypeScript version 2.0 or later."
                 },
-                "ignore": {
-                  "anyOf": [
-                    { "type": "array", "items": { "type": "string" } },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "dependencies": {
-                          "type": "array",
-                          "items": { "type": "string" }
-                        },
-                        "devDependencies": {
-                          "type": "array",
-                          "items": { "type": "string" }
-                        },
-                        "peerDependencies": {
-                          "type": "array",
-                          "items": { "type": "string" }
-                        }
-                      },
-                      "additionalProperties": false
-                    }
-                  ]
+                "include": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Specifies a list of glob patterns that match files to be included in compilation.\n\nIf no `files` or `include` property is present in a `tsconfig.json`, the compiler defaults to including all files in the containing directory and subdirectories except those specified by `exclude`.",
+                  "markdownDescription": "Specifies a list of glob patterns that match files to be included in compilation.\n\nIf no `files` or `include` property is present in a `tsconfig.json`, the compiler defaults to including all files in the containing directory and subdirectories except those specified by `exclude`."
                 },
-                "level": {
-                  "type": "string",
-                  "enum": ["warning", "error"],
-                  "default": "warning"
-                },
-                "depKinds": {
+                "references": {
+                  "type": "array",
+                  "items": { "$ref": "#/definitions/TsConfigJson.References" },
+                  "description": "Referenced projects.",
+                  "markdownDescription": "Referenced projects."
+                }
+              },
+              "additionalProperties": false,
+              "description": "Pass a raw `tsconfig.json` object directly to the plugin.",
+              "markdownDescription": "Pass a raw `tsconfig.json` object directly to the plugin."
+            },
+            "compilerOptions": {
+              "$ref": "#/definitions/TsConfigJson.CompilerOptions",
+              "description": "Override the `compilerOptions` specified in `tsconfig.json`.",
+              "markdownDescription": "Override the `compilerOptions` specified in `tsconfig.json`."
+            },
+            "sourcemap": {
+              "type": "boolean",
+              "description": "If `true`, the plugin will generate declaration maps (`.d.ts.map`) for `.d.ts` files.",
+              "markdownDescription": "If `true`, the plugin will generate declaration maps (`.d.ts.map`) for `.d.ts` files."
+            },
+            "resolver": {
+              "type": "string",
+              "enum": ["oxc", "tsc"],
+              "description": "Specifies a resolver to resolve type definitions, especially for `node_modules`.\n\n- `'oxc'`: Uses Oxc's module resolution, which is faster and more efficient.\n- `'tsc'`: Uses TypeScript's native module resolution, which may be more compatible with complex setups, but slower.",
+              "markdownDescription": "Specifies a resolver to resolve type definitions, especially for `node_modules`.\n\n- `'oxc'`: Uses Oxc's module resolution, which is faster and more efficient.\n- `'tsc'`: Uses TypeScript's native module resolution, which may be more compatible with complex setups, but slower.",
+              "default": "oxc"
+            },
+            "cjsDefault": {
+              "type": "boolean",
+              "description": "Determines how the default export is emitted.\n\nIf set to `true`, and you are only exporting a single item using `export default ...`, the output will use `export = ...` instead of the standard ES module syntax. This is useful for compatibility with CommonJS.",
+              "markdownDescription": "Determines how the default export is emitted.\n\nIf set to `true`, and you are only exporting a single item using `export default ...`,\nthe output will use `export = ...` instead of the standard ES module syntax.\nThis is useful for compatibility with CommonJS."
+            },
+            "sideEffects": {
+              "type": "boolean",
+              "description": "Indicates whether the generated `.d.ts` files have side effects.\n- If set to `true`, Rolldown will treat the `.d.ts` files as having side effects during tree-shaking.\n- If set to `false`, Rolldown may consider the `.d.ts` files as side-effect-free, potentially removing them if they are not imported.",
+              "markdownDescription": "Indicates whether the generated `.d.ts` files have side effects.\n- If set to `true`, Rolldown will treat the `.d.ts` files as having side effects during tree-shaking.\n- If set to `false`, Rolldown may consider the `.d.ts` files as side-effect-free, potentially removing them if they are not imported.",
+              "default": false
+            },
+            "build": {
+              "type": "boolean",
+              "description": "Build mode for the TypeScript compiler:\n\n- If `true`, the plugin will use [`tsc -b`](https://www.typescriptlang.org/docs/handbook/project-references.html#build-mode-for-typescript) to build the project and all referenced projects before emitting `.d.ts` files.\n- If `false`, the plugin will use [`tsc`](https://www.typescriptlang.org/docs/handbook/compiler-options.html) to emit `.d.ts` files without building referenced projects.",
+              "markdownDescription": "Build mode for the TypeScript compiler:\n\n- If `true`, the plugin will use [`tsc -b`](https://www.typescriptlang.org/docs/handbook/project-references.html#build-mode-for-typescript) to build the project and all referenced projects before emitting `.d.ts` files.\n- If `false`, the plugin will use [`tsc`](https://www.typescriptlang.org/docs/handbook/compiler-options.html) to emit `.d.ts` files without building referenced projects.",
+              "default": false
+            },
+            "incremental": {
+              "type": "boolean",
+              "description": "If your tsconfig.json has [`references`](https://www.typescriptlang.org/tsconfig/#references) option, `rolldown-plugin-dts` will use [`tsc\n-b`](https://www.typescriptlang.org/docs/handbook/project-references.html#build-mode-for-typescript) to build the project and all referenced projects before emitting `.d.ts` files.\n\nIn such case, if this option is `true`, `rolldown-plugin-dts` will write down all built files into your disk, including [`.tsbuildinfo`](https://www.typescriptlang.org/tsconfig/#tsBuildInfoFile) and other built files. This is equivalent to running `tsc -b` in your project.\n\nOtherwise, if this option is `false`, `rolldown-plugin-dts` will write built files only into memory and leave a small footprint in your disk.\n\nEnabling this option will decrease the build time by caching previous build results. This is helpful when you have a large project with multiple referenced projects.\n\nBy default, `incremental` is `true` if your tsconfig has [`incremental`](https://www.typescriptlang.org/tsconfig/#incremental) or [`tsBuildInfoFile`](https://www.typescriptlang.org/tsconfig/#tsBuildInfoFile) enabled.\n\nThis option is only used when  {@link  Options.oxc }  is `false`.",
+              "markdownDescription": "If your tsconfig.json has\n[`references`](https://www.typescriptlang.org/tsconfig/#references) option,\n`rolldown-plugin-dts` will use [`tsc\n-b`](https://www.typescriptlang.org/docs/handbook/project-references.html#build-mode-for-typescript)\nto build the project and all referenced projects before emitting `.d.ts`\nfiles.\n\nIn such case, if this option is `true`, `rolldown-plugin-dts` will write\ndown all built files into your disk, including\n[`.tsbuildinfo`](https://www.typescriptlang.org/tsconfig/#tsBuildInfoFile)\nand other built files. This is equivalent to running `tsc -b` in your\nproject.\n\nOtherwise, if this option is `false`, `rolldown-plugin-dts` will write\nbuilt files only into memory and leave a small footprint in your disk.\n\nEnabling this option will decrease the build time by caching previous build\nresults. This is helpful when you have a large project with multiple\nreferenced projects.\n\nBy default, `incremental` is `true` if your tsconfig has\n[`incremental`](https://www.typescriptlang.org/tsconfig/#incremental) or\n[`tsBuildInfoFile`](https://www.typescriptlang.org/tsconfig/#tsBuildInfoFile)\nenabled.\n\nThis option is only used when  {@link  Options.oxc }  is\n`false`."
+            },
+            "vue": {
+              "type": "boolean",
+              "description": "If `true`, the plugin will generate `.d.ts` files using `vue-tsc`.",
+              "markdownDescription": "If `true`, the plugin will generate `.d.ts` files using `vue-tsc`."
+            },
+            "tsMacro": {
+              "type": "boolean",
+              "description": "If `true`, the plugin will generate `.d.ts` files using `@ts-macro/tsc`.",
+              "markdownDescription": "If `true`, the plugin will generate `.d.ts` files using `@ts-macro/tsc`."
+            },
+            "parallel": {
+              "type": "boolean",
+              "description": "If `true`, the plugin will launch a separate process for `tsc` or `vue-tsc`. This enables processing multiple projects in parallel.",
+              "markdownDescription": "If `true`, the plugin will launch a separate process for `tsc` or `vue-tsc`.\nThis enables processing multiple projects in parallel."
+            },
+            "eager": {
+              "type": "boolean",
+              "description": "If `true`, the plugin will prepare all files listed in `tsconfig.json` for `tsc` or `vue-tsc`.\n\nThis is especially useful when you have a single `tsconfig.json` for multiple projects in a monorepo.",
+              "markdownDescription": "If `true`, the plugin will prepare all files listed in `tsconfig.json` for `tsc` or `vue-tsc`.\n\nThis is especially useful when you have a single `tsconfig.json` for multiple projects in a monorepo."
+            },
+            "newContext": {
+              "type": "boolean",
+              "description": "If `true`, the plugin will create a new isolated context for each build, ensuring that previously generated `.d.ts` code and caches are not reused.\n\nBy default, the plugin may reuse internal caches or incremental build artifacts to speed up repeated builds. Enabling this option forces a clean context, guaranteeing that all type definitions are generated from scratch.",
+              "markdownDescription": "If `true`, the plugin will create a new isolated context for each build,\nensuring that previously generated `.d.ts` code and caches are not reused.\n\nBy default, the plugin may reuse internal caches or incremental build artifacts\nto speed up repeated builds. Enabling this option forces a clean context,\nguaranteeing that all type definitions are generated from scratch.",
+              "default": false
+            },
+            "emitJs": {
+              "type": "boolean",
+              "description": "If `true`, the plugin will emit `.d.ts` files for `.js` files as well. This is useful when you want to generate type definitions for JavaScript files with JSDoc comments.\n\nEnabled by default when `allowJs` in compilerOptions is `true`. This option is only used when  {@link  Options.oxc }  is `false`.",
+              "markdownDescription": "If `true`, the plugin will emit `.d.ts` files for `.js` files as well.\nThis is useful when you want to generate type definitions for JavaScript files with JSDoc comments.\n\nEnabled by default when `allowJs` in compilerOptions is `true`.\nThis option is only used when  {@link  Options.oxc }  is\n`false`."
+            },
+            "enabled": {
+              "anyOf": [
+                { "type": "boolean" },
+                { "$ref": "#/definitions/CIOption" }
+              ],
+              "default": true
+            }
+          }
+        },
+        "unused": {
+          "type": "object",
+          "properties": {
+            "root": { "type": "string" },
+            "include": {
+              "anyOf": [
+                { "type": "string" },
+                { "type": "string", "format": "regex" },
+                {
                   "type": "array",
                   "items": {
-                    "type": "string",
-                    "enum": [
-                      "dependencies",
-                      "devDependencies",
-                      "peerDependencies"
+                    "anyOf": [
+                      { "type": "string" },
+                      { "type": "string", "format": "regex" }
                     ]
-                  },
-                  "default": ["dependencies", "peerDependencies"]
+                  }
                 }
-              }
+              ]
+            },
+            "exclude": {
+              "anyOf": [
+                { "type": "string" },
+                { "type": "string", "format": "regex" },
+                {
+                  "type": "array",
+                  "items": {
+                    "anyOf": [
+                      { "type": "string" },
+                      { "type": "string", "format": "regex" }
+                    ]
+                  }
+                }
+              ]
+            },
+            "ignore": {
+              "anyOf": [
+                { "type": "array", "items": { "type": "string" } },
+                {
+                  "type": "object",
+                  "properties": {
+                    "dependencies": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "devDependencies": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "peerDependencies": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "level": {
+              "type": "string",
+              "enum": ["warning", "error"],
+              "default": "warning"
+            },
+            "depKinds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["dependencies", "devDependencies", "peerDependencies"]
+              },
+              "default": ["dependencies", "peerDependencies"]
+            },
+            "enabled": {
+              "anyOf": [
+                { "type": "boolean" },
+                { "$ref": "#/definitions/CIOption" }
+              ],
+              "default": true
             }
-          ],
-          "description": "Enable unused dependencies check with `unplugin-unused` Requires `unplugin-unused` to be installed.",
-          "markdownDescription": "Enable unused dependencies check with `unplugin-unused`\nRequires `unplugin-unused` to be installed.",
-          "default": false
+          }
         },
         "publint": {
           "anyOf": [
@@ -5931,7 +5849,8 @@
             }
           ],
           "description": "Generate package exports for `package.json`.\n\nThis will set the `main`, `module`, `types`, `exports` fields in `package.json` to point to the generated files.",
-          "markdownDescription": "Generate package exports for `package.json`.\n\nThis will set the `main`, `module`, `types`, `exports` fields in `package.json`\nto point to the generated files."
+          "markdownDescription": "Generate package exports for `package.json`.\n\nThis will set the `main`, `module`, `types`, `exports` fields in `package.json`\nto point to the generated files.",
+          "default": false
         },
         "css": {
           "$ref": "#/definitions/CssOptions",
@@ -5949,38 +5868,33 @@
         },
         "hooks": { "type": "object", "additionalProperties": false },
         "workspace": {
-          "anyOf": [
-            { "$ref": "#/definitions/Workspace" },
-            { "$ref": "#/definitions/Arrayable<string>" },
-            { "type": "boolean", "const": true }
-          ],
-          "description": "**[experimental]** Enable workspace mode. This allows you to build multiple packages in a monorepo.",
-          "markdownDescription": "**[experimental]** Enable workspace mode.\nThis allows you to build multiple packages in a monorepo."
+          "type": "object",
+          "properties": {
+            "include": { "type": "object", "properties": {} },
+            "exclude": { "type": "object", "properties": {} },
+            "config": {
+              "type": ["boolean", "string"],
+              "description": "Path to the workspace configuration file.",
+              "markdownDescription": "Path to the workspace configuration file."
+            }
+          },
+          "required": ["exclude", "include"]
         }
-      }
-    },
-    "TsdownInputOption": {
-      "$ref": "#/definitions/Arrayable<(string|alias-1474508258-74138-74264-1474508258-0-218439<string,def-alias-src_utils_types.ts-2080-2145-src_utils_types.ts-0-2146<string>>)>",
-      "description": "Extended input option that supports glob negation patterns.\n\nWhen using object form, values can be:\n- A single glob pattern string\n- An array of glob patterns, including negation patterns (prefixed with `!`)",
-      "markdownDescription": "Extended input option that supports glob negation patterns.\n\nWhen using object form, values can be:\n- A single glob pattern string\n- An array of glob patterns, including negation patterns (prefixed with `!`)"
-    },
-    "Arrayable<(string|alias-1474508258-74138-74264-1474508258-0-218439<string,def-alias-src_utils_types.ts-2080-2145-src_utils_types.ts-0-2146<string>>)>": {
-      "$ref": "#/definitions/Simplify<(Simplify<(string|alias-1474508258-74138-74264-1474508258-0-218439<string,def-alias-src_utils_types.ts-2080-2145-src_utils_types.ts-0-2146<string>>)>|def-alias-src_utils_types.ts-293-1841-src_utils_types.ts-0-2146<(string|alias-1474508258-74138-74264-1474508258-0-218439<string,def-alias-src_utils_types.ts-2080-2145-src_utils_types.ts-0-2146<string>>)>526889306[])>"
-    },
-    "Simplify<(Simplify<(string|alias-1474508258-74138-74264-1474508258-0-218439<string,def-alias-src_utils_types.ts-2080-2145-src_utils_types.ts-0-2146<string>>)>|def-alias-src_utils_types.ts-293-1841-src_utils_types.ts-0-2146<(string|alias-1474508258-74138-74264-1474508258-0-218439<string,def-alias-src_utils_types.ts-2080-2145-src_utils_types.ts-0-2146<string>>)>526889306[])>": {
-      "type": "object",
-      "properties": {},
-      "description": "Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.",
-      "markdownDescription": "Useful to flatten the type output to improve type hints shown in editors.\nAnd also to transform an interface into a type to aide with assignability."
-    },
-    "Arrayable<(string|string479082557)>": {
-      "$ref": "#/definitions/Simplify<(Simplify<(string|string479082557)>|def-alias-src_utils_types.ts-293-1841-src_utils_types.ts-0-2146<(string|string479082557)>526889306[])>"
-    },
-    "Simplify<(Simplify<(string|string479082557)>|def-alias-src_utils_types.ts-293-1841-src_utils_types.ts-0-2146<(string|string479082557)>526889306[])>": {
-      "type": "object",
-      "properties": {},
-      "description": "Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.",
-      "markdownDescription": "Useful to flatten the type output to improve type hints shown in editors.\nAnd also to transform an interface into a type to aide with assignability."
+      },
+      "required": [
+        "alias",
+        "define",
+        "dts",
+        "entry",
+        "env",
+        "ignoreWatch",
+        "inlineOnly",
+        "loader",
+        "noExternal",
+        "unused",
+        "watch",
+        "workspace"
+      ]
     },
     "alias-2028919632-66548-66684-2028919632-0-93569": {
       "anyOf": [
@@ -9506,15 +9420,6 @@
     },
     "LogType": { "type": "string", "enum": ["error", "warn", "info"] },
     "CIOption": { "type": "string", "enum": ["ci-only", "local-only"] },
-    "Arrayable<string>": {
-      "$ref": "#/definitions/Simplify<(Simplify<string>|def-alias-src_utils_types.ts-293-1841-src_utils_types.ts-0-2146<string>526889306[])>"
-    },
-    "Simplify<(Simplify<string>|def-alias-src_utils_types.ts-293-1841-src_utils_types.ts-0-2146<string>526889306[])>": {
-      "type": "object",
-      "properties": {},
-      "description": "Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.",
-      "markdownDescription": "Useful to flatten the type output to improve type hints shown in editors.\nAnd also to transform an interface into a type to aide with assignability."
-    },
     "CssOptions": {
       "type": "object",
       "properties": {
@@ -9574,37 +9479,6 @@
       "required": ["from"],
       "description": "Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.",
       "markdownDescription": "Useful to flatten the type output to improve type hints shown in editors.\nAnd also to transform an interface into a type to aide with assignability."
-    },
-    "Workspace": {
-      "type": "object",
-      "properties": {
-        "include": {
-          "anyOf": [
-            { "$ref": "#/definitions/Arrayable<string>" },
-            { "type": "string", "const": "auto" }
-          ],
-          "description": "Workspace directories. Glob patterns are supported.\n- `auto`: Automatically detect `package.json` files in the workspace.",
-          "markdownDescription": "Workspace directories. Glob patterns are supported.\n- `auto`: Automatically detect `package.json` files in the workspace.",
-          "default": "auto"
-        },
-        "exclude": {
-          "$ref": "#/definitions/Arrayable<string>",
-          "description": "Exclude directories from workspace. Defaults to all `node_modules`, `dist`, `test`, `tests`, `temp`, and `tmp` directories.",
-          "markdownDescription": "Exclude directories from workspace.\nDefaults to all `node_modules`, `dist`, `test`, `tests`, `temp`, and `tmp` directories.",
-          "default": [
-            "**/node_modules/**",
-            "**/dist/**",
-            "**/test?(s)/**",
-            "**/t?(e)mp/**"
-          ]
-        },
-        "config": {
-          "type": ["boolean", "string"],
-          "description": "Path to the workspace configuration file.",
-          "markdownDescription": "Path to the workspace configuration file."
-        }
-      },
-      "additionalProperties": false
     }
   }
 }

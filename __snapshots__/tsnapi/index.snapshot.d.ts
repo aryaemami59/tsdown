@@ -222,7 +222,7 @@ export type NoExternalFn = (_: string, _: string | undefined) => boolean | null 
 export type NormalizedFormat = InternalModuleFormat;
 export type OutExtensionFactory = (_: OutExtensionContext) => OutExtensionObject | undefined;
 export type PackageType = "module" | "commonjs" | undefined;
-export type ResolvedConfig = Overwrite<MarkPartial<Omit<UserConfig, "workspace" | "fromVite" | "publicDir" | "bundle" | "injectStyle" | "removeNodeProtocol" | "external" | "noExternal" | "inlineOnly" | "skipNodeModulesBundle" | "logLevel" | "failOnWarn" | "customLogger" | "envFile" | "envPrefix">, "globalName" | "inputOptions" | "outputOptions" | "minify" | "define" | "alias" | "onSuccess" | "outExtensions" | "hooks" | "copy" | "loader" | "name" | "banner" | "footer" | "checks" | "css">, {
+export type ResolvedConfig = Simplify<Overwrite<MarkPartial<Omit<UserConfig, "workspace" | "fromVite" | "publicDir" | "bundle" | "injectStyle" | "removeNodeProtocol" | "external" | "noExternal" | "inlineOnly" | "skipNodeModulesBundle" | "logLevel" | "failOnWarn" | "customLogger" | "envFile" | "envPrefix">, "globalName" | "inputOptions" | "outputOptions" | "minify" | "define" | "alias" | "onSuccess" | "outExtensions" | "hooks" | "copy" | "loader" | "name" | "banner" | "footer" | "checks" | "css">, {
   entry: Record<string, string>;
   rawEntry?: TsdownInputOption;
   nameLabel: string | undefined;
@@ -245,7 +245,7 @@ export type ResolvedConfig = Overwrite<MarkPartial<Omit<UserConfig, "workspace" 
   attw: false | AttwOptions;
   unused: false | UnusedOptions;
   exe: false | ExeOptions;
-}>;
+}>>;
 export type RolldownChunk = (OutputChunk | OutputAsset) & {
   outDir: string;
 };
@@ -259,7 +259,7 @@ export type UserConfigFn = (_: InlineConfig, _: {
   ci: boolean;
   rootConfig?: UserConfig;
 }) => Awaitable<Arrayable<UserConfig>>;
-export type WithEnabled<T> = boolean | undefined | CIOption | (T & {
+export type WithEnabled<T> = boolean | CIOption | (T & {
   enabled?: boolean | CIOption;
 });
 // #endregion

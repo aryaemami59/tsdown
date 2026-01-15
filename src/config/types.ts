@@ -32,6 +32,7 @@ import type {
   Awaitable,
   MarkPartial,
   Overwrite,
+  Simplify,
 } from '../utils/types.ts'
 import type { CssOptions } from '@tsdown/css'
 import type { Hookable } from 'hookable'
@@ -150,7 +151,7 @@ export type CIOption = 'ci-only' | 'local-only'
 
 export type WithEnabled<T> =
   | boolean
-  | undefined
+  // | undefined
   | CIOption
   | (T & {
       /**
@@ -766,14 +767,15 @@ export type ResolvedConfig = Overwrite<
     root: string
     configDeps: Set<string>
 
-    dts: false | DtsOptions
-    report: false | ReportOptions
-    tsconfig: false | string
-    exports: false | ExportsOptions
-    devtools: false | DevtoolsOptions
-    publint: false | PublintOptions
-    attw: false | AttwOptions
-    unused: false | UnusedOptions
-    exe: false | ExeOptions
-  }
+      dts: false | DtsOptions
+      report: false | ReportOptions
+      tsconfig: false | string
+      exports: false | ExportsOptions
+      devtools: false | DevtoolsOptions
+      publint: false | PublintOptions
+      attw: false | AttwOptions
+      unused: false | UnusedOptions
+      exe: false | ExeOptions
+    }
+  >
 >

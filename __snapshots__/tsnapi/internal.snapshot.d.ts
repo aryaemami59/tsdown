@@ -15,8 +15,8 @@ export interface Logger {
 // #endregion
 
 // #region Types
-export type MarkPartial<T, K extends keyof T> = Omit<Required<T>, K> & Partial<Pick<T, K>>;
-export type Overwrite<T, U> = Omit<T, keyof U> & U;
+export type MarkPartial<T, K extends keyof T> = Simplify<Omit<Required<T>, K> & Partial<Pick<T, K>>>;
+export type Overwrite<T, U> = Simplify<Omit<T, keyof U> & U>;
 // #endregion
 
 // #region Functions

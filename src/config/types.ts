@@ -1,3 +1,17 @@
+import type { Hookable } from 'hookable'
+import type {
+  ChecksOptions,
+  ExternalOption,
+  InputOptions,
+  InternalModuleFormat,
+  MinifyOptions,
+  ModuleFormat,
+  ModuleTypes,
+  OutputOptions,
+  TreeshakingOptions,
+} from 'rolldown'
+import type { Options as DtsOptions } from 'rolldown-plugin-dts'
+import type { Options as UnusedOptions } from 'unplugin-unused'
 import type { CopyEntry, CopyOptions, CopyOptionsFn } from '../features/copy.ts'
 import type { CssOptions } from '../features/css/index.ts'
 import type { DevtoolsOptions } from '../features/devtools.ts'
@@ -26,21 +40,8 @@ import type {
   Awaitable,
   MarkPartial,
   Overwrite,
+  Simplify,
 } from '../utils/types.ts'
-import type { Hookable } from 'hookable'
-import type {
-  ChecksOptions,
-  ExternalOption,
-  InputOptions,
-  InternalModuleFormat,
-  MinifyOptions,
-  ModuleFormat,
-  ModuleTypes,
-  OutputOptions,
-  TreeshakingOptions,
-} from 'rolldown'
-import type { Options as DtsOptions } from 'rolldown-plugin-dts'
-import type { Options as UnusedOptions } from 'unplugin-unused'
 
 export type Sourcemap = boolean | 'inline' | 'hidden'
 export type Format = ModuleFormat
@@ -134,7 +135,7 @@ export type WithEnabled<T> =
 /**
  * Options for tsdown.
  */
-export interface UserConfig {
+export type UserConfig = {
   // #region Input Options
   /**
    * Defaults to `'src/index.ts'` if it exists.
@@ -220,6 +221,7 @@ export interface UserConfig {
    *   "NODE_ENV": "production"
    * }
    * ```
+   * @default {}
    */
   env?: Record<string, any>
   /**
@@ -369,6 +371,7 @@ export interface UserConfig {
    * Otherwise, it will depend on the package type.
    *
    * Defaults to `true` if `platform` is set to `node`, `false` otherwise.
+   * @default node.platform === 'node' ? true : false
    */
   fixedExtension?: boolean
 
@@ -406,6 +409,8 @@ export interface UserConfig {
    * The working directory of the config file.
    * - Defaults to `process.cwd()` for root config.
    * - Defaults to the package directory for workspace config.
+   *
+   * @default process.cwd()
    */
   cwd?: string
 
@@ -555,7 +560,7 @@ export interface UserConfig {
   workspace?: Workspace | Arrayable<string> | true
 }
 
-export interface InlineConfig extends UserConfig {
+export type InlineConfig = UserConfig & {
   /**
    * Config file path
    */
@@ -580,60 +585,62 @@ export type UserConfigFn = (
 
 export type UserConfigExport = Awaitable<Arrayable<UserConfig> | UserConfigFn>
 
-export type ResolvedConfig = Overwrite<
-  MarkPartial<
-    Omit<
-      UserConfig,
-      | 'workspace' // merged
-      | 'fromVite' // merged
-      | 'publicDir' // deprecated
-      | 'bundle' // deprecated
-      | 'removeNodeProtocol' // deprecated
-      | 'logLevel' // merge to `logger`
-      | 'failOnWarn' // merge to `logger`
-      | 'customLogger' // merge to `logger`
-      | 'envFile' // merged to `env`
-      | 'envPrefix' // merged to `env`
+export type ResolvedConfig = Simplify<
+  Overwrite<
+    MarkPartial<
+      Omit<
+        UserConfig,
+        | 'workspace' // merged
+        | 'fromVite' // merged
+        | 'publicDir' // deprecated
+        | 'bundle' // deprecated
+        | 'removeNodeProtocol' // deprecated
+        | 'logLevel' // merge to `logger`
+        | 'failOnWarn' // merge to `logger`
+        | 'customLogger' // merge to `logger`
+        | 'envFile' // merged to `env`
+        | 'envPrefix' // merged to `env`
+      >,
+      | 'globalName'
+      | 'inputOptions'
+      | 'outputOptions'
+      | 'minify'
+      | 'define'
+      | 'alias'
+      | 'external'
+      | 'onSuccess'
+      | 'outExtensions'
+      | 'hooks'
+      | 'copy'
+      | 'loader'
+      | 'name'
+      | 'banner'
+      | 'footer'
+      | 'checks'
     >,
-    | 'globalName'
-    | 'inputOptions'
-    | 'outputOptions'
-    | 'minify'
-    | 'define'
-    | 'alias'
-    | 'external'
-    | 'onSuccess'
-    | 'outExtensions'
-    | 'hooks'
-    | 'copy'
-    | 'loader'
-    | 'name'
-    | 'banner'
-    | 'footer'
-    | 'checks'
-  >,
-  {
-    /** Resolved entry map (after glob expansion) */
-    entry: Record<string, string>
-    nameLabel: string | undefined
-    format: NormalizedFormat
-    target?: string[]
-    clean: string[]
-    pkg?: PackageJsonWithPath
-    nodeProtocol: 'strip' | boolean
-    logger: Logger
-    ignoreWatch: Array<string | RegExp>
-    noExternal?: NoExternalFn
-    inlineOnly?: Array<string | RegExp>
-    css: Required<CssOptions>
+    {
+      /** Resolved entry map (after glob expansion) */
+      entry: Record<string, string>
+      nameLabel: string | undefined
+      format: NormalizedFormat
+      target?: string[]
+      clean: string[]
+      pkg?: PackageJsonWithPath
+      nodeProtocol: 'strip' | boolean
+      logger: Logger
+      ignoreWatch: Array<string | RegExp>
+      noExternal?: NoExternalFn
+      inlineOnly?: Array<string | RegExp>
+      css: Required<CssOptions>
 
-    dts: false | DtsOptions
-    report: false | ReportOptions
-    tsconfig: false | string
-    exports: false | ExportsOptions
-    devtools: false | DevtoolsOptions
-    publint: false | PublintOptions
-    attw: false | AttwOptions
-    unused: false | UnusedOptions
-  }
+      dts: false | DtsOptions
+      report: false | ReportOptions
+      tsconfig: false | string
+      exports: false | ExportsOptions
+      devtools: false | DevtoolsOptions
+      publint: false | PublintOptions
+      attw: false | AttwOptions
+      unused: false | UnusedOptions
+    }
+  >
 >

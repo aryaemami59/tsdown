@@ -64,7 +64,8 @@
         "env": {
           "type": "object",
           "description": "Compile-time env variables, which can be accessed via `import.meta.env` or `process.env`.",
-          "markdownDescription": "Compile-time env variables, which can be accessed via `import.meta.env` or `process.env`."
+          "markdownDescription": "Compile-time env variables, which can be accessed via `import.meta.env` or `process.env`.",
+          "default": {}
         },
         "envFile": {
           "type": "string",
@@ -4501,7 +4502,8 @@
         "fixedExtension": {
           "type": "boolean",
           "description": "Use a fixed extension for output files. The extension will always be `.cjs` or `.mjs`. Otherwise, it will depend on the package type.\n\nDefaults to `true` if `platform` is set to `node`, `false` otherwise.",
-          "markdownDescription": "Use a fixed extension for output files.\nThe extension will always be `.cjs` or `.mjs`.\nOtherwise, it will depend on the package type.\n\nDefaults to `true` if `platform` is set to `node`, `false` otherwise."
+          "markdownDescription": "Use a fixed extension for output files.\nThe extension will always be `.cjs` or `.mjs`.\nOtherwise, it will depend on the package type.\n\nDefaults to `true` if `platform` is set to `node`, `false` otherwise.",
+          "default": "node.platform === 'node' ? true : false"
         },
         "hash": {
           "type": "boolean",
@@ -5285,7 +5287,8 @@
         "cwd": {
           "type": "string",
           "description": "The working directory of the config file.\n- Defaults to `process.cwd()` for root config.\n- Defaults to the package directory for workspace config.",
-          "markdownDescription": "The working directory of the config file.\n- Defaults to `process.cwd()` for root config.\n- Defaults to the package directory for workspace config."
+          "markdownDescription": "The working directory of the config file.\n- Defaults to `process.cwd()` for root config.\n- Defaults to the package directory for workspace config.",
+          "default": "process.cwd()"
         },
         "name": {
           "type": "string",
@@ -5714,7 +5717,10 @@
                               "additionalProperties": false
                             },
                             {
-                              "$ref": "#/definitions/global.ReadableStream<interface-1474508258-98052-110448-1474508258-0-218439>"
+                              "type": "object",
+                              "properties": { "locked": { "type": "boolean" } },
+                              "required": ["locked"],
+                              "additionalProperties": false
                             }
                           ]
                         }
@@ -5951,59 +5957,30 @@
           "description": "**[experimental]** Enable workspace mode. This allows you to build multiple packages in a monorepo.",
           "markdownDescription": "**[experimental]** Enable workspace mode.\nThis allows you to build multiple packages in a monorepo."
         }
-      },
-      "additionalProperties": false,
-      "description": "Options for tsdown.",
-      "markdownDescription": "Options for tsdown."
+      }
     },
     "TsdownInputOption": {
-      "$ref": "#/definitions/Arrayable<(string|alias-1474508258-74138-74264-1474508258-0-218439<string,def-alias-src_utils_types.ts-185-220-src_utils_types.ts-0-221<string>>)>",
+      "$ref": "#/definitions/Arrayable<(string|alias-1474508258-74138-74264-1474508258-0-218439<string,def-alias-src_utils_types.ts-2080-2145-src_utils_types.ts-0-2146<string>>)>",
       "description": "Extended input option that supports glob negation patterns.\n\nWhen using object form, values can be:\n- A single glob pattern string\n- An array of glob patterns, including negation patterns (prefixed with `!`)",
       "markdownDescription": "Extended input option that supports glob negation patterns.\n\nWhen using object form, values can be:\n- A single glob pattern string\n- An array of glob patterns, including negation patterns (prefixed with `!`)"
     },
-    "Arrayable<(string|alias-1474508258-74138-74264-1474508258-0-218439<string,def-alias-src_utils_types.ts-185-220-src_utils_types.ts-0-221<string>>)>": {
-      "anyOf": [
-        { "type": "string" },
-        {
-          "type": "object",
-          "additionalProperties": { "$ref": "#/definitions/Arrayable<string>" }
-        },
-        {
-          "type": "array",
-          "items": {
-            "anyOf": [
-              { "type": "string" },
-              {
-                "type": "object",
-                "additionalProperties": {
-                  "$ref": "#/definitions/Arrayable<string>"
-                }
-              }
-            ]
-          }
-        }
-      ]
+    "Arrayable<(string|alias-1474508258-74138-74264-1474508258-0-218439<string,def-alias-src_utils_types.ts-2080-2145-src_utils_types.ts-0-2146<string>>)>": {
+      "$ref": "#/definitions/Simplify<(Simplify<(string|alias-1474508258-74138-74264-1474508258-0-218439<string,def-alias-src_utils_types.ts-2080-2145-src_utils_types.ts-0-2146<string>>)>|def-alias-src_utils_types.ts-293-1841-src_utils_types.ts-0-2146<(string|alias-1474508258-74138-74264-1474508258-0-218439<string,def-alias-src_utils_types.ts-2080-2145-src_utils_types.ts-0-2146<string>>)>526889306[])>"
     },
-    "Arrayable<string>": {
-      "anyOf": [
-        { "type": "string" },
-        { "type": "array", "items": { "type": "string" } }
-      ]
+    "Simplify<(Simplify<(string|alias-1474508258-74138-74264-1474508258-0-218439<string,def-alias-src_utils_types.ts-2080-2145-src_utils_types.ts-0-2146<string>>)>|def-alias-src_utils_types.ts-293-1841-src_utils_types.ts-0-2146<(string|alias-1474508258-74138-74264-1474508258-0-218439<string,def-alias-src_utils_types.ts-2080-2145-src_utils_types.ts-0-2146<string>>)>526889306[])>": {
+      "type": "object",
+      "properties": {},
+      "description": "Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.",
+      "markdownDescription": "Useful to flatten the type output to improve type hints shown in editors.\nAnd also to transform an interface into a type to aide with assignability."
     },
     "Arrayable<(string|string479082557)>": {
-      "anyOf": [
-        { "type": "string" },
-        { "type": "string", "format": "regex" },
-        {
-          "type": "array",
-          "items": {
-            "anyOf": [
-              { "type": "string" },
-              { "type": "string", "format": "regex" }
-            ]
-          }
-        }
-      ]
+      "$ref": "#/definitions/Simplify<(Simplify<(string|string479082557)>|def-alias-src_utils_types.ts-293-1841-src_utils_types.ts-0-2146<(string|string479082557)>526889306[])>"
+    },
+    "Simplify<(Simplify<(string|string479082557)>|def-alias-src_utils_types.ts-293-1841-src_utils_types.ts-0-2146<(string|string479082557)>526889306[])>": {
+      "type": "object",
+      "properties": {},
+      "description": "Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.",
+      "markdownDescription": "Useful to flatten the type output to improve type hints shown in editors.\nAnd also to transform an interface into a type to aide with assignability."
     },
     "alias-2028919632-66548-66684-2028919632-0-93569": {
       "anyOf": [
@@ -9233,7 +9210,10 @@
                       "additionalProperties": false
                     },
                     {
-                      "$ref": "#/definitions/global.ReadableStream<interface-1474508258-98052-110448-1474508258-0-218439>"
+                      "type": "object",
+                      "properties": { "locked": { "type": "boolean" } },
+                      "required": ["locked"],
+                      "additionalProperties": false
                     }
                   ]
                 }
@@ -9265,11 +9245,6 @@
         "resolvePaths": { "type": "array", "items": { "type": "string" } }
       },
       "additionalProperties": false
-    },
-    "global.ReadableStream<interface-1474508258-98052-110448-1474508258-0-218439>": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {}
     },
     "PackFile": {
       "type": "object",
@@ -9531,6 +9506,15 @@
     },
     "LogType": { "type": "string", "enum": ["error", "warn", "info"] },
     "CIOption": { "type": "string", "enum": ["ci-only", "local-only"] },
+    "Arrayable<string>": {
+      "$ref": "#/definitions/Simplify<(Simplify<string>|def-alias-src_utils_types.ts-293-1841-src_utils_types.ts-0-2146<string>526889306[])>"
+    },
+    "Simplify<(Simplify<string>|def-alias-src_utils_types.ts-293-1841-src_utils_types.ts-0-2146<string>526889306[])>": {
+      "type": "object",
+      "properties": {},
+      "description": "Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.",
+      "markdownDescription": "Useful to flatten the type output to improve type hints shown in editors.\nAnd also to transform an interface into a type to aide with assignability."
+    },
     "CssOptions": {
       "type": "object",
       "properties": {
@@ -9551,21 +9535,9 @@
     },
     "CopyOptions": { "$ref": "#/definitions/Arrayable<(string|CopyEntry)>" },
     "Arrayable<(string|CopyEntry)>": {
-      "anyOf": [
-        { "type": "string" },
-        { "$ref": "#/definitions/CopyEntry" },
-        {
-          "type": "array",
-          "items": {
-            "anyOf": [
-              { "type": "string" },
-              { "$ref": "#/definitions/CopyEntry" }
-            ]
-          }
-        }
-      ]
+      "$ref": "#/definitions/Simplify<(Simplify<(string|CopyEntry)>|def-alias-src_utils_types.ts-293-1841-src_utils_types.ts-0-2146<(string|def-interface-641893009-285-881-641893009-0-3279)>526889306[])>"
     },
-    "CopyEntry": {
+    "Simplify<(Simplify<(string|CopyEntry)>|def-alias-src_utils_types.ts-293-1841-src_utils_types.ts-0-2146<(string|def-interface-641893009-285-881-641893009-0-3279)>526889306[])>": {
       "type": "object",
       "properties": {
         "from": {
@@ -9600,7 +9572,8 @@
         }
       },
       "required": ["from"],
-      "additionalProperties": false
+      "description": "Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.",
+      "markdownDescription": "Useful to flatten the type output to improve type hints shown in editors.\nAnd also to transform an interface into a type to aide with assignability."
     },
     "Workspace": {
       "type": "object",

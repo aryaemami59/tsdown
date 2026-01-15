@@ -63,16 +63,6 @@ export interface InlineConfig extends UserConfig {
   configLoader?: "auto" | "native" | "unrun";
   filter?: RegExp | Arrayable<string>;
 }
-export interface Logger {
-  level: LogLevel;
-  options?: LoggerOptions;
-  info: (..._: any[]) => void;
-  warn: (..._: any[]) => void;
-  warnOnce: (..._: any[]) => void;
-  error: (..._: any[]) => void;
-  success: (..._: any[]) => void;
-  clearScreen: (_: LogType) => void;
-}
 export interface OutExtensionContext {
   options: InputOptions;
   format: NormalizedFormat;
@@ -218,11 +208,21 @@ export type CIOption = "ci-only" | "local-only";
 export type CopyOptions = Arrayable<string | CopyEntry>;
 export type CopyOptionsFn = (_: ResolvedConfig) => Awaitable<CopyOptions>;
 export type Format = ModuleFormat;
+export type Logger = {
+  level: LogLevel;
+  options?: LoggerOptions;
+  info: (..._: any[]) => void;
+  warn: (..._: any[]) => void;
+  warnOnce: (..._: any[]) => void;
+  error: (..._: any[]) => void;
+  success: (..._: any[]) => void;
+  clearScreen: (_: LogType) => void;
+};
 export type NoExternalFn = (_: string, _: string | undefined) => boolean | null | undefined | void;
 export type NormalizedFormat = InternalModuleFormat;
 export type OutExtensionFactory = (_: OutExtensionContext) => OutExtensionObject | undefined;
 export type PackageType = "module" | "commonjs" | undefined;
-export type ResolvedConfig = Simplify<Overwrite<MarkPartial<Omit<UserConfig, "workspace" | "fromVite" | "publicDir" | "bundle" | "injectStyle" | "removeNodeProtocol" | "external" | "noExternal" | "inlineOnly" | "skipNodeModulesBundle" | "logLevel" | "failOnWarn" | "customLogger" | "envFile" | "envPrefix">, "globalName" | "inputOptions" | "outputOptions" | "minify" | "define" | "alias" | "onSuccess" | "outExtensions" | "hooks" | "copy" | "loader" | "name" | "banner" | "footer" | "checks" | "css">, {
+export type ResolvedConfig = Overwrite<MarkPartial<Omit<UserConfig, "workspace" | "fromVite" | "publicDir" | "bundle" | "injectStyle" | "removeNodeProtocol" | "external" | "noExternal" | "inlineOnly" | "skipNodeModulesBundle" | "logLevel" | "failOnWarn" | "customLogger" | "envFile" | "envPrefix">, "globalName" | "inputOptions" | "outputOptions" | "minify" | "define" | "alias" | "onSuccess" | "outExtensions" | "hooks" | "copy" | "loader" | "name" | "banner" | "footer" | "checks" | "css">, {
   entry: Record<string, string>;
   rawEntry?: TsdownInputOption;
   nameLabel: string | undefined;
@@ -245,7 +245,7 @@ export type ResolvedConfig = Simplify<Overwrite<MarkPartial<Omit<UserConfig, "wo
   attw: false | AttwOptions;
   unused: false | UnusedOptions;
   exe: false | ExeOptions;
-}>>;
+}>;
 export type RolldownChunk = (OutputChunk | OutputAsset) & {
   outDir: string;
 };

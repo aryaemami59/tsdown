@@ -3,7 +3,7 @@ import ApiSnapshot from 'tsnapi/rolldown'
 import { isCallOf } from 'unplugin-ast/ast-kit'
 import AST from 'unplugin-ast/rolldown'
 import { RemoveNode } from 'unplugin-ast/transformers'
-import { defineConfig } from './src/config.ts'
+import { defineConfig, type UserConfig } from './src/config.ts'
 
 export default defineConfig([
   {
@@ -70,4 +70,4 @@ export default defineConfig([
       devExports: 'dev',
     },
   },
-])
+]) satisfies UserConfig[] as UserConfig[]

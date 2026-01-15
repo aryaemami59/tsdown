@@ -5,17 +5,17 @@ import { format, resolveConfig } from 'prettier'
 import {
   createGenerator,
   DEFAULT_CONFIG,
+  ts,
   type Config,
 } from 'ts-json-schema-generator'
-import ts from 'typescript'
 
 const ROOT_DIR = path.join(import.meta.dirname, '..')
 
 const SCHEMAS_DIR = path.join(ROOT_DIR, 'docs', 'public')
 
-const inputFilePath = path.join(ROOT_DIR, 'scripts', 'schemas.ts')
+const inputFilePath = path.join(ROOT_DIR, 'src', 'index.ts')
 
-const rootNames = globSync(['src/**/*.ts', 'scripts/*.ts'], {
+const rootNames = globSync(['src/**/*.ts'], {
   cwd: ROOT_DIR,
   exclude: [
     'src/**/*.test.ts*',
@@ -33,8 +33,8 @@ const compilerOptions = {
   allowImportingTsExtensions: true,
   allowJs: false,
   allowSyntheticDefaultImports: true,
-  allowUnreachableCode: true,
-  allowUnusedLabels: true,
+  allowUnreachableCode: false,
+  allowUnusedLabels: false,
   checkJs: false,
   declaration: true,
   declarationMap: true,
@@ -56,10 +56,9 @@ const compilerOptions = {
   noUncheckedSideEffectImports: true,
   noUnusedLocals: false,
   noUnusedParameters: false,
-  outDir: path.join(ROOT_DIR, 'dist'),
-  paths: { tsdown: ['./src/index.ts'] },
+  outDir: path.join(ROOT_DIR, 'dist').replaceAll('\\', '/'),
   rewriteRelativeImportExtensions: true,
-  rootDir: ROOT_DIR,
+  rootDir: path.join(ROOT_DIR, 'src').replaceAll('\\', '/'),
   skipLibCheck: true,
   sourceMap: true,
   strict: true,
@@ -78,14 +77,16 @@ const tsProgram = ts.createProgram({
   options: compilerOptions,
 })
 
-const rootFileNames = tsProgram.getRootFileNames()
-
 const entries = {
-  tsdownConfig: { outputFile: 'tsdown.config', type: ['UserConfig'] },
+  tsdownConfig: {
+    outputFile: 'tsdown.config',
+    type: ['*'],
+  },
 } as const satisfies Record<string, { outputFile: string; type: string[] }>
 
 const config = {
   ...DEFAULT_CONFIG,
+  additionalProperties: false,
   discriminatorType: 'json-schema',
   encodeRefs: false,
   expose: 'export',
@@ -93,26 +94,80 @@ const config = {
   functions: 'hide',
   jsDoc: 'extended',
   markdownDescription: true,
+  minify: false,
+  path: inputFilePath,
   skipTypeCheck: false,
   sortProps: true,
   strictTuples: true,
   topRef: true,
+  tsconfig: path.join(ROOT_DIR, 'tsconfig.json'),
   tsProgram,
   type: ['*'],
 } as const satisfies Config
 
-const objectConfig = Object.entries(entries)
+const objectConfig = Object.entries(entries).map(([, output]) => ({
+  ...config,
+  type: output.type,
+  path: inputFilePath,
+  outputFile: path.join(SCHEMAS_DIR, `${output.outputFile}.schema.json`),
+}))
 
-  .map(([, output]) => ({
-    ...config,
-    type: output.type,
-    path: inputFilePath,
-    outputFile: path.join(SCHEMAS_DIR, `${output.outputFile}.schema.json`),
-  }))
+const schemaGenerators = objectConfig.map(({ outputFile, ...config }) => ({
+  outputFile,
+  config,
+  schemaGenerator: createGenerator(config),
+}))
 
-const schemas = objectConfig.map(
-  ({ outputFile, ...config }) =>
-    [outputFile, createGenerator(config).createSchema(config.type)] as const,
+const schemas = schemaGenerators.map(
+  ({ outputFile, schemaGenerator }) =>
+    [
+      outputFile,
+      schemaGenerator.createSchema([
+        // 'AttwOptions',
+        // 'CheckPackageOptions',
+        // 'ChunkAddon',
+        // 'ChunkAddonObject',
+        // 'CIOption',
+        // 'CopyEntry',
+        // 'CopyOptions',
+        // 'CssOptions',
+        // 'DevtoolsOptions',
+        // 'ExportsOptions',
+        // 'Format',
+        // 'LogLevel',
+        // 'LogType',
+        // 'NormalizedFormat',
+        // 'PackageJsonWithPath',
+        // 'PackageType',
+        // 'PackFile',
+        // 'PublintOptions',
+        // 'ReportOptions',
+        // 'Sourcemap',
+        // 'TsConfigJson.CompilerOptions.FallbackPolling',
+        // 'TsConfigJson.CompilerOptions.IgnoreDeprecations',
+        // 'TsConfigJson.CompilerOptions.ImportsNotUsedAsValues',
+        // 'TsConfigJson.CompilerOptions.JSX',
+        // 'TsConfigJson.CompilerOptions.Lib',
+        // 'TsConfigJson.CompilerOptions.Module',
+        // 'TsConfigJson.CompilerOptions.ModuleDetection',
+        // 'TsConfigJson.CompilerOptions.ModuleResolution',
+        // 'TsConfigJson.CompilerOptions.NewLine',
+        // 'TsConfigJson.CompilerOptions.Plugin',
+        // 'TsConfigJson.CompilerOptions.Target',
+        // 'TsConfigJson.CompilerOptions.WatchDirectory',
+        // 'TsConfigJson.CompilerOptions.WatchFile',
+        // 'TsConfigJson.CompilerOptions',
+        // 'TsConfigJson.References',
+        // 'TsConfigJson.TypeAcquisition',
+        // 'TsConfigJson.WatchOptions.PollingWatchKind',
+        // 'TsConfigJson.WatchOptions.WatchDirectoryKind',
+        // 'TsConfigJson.WatchOptions.WatchFileKind',
+        // 'TsConfigJson.WatchOptions',
+        // 'TsdownInputOption',
+        // 'Workspace',
+        'UserConfig',
+      ]),
+    ] as const,
 )
 
 const stringifiedSchemas = await Promise.all(
@@ -131,84 +186,8 @@ const stringifiedSchemas = await Promise.all(
   }),
 )
 
-const stripPrivateFields: ts.TransformerFactory<ts.SourceFile | ts.Bundle> = (
-  ctx,
-) => {
-  const visitor = (node: ts.Node) => {
-    if (ts.isPropertySignature(node) && ts.isPrivateIdentifier(node.name)) {
-      return ctx.factory.updatePropertySignature(
-        node,
-        node.modifiers,
-        ctx.factory.createStringLiteral(node.name.text),
-        node.questionToken,
-        node.type,
-      )
-    }
-    return ts.visitEachChild(node, visitor, ctx)
-  }
-  return (sourceFile) =>
-    ts.visitNode(sourceFile, visitor, ts.isSourceFile) ?? sourceFile
-}
-
-const customTransformers: ts.CustomTransformers = {
-  afterDeclarations: [stripPrivateFields],
-}
-
-// console.log(
-//   tsProgram.getSourceFile(
-//     path.join(import.meta.dirname, 'scripts', 'schemas.ts'),
-//   ),
-// )
-
-// const typeChecker = tsProgram.getTypeChecker()
-// console.log(typeChecker)
-
-const sourceFile = tsProgram.getSourceFile(inputFilePath)
-
-const emitResult = tsProgram.emit(
-  // tsProgram.getSourceFile(path.join(ROOT_DIR, 'scripts', 'schemas.ts')),
-  sourceFile,
-  (fileName, code) => {
-    // console.log(ts.sys.resolvePath(sourceFile?.fileName))
-    // console.log(fileName)
-    if (fileName.endsWith('.map')) {
-      const map = JSON.parse(code)
-      // console.log(map)
-    } else if (ts.sys.resolvePath(fileName) === ts.sys.resolvePath(fileName)) {
-      console.log(fileName)
-      console.log(ts.sys.resolvePath(inputFilePath))
-      console.log(
-        ts.bundlerModuleNameResolver(
-          fileName,
-          inputFilePath,
-          compilerOptions,
-          ts.sys,
-          undefined,
-          undefined,
-        ).resolvedModule?.resolvedFileName,
-      )
-      ts.sys.writeFile(fileName, code)
-      // return code
-      // console.log(code)
-    }
-  },
-  undefined,
-  true,
-  customTransformers,
-  // @ts-expect-error private API: forceDtsEmit,
-  true,
+await Promise.all(
+  stringifiedSchemas.map(([outputFile, content]) =>
+    fs.writeFile(outputFile, content, { encoding: 'utf8' }),
+  ),
 )
-// console.dir(emitResult, {
-//   depth: 4,
-//   getters: false,
-//   sorted: false,
-// })
-
-if (!emitResult.emitSkipped) {
-  // console.log(emitResult.emittedFiles)
-  await Promise.all(
-    stringifiedSchemas.map(([outputFile, content]) =>
-      fs.writeFile(outputFile, content, { encoding: 'utf8' }),
-    ),
-  )
-}

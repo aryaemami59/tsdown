@@ -33,8 +33,8 @@ const compilerOptions = {
   allowImportingTsExtensions: true,
   allowJs: false,
   allowSyntheticDefaultImports: true,
-  allowUnreachableCode: true,
-  allowUnusedLabels: true,
+  allowUnreachableCode: false,
+  allowUnusedLabels: false,
   checkJs: false,
   declaration: true,
   declarationMap: true,
@@ -56,9 +56,9 @@ const compilerOptions = {
   noUncheckedSideEffectImports: true,
   noUnusedLocals: false,
   noUnusedParameters: false,
-  outDir: path.join(ROOT_DIR, 'dist'),
+  outDir: path.join(ROOT_DIR, 'dist').replaceAll('\\', '/'),
   rewriteRelativeImportExtensions: true,
-  rootDir: path.join(ROOT_DIR),
+  rootDir: path.join(ROOT_DIR, 'src').replaceAll('\\', '/'),
   skipLibCheck: true,
   sourceMap: true,
   strict: true,
@@ -80,29 +80,29 @@ const tsProgram = ts.createProgram({
 const entries = {
   tsdownConfig: {
     outputFile: 'tsdown.config',
-    type: ['UserConfig'],
+    type: ['*'],
   },
 } as const satisfies Record<string, { outputFile: string; type: string[] }>
 
 const config = {
   ...DEFAULT_CONFIG,
+  additionalProperties: false,
   discriminatorType: 'json-schema',
-  encodeRefs: true,
+  encodeRefs: false,
   expose: 'export',
   fullDescription: false,
   functions: 'hide',
   jsDoc: 'extended',
   markdownDescription: true,
-  tsconfig: path.join(ROOT_DIR, 'tsconfig.json'),
-  additionalProperties: false,
-  minify: true,
+  minify: false,
+  path: inputFilePath,
   skipTypeCheck: false,
   sortProps: true,
   strictTuples: true,
   topRef: true,
-  path: inputFilePath,
+  tsconfig: path.join(ROOT_DIR, 'tsconfig.json'),
   tsProgram,
-  type: ['UserConfig'],
+  type: ['*'],
 } as const satisfies Config
 
 const objectConfig = Object.entries(entries).map(([, output]) => ({
@@ -112,9 +112,62 @@ const objectConfig = Object.entries(entries).map(([, output]) => ({
   outputFile: path.join(SCHEMAS_DIR, `${output.outputFile}.schema.json`),
 }))
 
-const schemas = objectConfig.map(
-  ({ outputFile, ...config }) =>
-    [outputFile, createGenerator(config).createSchema(['UserConfig'])] as const,
+const schemaGenerators = objectConfig.map(({ outputFile, ...config }) => ({
+  outputFile,
+  config,
+  schemaGenerator: createGenerator(config),
+}))
+
+const schemas = schemaGenerators.map(
+  ({ outputFile, schemaGenerator }) =>
+    [
+      outputFile,
+      schemaGenerator.createSchema([
+        // 'AttwOptions',
+        // 'CheckPackageOptions',
+        // 'ChunkAddon',
+        // 'ChunkAddonObject',
+        // 'CIOption',
+        // 'CopyEntry',
+        // 'CopyOptions',
+        // 'CssOptions',
+        // 'DevtoolsOptions',
+        // 'ExportsOptions',
+        // 'Format',
+        // 'LogLevel',
+        // 'LogType',
+        // 'NormalizedFormat',
+        // 'PackageJsonWithPath',
+        // 'PackageType',
+        // 'PackFile',
+        // 'PublintOptions',
+        // 'ReportOptions',
+        // 'Sourcemap',
+        // 'TsConfigJson.CompilerOptions.FallbackPolling',
+        // 'TsConfigJson.CompilerOptions.IgnoreDeprecations',
+        // 'TsConfigJson.CompilerOptions.ImportsNotUsedAsValues',
+        // 'TsConfigJson.CompilerOptions.JSX',
+        // 'TsConfigJson.CompilerOptions.Lib',
+        // 'TsConfigJson.CompilerOptions.Module',
+        // 'TsConfigJson.CompilerOptions.ModuleDetection',
+        // 'TsConfigJson.CompilerOptions.ModuleResolution',
+        // 'TsConfigJson.CompilerOptions.NewLine',
+        // 'TsConfigJson.CompilerOptions.Plugin',
+        // 'TsConfigJson.CompilerOptions.Target',
+        // 'TsConfigJson.CompilerOptions.WatchDirectory',
+        // 'TsConfigJson.CompilerOptions.WatchFile',
+        // 'TsConfigJson.CompilerOptions',
+        // 'TsConfigJson.References',
+        // 'TsConfigJson.TypeAcquisition',
+        // 'TsConfigJson.WatchOptions.PollingWatchKind',
+        // 'TsConfigJson.WatchOptions.WatchDirectoryKind',
+        // 'TsConfigJson.WatchOptions.WatchFileKind',
+        // 'TsConfigJson.WatchOptions',
+        // 'TsdownInputOption',
+        // 'Workspace',
+        'UserConfig',
+      ]),
+    ] as const,
 )
 
 const stringifiedSchemas = await Promise.all(

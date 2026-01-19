@@ -1,17 +1,3 @@
-import type { Hookable } from 'hookable'
-import type {
-  ChecksOptions,
-  ExternalOption,
-  InputOptions,
-  InternalModuleFormat,
-  MinifyOptions,
-  ModuleFormat,
-  ModuleTypes,
-  OutputOptions,
-  TreeshakingOptions,
-} from 'rolldown'
-import type { Options as DtsOptions } from 'rolldown-plugin-dts'
-import type { Options as UnusedOptions } from 'unplugin-unused'
 import type { CopyEntry, CopyOptions, CopyOptionsFn } from '../features/copy.ts'
 import type { CssOptions } from '../features/css/index.ts'
 import type { DevtoolsOptions } from '../features/devtools.ts'
@@ -41,6 +27,20 @@ import type {
   MarkPartial,
   Overwrite,
 } from '../utils/types.ts'
+import type { Hookable } from 'hookable'
+import type {
+  ChecksOptions,
+  ExternalOption,
+  InputOptions,
+  InternalModuleFormat,
+  MinifyOptions,
+  ModuleFormat,
+  ModuleTypes,
+  OutputOptions,
+  TreeshakingOptions,
+} from 'rolldown'
+import type { Options as DtsOptions } from 'rolldown-plugin-dts'
+import type { Options as UnusedOptions } from 'unplugin-unused'
 
 export type Sourcemap = boolean | 'inline' | 'hidden'
 export type Format = ModuleFormat
@@ -122,22 +122,30 @@ export type NoExternalFn = (
 
 export type CIOption = 'ci-only' | 'local-only'
 
-export type WithEnabled<T> = T extends (...args: never[]) => unknown
-  ? never
-  :
-      | boolean
-      | undefined
-      | CIOption
-      | ({
-          [KeyType in keyof T]: T[KeyType]
-        } & {
-          /** @default true */
-          enabled?: boolean | CIOption
-        })
+export type WithEnabled<T> =
+  | boolean
+  // | undefined
+  | CIOption
+  | (T & {
+      /** @default true */
+      enabled?: boolean | CIOption
+    })
+// export type WithEnabled<T> = T extends (...args: never[]) => unknown
+//   ? never
+//   :
+//       | boolean
+//       | undefined
+//       | CIOption
+//       | ({
+//           [KeyType in keyof T]: T[KeyType]
+//         } & {
+//           /** @default true */
+//           enabled?: boolean | CIOption
+//         })
 /**
  * Options for tsdown.
  */
-export type UserConfig = {
+export interface UserConfig {
   // #region Input Options
   /**
    * Defaults to `'src/index.ts'` if it exists.
@@ -564,7 +572,7 @@ export type UserConfig = {
   workspace?: Workspace | Arrayable<string> | true
 }
 
-export type InlineConfig = UserConfig & {
+export interface InlineConfig extends UserConfig {
   /**
    * Config file path
    */
@@ -631,9 +639,9 @@ export type ResolvedConfig = Overwrite<
     pkg?: PackageJsonWithPath
     nodeProtocol: 'strip' | boolean
     logger: Logger
-    ignoreWatch: Array<string | RegExp>
+    ignoreWatch: (string | RegExp)[]
     noExternal?: NoExternalFn
-    inlineOnly?: Array<string | RegExp>
+    inlineOnly?: (string | RegExp)[]
     css: Required<CssOptions>
 
     dts: false | DtsOptions

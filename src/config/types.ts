@@ -122,15 +122,18 @@ export type NoExternalFn = (
 
 export type CIOption = 'ci-only' | 'local-only'
 
-export type WithEnabled<T> =
-  | boolean
-  | undefined
-  | CIOption
-  | (T & {
-      /** @default true */
-      enabled?: boolean | CIOption
-    })
-
+export type WithEnabled<T> = T extends (...args: never[]) => unknown
+  ? never
+  :
+      | boolean
+      | undefined
+      | CIOption
+      | ({
+          [KeyType in keyof T]: T[KeyType]
+        } & {
+          /** @default true */
+          enabled?: boolean | CIOption
+        })
 /**
  * Options for tsdown.
  */

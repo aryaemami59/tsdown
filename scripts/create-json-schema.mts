@@ -13,9 +13,9 @@ const ROOT_DIR = path.join(import.meta.dirname, '..')
 
 const SCHEMAS_DIR = path.join(ROOT_DIR, 'docs', 'public')
 
-const inputFilePath = path.join(ROOT_DIR, 'scripts', 'schemas.ts')
+const inputFilePath = path.join(ROOT_DIR, 'src', 'index.ts')
 
-const rootNames = globSync(['src/**/*.ts', 'scripts/*.ts'], {
+const rootNames = globSync(['src/**/*.ts'], {
   cwd: ROOT_DIR,
   exclude: [
     'src/**/*.test.ts*',
@@ -57,9 +57,8 @@ const compilerOptions = {
   noUnusedLocals: false,
   noUnusedParameters: false,
   outDir: path.join(ROOT_DIR, 'dist'),
-  paths: { tsdown: ['./src/index.ts'] },
   rewriteRelativeImportExtensions: true,
-  rootDir: ROOT_DIR,
+  rootDir: path.join(ROOT_DIR),
   skipLibCheck: true,
   sourceMap: true,
   strict: true,
@@ -79,38 +78,43 @@ const tsProgram = ts.createProgram({
 })
 
 const entries = {
-  tsdownConfig: { outputFile: 'tsdown.config', type: ['UserConfig'] },
+  tsdownConfig: {
+    outputFile: 'tsdown.config',
+    type: ['UserConfig'],
+  },
 } as const satisfies Record<string, { outputFile: string; type: string[] }>
 
 const config = {
   ...DEFAULT_CONFIG,
   discriminatorType: 'json-schema',
-  encodeRefs: false,
+  encodeRefs: true,
   expose: 'export',
   fullDescription: false,
   functions: 'hide',
   jsDoc: 'extended',
   markdownDescription: true,
+  tsconfig: path.join(ROOT_DIR, 'tsconfig.json'),
+  additionalProperties: false,
+  minify: true,
   skipTypeCheck: false,
   sortProps: true,
   strictTuples: true,
   topRef: true,
+  path: inputFilePath,
   tsProgram,
-  type: ['*'],
+  type: ['UserConfig'],
 } as const satisfies Config
 
-const objectConfig = Object.entries(entries)
-
-  .map(([, output]) => ({
-    ...config,
-    type: output.type,
-    path: inputFilePath,
-    outputFile: path.join(SCHEMAS_DIR, `${output.outputFile}.schema.json`),
-  }))
+const objectConfig = Object.entries(entries).map(([, output]) => ({
+  ...config,
+  type: output.type,
+  path: inputFilePath,
+  outputFile: path.join(SCHEMAS_DIR, `${output.outputFile}.schema.json`),
+}))
 
 const schemas = objectConfig.map(
   ({ outputFile, ...config }) =>
-    [outputFile, createGenerator(config).createSchema(config.type)] as const,
+    [outputFile, createGenerator(config).createSchema(['UserConfig'])] as const,
 )
 
 const stringifiedSchemas = await Promise.all(

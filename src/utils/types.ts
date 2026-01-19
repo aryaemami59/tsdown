@@ -53,9 +53,8 @@ export type Simplify<BaseType> = BaseType extends
       [KeyType in keyof BaseType]: BaseType[KeyType]
     }
 
-export type Overwrite<T, U> = Simplify<Omit<T, keyof U> & U>
-export type Awaitable<T> = Simplify<Simplify<T> | Promise<Simplify<T>>>
-export type MarkPartial<T, K extends keyof T> = Simplify<
-  Omit<Required<T>, K> & Partial<Pick<T, K>>
->
-export type Arrayable<T> = Simplify<Simplify<T> | Simplify<T>[]>
+export type Overwrite<T, U> = Omit<T, keyof U> & U
+export type Awaitable<T> = T | Promise<T>
+export type MarkPartial<T, K extends keyof T> = Omit<Required<T>, K> &
+  Partial<Pick<T, K>>
+export type Arrayable<T> = T | T[]

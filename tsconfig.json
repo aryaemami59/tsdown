@@ -3,7 +3,7 @@
     "target": "esnext",
     "lib": ["es2023"],
     "moduleDetection": "force",
-    "rootDir": "./",
+    "rootDir": "${configDir}/",
     "customConditions": ["dev"],
     "module": "nodenext",
     "moduleResolution": "node16",
@@ -14,7 +14,7 @@
     "noUnusedLocals": true,
     "declaration": true,
     "noEmit": true,
-    "outDir": "./dist",
+    "outDir": "${configDir}/dist",
     "stripInternal": true,
     "esModuleInterop": true,
     "isolatedDeclarations": true,
@@ -22,5 +22,5 @@
     "verbatimModuleSyntax": true,
     "skipLibCheck": true
   },
-  "exclude": ["**/temp", "**/fixtures", "docs/"]
+  "exclude": ["**/temp", "**/fixtures", "${configDir}/docs", "**/dist"]
 }

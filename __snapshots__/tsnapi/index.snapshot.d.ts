@@ -63,6 +63,16 @@ export interface InlineConfig extends UserConfig {
   configLoader?: "auto" | "native" | "unrun";
   filter?: RegExp | Arrayable<string>;
 }
+export interface Logger {
+  level: LogLevel;
+  options?: LoggerOptions;
+  info: (..._: any[]) => void;
+  warn: (..._: any[]) => void;
+  warnOnce: (..._: any[]) => void;
+  error: (..._: any[]) => void;
+  success: (..._: any[]) => void;
+  clearScreen: (_: LogType) => void;
+}
 export interface OutExtensionContext {
   options: InputOptions;
   format: NormalizedFormat;
@@ -208,16 +218,6 @@ export type CIOption = "ci-only" | "local-only";
 export type CopyOptions = Arrayable<string | CopyEntry>;
 export type CopyOptionsFn = (_: ResolvedConfig) => Awaitable<CopyOptions>;
 export type Format = ModuleFormat;
-export type Logger = {
-  level: LogLevel;
-  options?: LoggerOptions;
-  info: (..._: any[]) => void;
-  warn: (..._: any[]) => void;
-  warnOnce: (..._: any[]) => void;
-  error: (..._: any[]) => void;
-  success: (..._: any[]) => void;
-  clearScreen: (_: LogType) => void;
-};
 export type NoExternalFn = (_: string, _: string | undefined) => boolean | null | undefined | void;
 export type NormalizedFormat = InternalModuleFormat;
 export type OutExtensionFactory = (_: OutExtensionContext) => OutExtensionObject | undefined;

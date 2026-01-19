@@ -21,7 +21,7 @@ export const LogLevels: Record<LogLevel, number> = {
   info: 3,
 }
 
-export type Logger = {
+export interface Logger {
   level: LogLevel
   options?: LoggerOptions
   info: (...args: any[]) => void

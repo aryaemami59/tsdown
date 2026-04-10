@@ -9,7 +9,7 @@
           "$ref": "#/definitions/TsdownInputOption",
           "description": "Defaults to `'src/index.ts'` if it exists.\n\nSupports glob patterns with negation to exclude files:",
           "markdownDescription": "Defaults to `'src/index.ts'` if it exists.\n\nSupports glob patterns with negation to exclude files:",
-          "default": "src/index.ts"
+          "default": { "index": "src/index.ts" }
         },
         "deps": {
           "$ref": "#/definitions/DepsConfig",
@@ -30,29 +30,29 @@
               }
             }
           ],
-          "deprecated": "Use `deps.neverBundle` instead."
+          "deprecated": "Use {@linkcode DepsConfig.neverBundle deps.neverBundle} instead."
         },
         "noExternal": {
           "$ref": "#/definitions/Arrayable<(string|string479082557)>",
-          "deprecated": "Use `deps.alwaysBundle` instead."
+          "deprecated": "Use {@linkcode DepsConfig.alwaysBundle deps.alwaysBundle} instead."
         },
         "inlineOnly": {
           "anyOf": [
             { "$ref": "#/definitions/Arrayable<(string|string479082557)>" },
             { "type": "boolean", "const": false }
           ],
-          "deprecated": "Use `deps.onlyBundle` instead."
+          "deprecated": "Use {@linkcode DepsConfig.onlyBundle deps.onlyBundle} instead."
         },
         "skipNodeModulesBundle": {
           "type": "boolean",
-          "deprecated": "Use `deps.skipNodeModulesBundle` instead.",
+          "deprecated": "Use {@linkcode DepsConfig.skipNodeModulesBundle deps.skipNodeModulesBundle} instead.",
           "default": false
         },
         "alias": {
           "type": "object",
           "additionalProperties": { "type": "string" }
         },
-        "tsconfig": { "type": ["string", "boolean"] },
+        "tsconfig": { "type": ["string", "boolean"], "default": true },
         "platform": {
           "type": "string",
           "enum": ["node", "neutral", "browser"],
@@ -62,12 +62,11 @@
         },
         "target": {
           "anyOf": [
-            { "type": "string" },
-            { "type": "array", "items": { "type": "string" } },
+            { "$ref": "#/definitions/Arrayable<string>" },
             { "type": "boolean", "const": false }
           ],
-          "description": "Specifies the compilation target environment(s).\n\nDetermines the JavaScript version or runtime(s) for which the code should be compiled. If not set, defaults to the value of `engines.node` in your project's `package.json`. If no `engines.node` field exists, no syntax transformations are applied.\n\nAccepts a single target (e.g., `'es2020'`, `'node18'`), an array of targets, or `false` to disable all transformations.",
-          "markdownDescription": "Specifies the compilation target environment(s).\n\nDetermines the JavaScript version or runtime(s) for which the code should be compiled.\nIf not set, defaults to the value of `engines.node` in your project's `package.json`.\nIf no `engines.node` field exists, no syntax transformations are applied.\n\nAccepts a single target (e.g., `'es2020'`, `'node18'`), an array of targets, or `false` to disable all transformations."
+          "description": "Specifies the compilation target environment(s).\n\nDetermines the JavaScript version or runtime(s) for which the code should be compiled. If not set, defaults to the value of `engines.node` in your project's `package.json`. If no `engines.node` field exists, no syntax transformations are applied.\n\nAccepts a single target (e.g., `'es2020'`, `'node18'`, `'baseline-widely-available'`), an array of targets, or `false` to disable all transformations.",
+          "markdownDescription": "Specifies the compilation target environment(s).\n\nDetermines the JavaScript version or runtime(s) for which the code should be compiled.\nIf not set, defaults to the value of `engines.node` in your project's `package.json`.\nIf no `engines.node` field exists, no syntax transformations are applied.\n\nAccepts a single target (e.g., `'es2020'`, `'node18'`, `'baseline-widely-available'`), an array of targets, or `false` to disable all transformations."
         },
         "env": {
           "type": "object",
@@ -81,10 +80,7 @@
           "markdownDescription": "Path to env file providing compile-time env variables."
         },
         "envPrefix": {
-          "anyOf": [
-            { "type": "string" },
-            { "type": "array", "items": { "type": "string" } }
-          ],
+          "$ref": "#/definitions/Arrayable<string>",
           "description": "When loading env variables from `envFile`, only include variables with these prefixes.",
           "markdownDescription": "When loading env variables from `envFile`, only include variables with these prefixes.",
           "default": "TSDOWN_"
@@ -203,18 +199,18 @@
         },
         "removeNodeProtocol": {
           "type": "boolean",
-          "description": "If enabled, strips the `node:` protocol prefix from import source.",
-          "markdownDescription": "If enabled, strips the `node:` protocol prefix from import source.",
+          "description": "Remove the `node:` prefix from built-in Node.js module imports. When enabled, rewrites import sources like `node:fs` to `fs`.",
+          "markdownDescription": "Remove the `node:` prefix from built-in Node.js module imports.\nWhen enabled, rewrites import sources like `node:fs` to `fs`.",
           "default": false,
-          "deprecated": "Use `nodeProtocol: 'strip'` instead."
+          "deprecated": "Use {@linkcode nodeProtocol nodeProtocol: 'strip'} instead."
         },
         "nodeProtocol": {
           "anyOf": [
             { "type": "string", "const": "strip" },
             { "type": "boolean" }
           ],
-          "description": "- If `true`, add `node:` prefix to built-in modules.\n- If `'strip'`, strips the `node:` protocol prefix from import source.\n- If `false`, does not modify the import source.",
-          "markdownDescription": "- If `true`, add `node:` prefix to built-in modules.\n- If `'strip'`, strips the `node:` protocol prefix from import source.\n- If `false`, does not modify the import source.",
+          "description": "Control whether built-in Node.js module imports use the `node:` protocol.\n\n- `true`: Add the `node:` prefix to built-in module imports.\n- `'strip'`: Remove the `node:` prefix from built-in module imports.\n- `false`: Do not transform built-in module imports.",
+          "markdownDescription": "Control whether built-in Node.js module imports use the `node:` protocol.\n\n- `true`: Add the `node:` prefix to built-in module imports.\n- `'strip'`: Remove the `node:` prefix from built-in module imports.\n- `false`: Do not transform built-in module imports.",
           "default": false
         },
         "checks": {
@@ -353,6 +349,7 @@
         },
         "plugins": {
           "anyOf": [
+            { "$ref": "#/definitions/TsdownPlugin<any>" },
             {
               "type": "object",
               "properties": {
@@ -542,24 +539,20 @@
               "required": ["_parallel"],
               "additionalProperties": false
             },
-            { "type": "null" },
-            { "type": "null" },
             {
               "type": "object",
               "properties": { "name": { "type": "string" } },
               "required": ["name"],
               "additionalProperties": false
             },
+            { "type": "null" },
+            { "type": "null" },
             { "type": "boolean", "const": false },
             {
               "type": "array",
-              "items": {
-                "$ref": "#/definitions/alias-1803000291-108819-108955-1803000291-0-137895"
-              }
+              "items": { "$ref": "#/definitions/TsdownPluginOption<any>" }
             }
-          ],
-          "description": "The list of plugins to use.\n\nFalsy plugins will be ignored, which can be used to easily activate or deactivate plugins. Nested plugins will be flattened. Async plugins will be awaited and resolved.\n\nSee [Plugin API document](https://rolldown.rs/apis/plugin-api) for more details about creating plugins.",
-          "markdownDescription": "The list of plugins to use.\n\nFalsy plugins will be ignored, which can be used to easily activate or deactivate plugins. Nested plugins will be flattened. Async plugins will be awaited and resolved.\n\nSee [Plugin API document](https://rolldown.rs/apis/plugin-api) for more details about creating plugins."
+          ]
         },
         "inputOptions": {
           "type": "object",
@@ -779,7 +772,7 @@
                 {
                   "type": "array",
                   "items": {
-                    "$ref": "#/definitions/alias-1803000291-108819-108955-1803000291-0-137895"
+                    "$ref": "#/definitions/alias-1404212539-109894-110030-1404212539-0-138970"
                   }
                 }
               ],
@@ -1129,6 +1122,18 @@
                       "type": "boolean",
                       "description": "When enabled, class fields without initializers are removed.\n\nFor example: ```ts class Foo {    x: number;    y: number = 0; } ``` // transform into ```js class Foo {    x: number; } ```\n\nThe option is used to align with the behavior of TypeScript's `useDefineForClassFields: false` option. When you want to enable this, you also need to set [`crate::CompilerAssumptions::set_public_class_fields`] to `true`. The `set_public_class_fields: true` + `remove_class_fields_without_initializer: true` is equivalent to `useDefineForClassFields: false` in TypeScript.\n\nWhen `set_public_class_fields` is true and class-properties plugin is enabled, the above example transforms into:\n\n```js class Foo {   constructor() {     this.y = 0;   } } ```\n\nDefaults to `false`.",
                       "markdownDescription": "When enabled, class fields without initializers are removed.\n\nFor example:\n```ts\nclass Foo {\n   x: number;\n   y: number = 0;\n}\n```\n// transform into\n```js\nclass Foo {\n   x: number;\n}\n```\n\nThe option is used to align with the behavior of TypeScript's `useDefineForClassFields: false` option.\nWhen you want to enable this, you also need to set [`crate::CompilerAssumptions::set_public_class_fields`]\nto `true`. The `set_public_class_fields: true` + `remove_class_fields_without_initializer: true` is\nequivalent to `useDefineForClassFields: false` in TypeScript.\n\nWhen `set_public_class_fields` is true and class-properties plugin is enabled, the above example transforms into:\n\n```js\nclass Foo {\n  constructor() {\n    this.y = 0;\n  }\n}\n```\n\nDefaults to `false`."
+                    },
+                    "optimizeConstEnums": {
+                      "type": "boolean",
+                      "description": "When true, optimize const enums by inlining their values at usage sites and removing the enum declaration.",
+                      "markdownDescription": "When true, optimize const enums by inlining their values at usage sites\nand removing the enum declaration.",
+                      "default": false
+                    },
+                    "optimizeEnums": {
+                      "type": "boolean",
+                      "description": "When true, optimize regular (non-const) enums by inlining their member accesses at usage sites when the member value is statically known.\n\nNon-exported enum declarations are also removed when all members are evaluable and no references to the enum as a runtime value exist (e.g., `console.log(Foo)`, `typeof Foo`, or passing the enum as an argument).",
+                      "markdownDescription": "When true, optimize regular (non-const) enums by inlining their member\naccesses at usage sites when the member value is statically known.\n\nNon-exported enum declarations are also removed when all members are\nevaluable and no references to the enum as a runtime value exist\n(e.g., `console.log(Foo)`, `typeof Foo`, or passing the enum as an argument).",
+                      "default": false
                     },
                     "declaration": {
                       "type": "object",
@@ -1750,8 +1755,7 @@
         },
         "format": {
           "anyOf": [
-            { "$ref": "#/definitions/Format" },
-            { "type": "array", "items": { "$ref": "#/definitions/Format" } },
+            { "$ref": "#/definitions/Arrayable<Format>" },
             {
               "type": "object",
               "properties": {
@@ -1813,6 +1817,12 @@
                       "type": "string",
                       "description": "Resolved root directory of input files",
                       "markdownDescription": "Resolved root directory of input files"
+                    },
+                    "configDeps": {
+                      "type": "object",
+                      "properties": { "size": { "type": "number" } },
+                      "required": ["size"],
+                      "additionalProperties": false
                     },
                     "dts": {
                       "anyOf": [
@@ -2015,6 +2025,12 @@
                       "description": "Resolved root directory of input files",
                       "markdownDescription": "Resolved root directory of input files"
                     },
+                    "configDeps": {
+                      "type": "object",
+                      "properties": { "size": { "type": "number" } },
+                      "required": ["size"],
+                      "additionalProperties": false
+                    },
                     "dts": {
                       "anyOf": [
                         { "type": "boolean", "const": false },
@@ -2215,6 +2231,12 @@
                       "type": "string",
                       "description": "Resolved root directory of input files",
                       "markdownDescription": "Resolved root directory of input files"
+                    },
+                    "configDeps": {
+                      "type": "object",
+                      "properties": { "size": { "type": "number" } },
+                      "required": ["size"],
+                      "additionalProperties": false
                     },
                     "dts": {
                       "anyOf": [
@@ -2417,6 +2439,12 @@
                       "description": "Resolved root directory of input files",
                       "markdownDescription": "Resolved root directory of input files"
                     },
+                    "configDeps": {
+                      "type": "object",
+                      "properties": { "size": { "type": "number" } },
+                      "required": ["size"],
+                      "additionalProperties": false
+                    },
                     "dts": {
                       "anyOf": [
                         { "type": "boolean", "const": false },
@@ -2617,6 +2645,12 @@
                       "type": "string",
                       "description": "Resolved root directory of input files",
                       "markdownDescription": "Resolved root directory of input files"
+                    },
+                    "configDeps": {
+                      "type": "object",
+                      "properties": { "size": { "type": "number" } },
+                      "required": ["size"],
+                      "additionalProperties": false
                     },
                     "dts": {
                       "anyOf": [
@@ -2819,6 +2853,12 @@
                       "description": "Resolved root directory of input files",
                       "markdownDescription": "Resolved root directory of input files"
                     },
+                    "configDeps": {
+                      "type": "object",
+                      "properties": { "size": { "type": "number" } },
+                      "required": ["size"],
+                      "additionalProperties": false
+                    },
                     "dts": {
                       "anyOf": [
                         { "type": "boolean", "const": false },
@@ -3020,6 +3060,12 @@
                       "description": "Resolved root directory of input files",
                       "markdownDescription": "Resolved root directory of input files"
                     },
+                    "configDeps": {
+                      "type": "object",
+                      "properties": { "size": { "type": "number" } },
+                      "required": ["size"],
+                      "additionalProperties": false
+                    },
                     "dts": {
                       "anyOf": [
                         { "type": "boolean", "const": false },
@@ -3168,7 +3214,7 @@
           ],
           "description": "Output format(s). Available formats are\n- `esm`: ESM\n- `cjs`: CommonJS\n- `iife`: IIFE\n- `umd`: UMD",
           "markdownDescription": "Output format(s). Available formats are\n- `esm`: ESM\n- `cjs`: CommonJS\n- `iife`: IIFE\n- `umd`: UMD",
-          "default": ["esm"]
+          "default": "esm"
         },
         "globalName": { "type": "string" },
         "outDir": { "type": "string", "default": "dist" },
@@ -3180,8 +3226,8 @@
         },
         "sourcemap": {
           "$ref": "#/definitions/Sourcemap",
-          "description": "Whether to generate source map files.\n\nNote that this option will always be `true` if you have [`declarationMap`](https://www.typescriptlang.org/tsconfig/#declarationMap) option enabled in your `tsconfig.json`.",
-          "markdownDescription": "Whether to generate source map files.\n\nNote that this option will always be `true` if you have\n[`declarationMap`](https://www.typescriptlang.org/tsconfig/#declarationMap)\noption enabled in your `tsconfig.json`.",
+          "description": "Whether to generate source map files.\n\nNote that this option will always be `true` if you have  {@link  https://www.typescriptlang.org/tsconfig/#declarationMap `declarationMap` }  option enabled in your `tsconfig.json`.",
+          "markdownDescription": "Whether to generate source map files.\n\nNote that this option will always be `true` if you have\n {@link  https://www.typescriptlang.org/tsconfig/#declarationMap `declarationMap` } \noption enabled in your `tsconfig.json`.",
           "default": false
         },
         "clean": {
@@ -3305,6 +3351,12 @@
                               "markdownDescription": "Whether property read accesses have side effects.",
                               "default": "always"
                             },
+                            "propertyWriteSideEffects": {
+                              "type": "boolean",
+                              "description": "Whether property write accesses (assignments to member expressions) have side effects.\n\nWhen false, assignments like `obj.prop = value` are considered side-effect-free (assuming the object and value expressions themselves are side-effect-free).",
+                              "markdownDescription": "Whether property write accesses (assignments to member expressions) have side effects.\n\nWhen false, assignments like `obj.prop = value` are considered side-effect-free\n(assuming the object and value expressions themselves are side-effect-free).",
+                              "default": true
+                            },
                             "unknownGlobalSideEffects": {
                               "type": "boolean",
                               "description": "Whether accessing a global variable has side effects.\n\nAccessing a non-existing global variable will throw an error. Global variable may be a getter that has side effects.",
@@ -3403,8 +3455,8 @@
         "banner": { "$ref": "#/definitions/ChunkAddon" },
         "unbundle": {
           "type": "boolean",
-          "description": "Determines whether unbundle mode is enabled. When set to true, the output files will mirror the input file structure.",
-          "markdownDescription": "Determines whether unbundle mode is enabled.\nWhen set to true, the output files will mirror the input file structure.",
+          "description": "Determines whether `unbundle` is enabled. When set to `true`, the output files will mirror the input file structure.",
+          "markdownDescription": "Determines whether `unbundle` is enabled.\nWhen set to `true`, the output files will mirror the input file structure.",
           "default": false
         },
         "root": {
@@ -3414,13 +3466,13 @@
         },
         "bundle": {
           "type": "boolean",
-          "deprecated": "Use `unbundle` instead.",
+          "deprecated": "Use {@linkcode unbundle } instead.",
           "default": true
         },
         "fixedExtension": {
           "type": "boolean",
-          "description": "Use a fixed extension for output files. The extension will always be `.cjs` or `.mjs`. Otherwise, it will depend on the package type.\n\nDefaults to `true` if `platform` is set to `node`, `false` otherwise.",
-          "markdownDescription": "Use a fixed extension for output files.\nThe extension will always be `.cjs` or `.mjs`.\nOtherwise, it will depend on the package type.\n\nDefaults to `true` if `platform` is set to `node`, `false` otherwise.",
+          "description": "Use a fixed extension for output files. The extension will always be `.cjs` or `.mjs`. Otherwise, it will depend on the package type.\n\nDefaults to `true` if  {@linkcode  platform }  is set to `node`, `false` otherwise.",
+          "markdownDescription": "Use a fixed extension for output files.\nThe extension will always be `.cjs` or `.mjs`.\nOtherwise, it will depend on the package type.\n\nDefaults to `true` if  {@linkcode  platform }  is set to `node`,\n`false` otherwise.",
           "default": "platform === 'node'"
         },
         "hash": {
@@ -3686,6 +3738,12 @@
                                   "markdownDescription": "Whether property read accesses have side effects.",
                                   "default": "always"
                                 },
+                                "propertyWriteSideEffects": {
+                                  "type": "boolean",
+                                  "description": "Whether property write accesses (assignments to member expressions) have side effects.\n\nWhen false, assignments like `obj.prop = value` are considered side-effect-free (assuming the object and value expressions themselves are side-effect-free).",
+                                  "markdownDescription": "Whether property write accesses (assignments to member expressions) have side effects.\n\nWhen false, assignments like `obj.prop = value` are considered side-effect-free\n(assuming the object and value expressions themselves are side-effect-free).",
+                                  "default": true
+                                },
                                 "unknownGlobalSideEffects": {
                                   "type": "boolean",
                                   "description": "Whether accessing a global variable has side effects.\n\nAccessing a non-existing global variable will throw an error. Global variable may be a getter that has side effects.",
@@ -3945,6 +4003,17 @@
                             "description": "Size threshold in bytes for merging small `entriesAware` subgroups into the closest neighboring subgroup.\n\nThis option only works when  {@linkcode  CodeSplittingGroup.entriesAware entriesAware }  is `true`. Set to `0` to disable subgroup merging.",
                             "markdownDescription": "Size threshold in bytes for merging small `entriesAware` subgroups into the\nclosest neighboring subgroup.\n\nThis option only works when  {@linkcode  CodeSplittingGroup.entriesAware entriesAware } \nis `true`. Set to `0` to disable subgroup merging.",
                             "default": 0
+                          },
+                          "tags": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "const": "$initial",
+                              "description": "Built-in module tag names computed by rolldown.\n\n- `'$initial'` — the module is statically imported by at least one user-defined entry point, or is part of its static dependency chain.",
+                              "markdownDescription": "Built-in module tag names computed by rolldown.\n\n- `'$initial'` — the module is statically imported by at least one user-defined entry point, or is part of its static dependency chain."
+                            },
+                            "description": "Filter modules by tags. Only modules that have **all** specified tags are captured by this group. Combines with `test` and other filters — a module must match all criteria.\n\nBuilt-in tags: `'$initial'` (module is statically imported by a user-defined entry or part of its dependency chain).",
+                            "markdownDescription": "Filter modules by tags. Only modules that have **all** specified tags\nare captured by this group. Combines with `test` and other filters —\na module must match all criteria.\n\nBuilt-in tags: `'$initial'` (module is statically imported by a user-defined entry or part of its dependency chain)."
                           }
                         },
                         "required": ["name"],
@@ -4037,6 +4106,17 @@
                         "description": "Size threshold in bytes for merging small `entriesAware` subgroups into the closest neighboring subgroup.\n\nThis option only works when  {@linkcode  CodeSplittingGroup.entriesAware entriesAware }  is `true`. Set to `0` to disable subgroup merging.",
                         "markdownDescription": "Size threshold in bytes for merging small `entriesAware` subgroups into the\nclosest neighboring subgroup.\n\nThis option only works when  {@linkcode  CodeSplittingGroup.entriesAware entriesAware } \nis `true`. Set to `0` to disable subgroup merging.",
                         "default": 0
+                      },
+                      "tags": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "const": "$initial",
+                          "description": "Built-in module tag names computed by rolldown.\n\n- `'$initial'` — the module is statically imported by at least one user-defined entry point, or is part of its static dependency chain.",
+                          "markdownDescription": "Built-in module tag names computed by rolldown.\n\n- `'$initial'` — the module is statically imported by at least one user-defined entry point, or is part of its static dependency chain."
+                        },
+                        "description": "Filter modules by tags. Only modules that have **all** specified tags are captured by this group. Combines with `test` and other filters — a module must match all criteria.\n\nBuilt-in tags: `'$initial'` (module is statically imported by a user-defined entry or part of its dependency chain).",
+                        "markdownDescription": "Filter modules by tags. Only modules that have **all** specified tags\nare captured by this group. Combines with `test` and other filters —\na module must match all criteria.\n\nBuilt-in tags: `'$initial'` (module is statically imported by a user-defined entry or part of its dependency chain)."
                       }
                     },
                     "required": ["name"],
@@ -4228,7 +4308,7 @@
                 {
                   "type": "array",
                   "items": {
-                    "$ref": "#/definitions/alias-1803000291-109013-109155-1803000291-0-137895"
+                    "$ref": "#/definitions/alias-1404212539-110088-110230-1404212539-0-138970"
                   }
                 }
               ],
@@ -4304,8 +4384,8 @@
         },
         "cwd": {
           "type": "string",
-          "description": "The working directory of the config file.\n- Defaults to `process.cwd()` for root config.\n- Defaults to the package directory for workspace config.",
-          "markdownDescription": "The working directory of the config file.\n- Defaults to `process.cwd()` for root config.\n- Defaults to the package directory for workspace config.",
+          "description": "The working directory of the config file.\n- Defaults to  {@linkcode  process.cwd process.cwd() }  for root config.\n- Defaults to the package directory for  {@linkcode  workspace }  config.",
+          "markdownDescription": "The working directory of the config file.\n- Defaults to  {@linkcode  process.cwd process.cwd() }  for root config.\n- Defaults to the package directory for  {@linkcode  workspace }  config.",
           "default": "process.cwd()"
         },
         "name": {
@@ -4362,8 +4442,8 @@
         },
         "dts": {
           "$ref": "#/definitions/WithEnabled<DtsOptions>",
-          "description": "Enables generation of TypeScript declaration files (`.d.ts`).\n\nBy default, this option is auto-detected based on your project's `package.json`:\n- If  {@link  exe }  is enabled, declaration file generation is disabled by default.\n- If the `types` field is present, or if the main `exports` contains a `types` entry, declaration file generation is enabled by default.\n- Otherwise, declaration file generation is disabled by default.",
-          "markdownDescription": "Enables generation of TypeScript declaration files (`.d.ts`).\n\nBy default, this option is auto-detected based on your project's `package.json`:\n- If  {@link  exe }  is enabled, declaration file generation is disabled by default.\n- If the `types` field is present, or if the main `exports` contains a `types` entry, declaration file generation is enabled by default.\n- Otherwise, declaration file generation is disabled by default."
+          "description": "Enables generation of TypeScript declaration files (`.d.ts`).\n\nBy default, this option is auto-detected based on your project's `package.json`:\n- If  {@linkcode  exe }  is enabled, declaration file generation is disabled by default.\n- If the `types` field is present, or if the main `exports` contains a `types` entry, declaration file generation is enabled by default.\n- Otherwise, declaration file generation is disabled by default.",
+          "markdownDescription": "Enables generation of TypeScript declaration files (`.d.ts`).\n\nBy default, this option is auto-detected based on your project's `package.json`:\n- If  {@linkcode  exe }  is enabled, declaration file generation is disabled by default.\n- If the `types` field is present, or if the main `exports` contains a `types` entry, declaration file generation is enabled by default.\n- Otherwise, declaration file generation is disabled by default."
         },
         "unused": {
           "$ref": "#/definitions/WithEnabled<interface-715603908-146-604-715603908-0-884>",
@@ -4373,8 +4453,8 @@
         },
         "publint": {
           "$ref": "#/definitions/WithEnabled<PublintOptions>",
-          "description": "Run publint after bundling. Requires `publint` to be installed.",
-          "markdownDescription": "Run publint after bundling.\nRequires `publint` to be installed.",
+          "description": "Run `publint` after bundling. Requires `publint` to be installed.",
+          "markdownDescription": "Run `publint` after bundling.\nRequires `publint` to be installed.",
           "default": false
         },
         "attw": {
@@ -4406,13 +4486,14 @@
           "properties": {
             "splitting": {
               "type": "boolean",
-              "description": "Enable/disable CSS code splitting. When set to `false`, all CSS in the entire project will be extracted into a single CSS file named by  {@link  fileName } . When set to `true`, CSS imported in async JS chunks will be preserved as chunks.\n\nDefaults to `false`, but if `unbundle` is `true`, it defaults to `true` to preserve chunk splitting.",
-              "markdownDescription": "Enable/disable CSS code splitting.\nWhen set to `false`, all CSS in the entire project will be extracted into a single CSS file named by  {@link  fileName } .\nWhen set to `true`, CSS imported in async JS chunks will be preserved as chunks.\n\nDefaults to `false`, but if `unbundle` is `true`, it defaults to `true` to preserve chunk splitting."
+              "description": "Enable/disable CSS code splitting. When set to `false`, all CSS in the entire project will be extracted into a single CSS file named by  {@linkcode  fileName } . When set to `true`, CSS imported in async JS chunks will be preserved as chunks.\n\nDefaults to `false`, but if `unbundle` is `true`, it defaults to `true` to preserve chunk splitting.",
+              "markdownDescription": "Enable/disable CSS code splitting.\nWhen set to `false`, all CSS in the entire project will be extracted into\na single CSS file named by  {@linkcode  fileName } .\nWhen set to `true`, CSS imported in async JS chunks will be preserved as chunks.\n\nDefaults to `false`, but if `unbundle` is `true`, it defaults to `true` to preserve chunk splitting.",
+              "default": false
             },
             "fileName": {
               "type": "string",
-              "description": "Specify the name of the CSS file generated when `splitting` is `false`.",
-              "markdownDescription": "Specify the name of the CSS file generated when `splitting` is `false`.",
+              "description": "Specify the name of the CSS file generated when  {@linkcode  splitting }  is `false`.",
+              "markdownDescription": "Specify the name of the CSS file generated when  {@linkcode  splitting }  is\n`false`.",
               "default": "style.css"
             },
             "target": {
@@ -4422,7 +4503,8 @@
                 { "type": "boolean", "const": false }
               ],
               "description": "Set the target environment for CSS syntax lowering. Accepts esbuild-style target strings (e.g., `'chrome99'`, `'safari16.2'`). Defaults to the top-level `target` option.",
-              "markdownDescription": "Set the target environment for CSS syntax lowering.\nAccepts esbuild-style target strings (e.g., `'chrome99'`, `'safari16.2'`).\nDefaults to the top-level `target` option."
+              "markdownDescription": "Set the target environment for CSS syntax lowering.\nAccepts esbuild-style target strings (e.g., `'chrome99'`, `'safari16.2'`).\nDefaults to the top-level `target` option.",
+              "default": "tsdownConfig.target"
             },
             "preprocessorOptions": {
               "type": "object",
@@ -4573,8 +4655,8 @@
                   "properties": { "plugins": { "type": "array", "items": {} } }
                 }
               ],
-              "description": "PostCSS configuration.\n\n- `string`: Path to the directory to search for PostCSS config files.\n- `object`: Inline PostCSS options with optional `plugins` array.\n- Omitted: Auto-detect PostCSS config from the project root.\n\nOnly used when `transformer` is `'postcss'`. Requires `postcss` to be installed.",
-              "markdownDescription": "PostCSS configuration.\n\n- `string`: Path to the directory to search for PostCSS config files.\n- `object`: Inline PostCSS options with optional `plugins` array.\n- Omitted: Auto-detect PostCSS config from the project root.\n\nOnly used when `transformer` is `'postcss'`.\nRequires `postcss` to be installed."
+              "description": "PostCSS configuration.\n\n- `string`: Path to the directory to search for PostCSS config files.\n- `object`: Inline PostCSS options with optional `plugins` array.\n- Omitted: Auto-detect PostCSS config from the project root.\n\nOnly used when  {@linkcode  transformer }  is `'postcss'`. Requires `postcss` to be installed.",
+              "markdownDescription": "PostCSS configuration.\n\n- `string`: Path to the directory to search for PostCSS config files.\n- `object`: Inline PostCSS options with optional `plugins` array.\n- Omitted: Auto-detect PostCSS config from the project root.\n\nOnly used when  {@linkcode  transformer }  is `'postcss'`.\nRequires `postcss` to be installed."
             },
             "inject": {
               "type": "boolean",
@@ -4632,7 +4714,8 @@
                 { "type": "boolean", "const": false }
               ],
               "description": "CSS modules configuration. When not `false`, `.module.css` files (and preprocessor variants) are treated as CSS modules with scoped class names.",
-              "markdownDescription": "CSS modules configuration.\nWhen not `false`, `.module.css` files (and preprocessor variants) are\ntreated as CSS modules with scoped class names."
+              "markdownDescription": "CSS modules configuration.\nWhen not `false`, `.module.css` files (and preprocessor variants) are\ntreated as CSS modules with scoped class names.",
+              "default": {}
             },
             "transformer": {
               "type": "string",
@@ -4648,11 +4731,11 @@
         },
         "injectStyle": {
           "type": "boolean",
-          "deprecated": "Use `css.inject` instead."
+          "deprecated": "Use {@linkcode CssOptions.inject css.inject} instead."
         },
         "publicDir": {
           "$ref": "#/definitions/CopyOptions",
-          "deprecated": "Alias for `copy`, will be removed in the future."
+          "deprecated": "Alias for {@linkcode copy }, will be removed in the future."
         },
         "copy": {
           "$ref": "#/definitions/CopyOptions",
@@ -4663,7 +4746,8 @@
         "exe": {
           "$ref": "#/definitions/WithEnabled<ExeOptions>",
           "description": "**[experimental]** Bundle as executable using Node.js SEA (Single Executable Applications).\n\nThis will bundle the output into a single executable file using Node.js SEA. Note that this is only supported on Node.js 25.7.0 and later, and is not supported in Bun or Deno.",
-          "markdownDescription": "**[experimental]** Bundle as executable using Node.js SEA (Single Executable Applications).\n\nThis will bundle the output into a single executable file using Node.js SEA.\nNote that this is only supported on Node.js 25.7.0 and later, and is not supported in Bun or Deno."
+          "markdownDescription": "**[experimental]** Bundle as executable using Node.js SEA (Single Executable Applications).\n\nThis will bundle the output into a single executable file using Node.js SEA.\nNote that this is only supported on Node.js 25.7.0 and later, and is not supported in Bun or Deno.",
+          "default": false
         },
         "workspace": {
           "anyOf": [
@@ -4680,11 +4764,11 @@
       "markdownDescription": "Options for tsdown."
     },
     "TsdownInputOption": {
-      "$ref": "#/definitions/Arrayable<(string|alias-1474508258-74138-74264-1474508258-0-218439<string,def-alias-src_utils_types.ts-2028-2063-src_utils_types.ts-0-2064<string>>)>",
+      "$ref": "#/definitions/Arrayable<(string|alias-923471658-74155-74281-923471658-0-218972<string,def-alias-src_utils_types.ts-2028-2063-src_utils_types.ts-0-2064<string>>)>",
       "description": "Extended input option that supports glob negation patterns.\n\nWhen using object form, values can be:\n- A single glob pattern string\n- An array of glob patterns, including negation patterns (prefixed with `!`)",
       "markdownDescription": "Extended input option that supports glob negation patterns.\n\nWhen using object form, values can be:\n- A single glob pattern string\n- An array of glob patterns, including negation patterns (prefixed with `!`)"
     },
-    "Arrayable<(string|alias-1474508258-74138-74264-1474508258-0-218439<string,def-alias-src_utils_types.ts-2028-2063-src_utils_types.ts-0-2064<string>>)>": {
+    "Arrayable<(string|alias-923471658-74155-74281-923471658-0-218972<string,def-alias-src_utils_types.ts-2028-2063-src_utils_types.ts-0-2064<string>>)>": {
       "anyOf": [
         { "type": "string" },
         {
@@ -4730,8 +4814,8 @@
               }
             }
           ],
-          "description": "Mark dependencies as external (not bundled). Accepts strings, regular expressions, or Rolldown's `ExternalOption`.",
-          "markdownDescription": "Mark dependencies as external (not bundled).\nAccepts strings, regular expressions, or Rolldown's `ExternalOption`."
+          "description": "Mark dependencies as external (not bundled). Accepts strings, regular expressions, or Rolldown's  {@linkcode  ExternalOption } .",
+          "markdownDescription": "Mark dependencies as external (not bundled).\nAccepts strings, regular expressions, or Rolldown's\n {@linkcode  ExternalOption } ."
         },
         "alwaysBundle": {
           "$ref": "#/definitions/Arrayable<(string|string479082557)>",
@@ -4751,12 +4835,12 @@
             { "$ref": "#/definitions/Arrayable<(string|string479082557)>" },
             { "type": "boolean", "const": false }
           ],
-          "deprecated": "Use {@link onlyBundle } instead."
+          "deprecated": "Use {@linkcode onlyBundle } instead."
         },
         "skipNodeModulesBundle": {
           "type": "boolean",
-          "description": "Skip bundling all `node_modules` dependencies.\n\n**Note:** This option cannot be used together with `alwaysBundle`.",
-          "markdownDescription": "Skip bundling all `node_modules` dependencies.\n\n**Note:** This option cannot be used together with `alwaysBundle`.",
+          "description": "Skip bundling all `node_modules` dependencies.\n\n**Note:** This option cannot be used together with  {@linkcode  alwaysBundle } .",
+          "markdownDescription": "Skip bundling all `node_modules` dependencies.\n\n**Note:** This option cannot be used together with  {@linkcode  alwaysBundle } .",
           "default": false
         }
       },
@@ -4777,7 +4861,352 @@
         }
       ]
     },
-    "alias-1803000291-108819-108955-1803000291-0-137895": {
+    "TsdownPlugin<any>": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "onLog": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "order": {
+              "type": ["string", "null"],
+              "enum": ["pre", "post", null]
+            }
+          },
+          "description": "A hook in a function or an object form with additional properties.",
+          "markdownDescription": "A hook in a function or an object form with additional properties."
+        },
+        "outputOptions": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "order": {
+              "type": ["string", "null"],
+              "enum": ["pre", "post", null]
+            }
+          },
+          "description": "A hook in a function or an object form with additional properties.",
+          "markdownDescription": "A hook in a function or an object form with additional properties."
+        },
+        "augmentChunkHash": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "order": {
+              "type": ["string", "null"],
+              "enum": ["pre", "post", null]
+            }
+          },
+          "description": "A hook in a function or an object form with additional properties.",
+          "markdownDescription": "A hook in a function or an object form with additional properties."
+        },
+        "banner": {
+          "anyOf": [
+            { "type": "string" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "order": {
+                  "type": ["string", "null"],
+                  "enum": ["pre", "post", null]
+                },
+                "handler": { "type": "string" }
+              },
+              "required": ["handler"]
+            }
+          ],
+          "description": "A hook in a function or an object form with additional properties.",
+          "markdownDescription": "A hook in a function or an object form with additional properties."
+        },
+        "footer": {
+          "anyOf": [
+            { "type": "string" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "order": {
+                  "type": ["string", "null"],
+                  "enum": ["pre", "post", null]
+                },
+                "handler": { "type": "string" }
+              },
+              "required": ["handler"]
+            }
+          ],
+          "description": "A hook in a function or an object form with additional properties.",
+          "markdownDescription": "A hook in a function or an object form with additional properties."
+        },
+        "intro": {
+          "anyOf": [
+            { "type": "string" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "order": {
+                  "type": ["string", "null"],
+                  "enum": ["pre", "post", null]
+                },
+                "handler": { "type": "string" }
+              },
+              "required": ["handler"]
+            }
+          ],
+          "description": "A hook in a function or an object form with additional properties.",
+          "markdownDescription": "A hook in a function or an object form with additional properties."
+        },
+        "outro": {
+          "anyOf": [
+            { "type": "string" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "order": {
+                  "type": ["string", "null"],
+                  "enum": ["pre", "post", null]
+                },
+                "handler": { "type": "string" }
+              },
+              "required": ["handler"]
+            }
+          ],
+          "description": "A hook in a function or an object form with additional properties.",
+          "markdownDescription": "A hook in a function or an object form with additional properties."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the plugin, for use in error messages and logs.",
+          "markdownDescription": "The name of the plugin, for use in error messages and logs."
+        },
+        "version": {
+          "type": "string",
+          "description": "The version of the plugin, for use in inter-plugin communication scenarios.",
+          "markdownDescription": "The version of the plugin, for use in inter-plugin communication scenarios."
+        },
+        "api": {
+          "description": "Used for inter-plugin communication.",
+          "markdownDescription": "Used for inter-plugin communication."
+        }
+      },
+      "required": ["name"],
+      "description": "A tsdown-aware plugin. Extends Rolldown's  {@linkcode  Plugin }  with tsdown-specific lifecycle hooks.\n\nPlugins that only use Rolldown's own lifecycle continue to work unchanged; tsdown detects these optional methods via runtime duck-typing.",
+      "markdownDescription": "A tsdown-aware plugin. Extends Rolldown's  {@linkcode  Plugin }  with\ntsdown-specific lifecycle hooks.\n\nPlugins that only use Rolldown's own lifecycle continue to work unchanged;\ntsdown detects these optional methods via runtime duck-typing."
+    },
+    "TsdownPluginOption<any>": {
+      "$ref": "#/definitions/Awaitable<(TsdownPlugin<any>|alias-1404212539-109819-109894-1404212539-0-138970<any>|structure-595204141-2704-2721-595204141-2658-2791-595204141-2647-2793-595204141-2283-2793-595204141-0-3115<any>|undefined|null|void|false|alias-595204141-2283-2793-595204141-0-3115<any>[])>",
+      "description": "A tsdown plugin slot — accepts tsdown plugins, any Rolldown plugin form, `null`/`undefined`/`false`,  {@linkcode  Promise promises } , and nested arrays. Mirrors Rolldown's  {@linkcode  RolldownPluginOption }  but with  {@linkcode  TsdownPlugin }  as the atom so that tsdown-specific hooks are type-checked.",
+      "markdownDescription": "A tsdown plugin slot — accepts tsdown plugins, any Rolldown plugin form,\n`null`/`undefined`/`false`,  {@linkcode  Promise promises } , and\nnested arrays. Mirrors Rolldown's  {@linkcode  RolldownPluginOption }  but with\n {@linkcode  TsdownPlugin }  as the atom so that tsdown-specific hooks are\ntype-checked."
+    },
+    "Awaitable<(TsdownPlugin<any>|alias-1404212539-109819-109894-1404212539-0-138970<any>|structure-595204141-2704-2721-595204141-2658-2791-595204141-2647-2793-595204141-2283-2793-595204141-0-3115<any>|undefined|null|void|false|alias-595204141-2283-2793-595204141-0-3115<any>[])>": {
+      "anyOf": [
+        { "$ref": "#/definitions/TsdownPlugin<any>" },
+        {
+          "type": "object",
+          "properties": {
+            "onLog": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "order": {
+                  "type": ["string", "null"],
+                  "enum": ["pre", "post", null]
+                }
+              },
+              "description": "A hook in a function or an object form with additional properties.",
+              "markdownDescription": "A hook in a function or an object form with additional properties."
+            },
+            "outputOptions": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "order": {
+                  "type": ["string", "null"],
+                  "enum": ["pre", "post", null]
+                }
+              },
+              "description": "A hook in a function or an object form with additional properties.",
+              "markdownDescription": "A hook in a function or an object form with additional properties."
+            },
+            "augmentChunkHash": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "order": {
+                  "type": ["string", "null"],
+                  "enum": ["pre", "post", null]
+                }
+              },
+              "description": "A hook in a function or an object form with additional properties.",
+              "markdownDescription": "A hook in a function or an object form with additional properties."
+            },
+            "banner": {
+              "anyOf": [
+                { "type": "string" },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "order": {
+                      "type": ["string", "null"],
+                      "enum": ["pre", "post", null]
+                    },
+                    "handler": { "type": "string" }
+                  },
+                  "required": ["handler"]
+                }
+              ],
+              "description": "A hook in a function or an object form with additional properties.",
+              "markdownDescription": "A hook in a function or an object form with additional properties."
+            },
+            "footer": {
+              "anyOf": [
+                { "type": "string" },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "order": {
+                      "type": ["string", "null"],
+                      "enum": ["pre", "post", null]
+                    },
+                    "handler": { "type": "string" }
+                  },
+                  "required": ["handler"]
+                }
+              ],
+              "description": "A hook in a function or an object form with additional properties.",
+              "markdownDescription": "A hook in a function or an object form with additional properties."
+            },
+            "intro": {
+              "anyOf": [
+                { "type": "string" },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "order": {
+                      "type": ["string", "null"],
+                      "enum": ["pre", "post", null]
+                    },
+                    "handler": { "type": "string" }
+                  },
+                  "required": ["handler"]
+                }
+              ],
+              "description": "A hook in a function or an object form with additional properties.",
+              "markdownDescription": "A hook in a function or an object form with additional properties."
+            },
+            "outro": {
+              "anyOf": [
+                { "type": "string" },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "order": {
+                      "type": ["string", "null"],
+                      "enum": ["pre", "post", null]
+                    },
+                    "handler": { "type": "string" }
+                  },
+                  "required": ["handler"]
+                }
+              ],
+              "description": "A hook in a function or an object form with additional properties.",
+              "markdownDescription": "A hook in a function or an object form with additional properties."
+            },
+            "name": {
+              "type": "string",
+              "description": "The name of the plugin, for use in error messages and logs.",
+              "markdownDescription": "The name of the plugin, for use in error messages and logs."
+            },
+            "version": {
+              "type": "string",
+              "description": "The version of the plugin, for use in inter-plugin communication scenarios.",
+              "markdownDescription": "The version of the plugin, for use in inter-plugin communication scenarios."
+            },
+            "api": {
+              "description": "Used for inter-plugin communication.",
+              "markdownDescription": "Used for inter-plugin communication."
+            }
+          },
+          "additionalProperties": false,
+          "required": ["name"],
+          "description": "The Plugin interface.\n\nSee [Plugin API document](https://rolldown.rs/apis/plugin-api) for details.",
+          "markdownDescription": "The Plugin interface.\n\nSee [Plugin API document](https://rolldown.rs/apis/plugin-api) for details."
+        },
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "enum": [
+                "builtin:bundle-analyzer",
+                "builtin:esm-external-require",
+                "builtin:isolated-declaration",
+                "builtin:replace",
+                "builtin:vite-alias",
+                "builtin:vite-build-import-analysis",
+                "builtin:vite-dynamic-import-vars",
+                "builtin:vite-import-glob",
+                "builtin:vite-json",
+                "builtin:vite-load-fallback",
+                "builtin:vite-manifest",
+                "builtin:vite-module-preload-polyfill",
+                "builtin:vite-react-refresh-wrapper",
+                "builtin:vite-reporter",
+                "builtin:vite-resolve",
+                "builtin:vite-transform",
+                "builtin:vite-wasm-fallback",
+                "builtin:vite-web-worker-post",
+                "builtin:oxc-runtime"
+              ]
+            },
+            "_options": {},
+            "enforce": {
+              "type": "string",
+              "enum": ["pre", "post"],
+              "description": "Vite-specific option to control plugin ordering",
+              "markdownDescription": "Vite-specific option to control plugin ordering"
+            }
+          },
+          "required": ["name"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "_parallel": {
+              "type": "object",
+              "properties": { "fileUrl": { "type": "string" }, "options": {} },
+              "required": ["fileUrl", "options"],
+              "additionalProperties": false
+            }
+          },
+          "required": ["_parallel"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": { "name": { "type": "string" } },
+          "required": ["name"],
+          "additionalProperties": false
+        },
+        { "not": {} },
+        { "type": "null" },
+        { "type": "null" },
+        { "type": "boolean", "const": false },
+        {
+          "type": "array",
+          "items": { "$ref": "#/definitions/TsdownPluginOption<any>" }
+        }
+      ]
+    },
+    "alias-1404212539-109894-110030-1404212539-0-138970": {
       "anyOf": [
         {
           "type": "object",
@@ -4978,9 +5407,15 @@
         {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/alias-1803000291-108819-108955-1803000291-0-137895"
+            "$ref": "#/definitions/alias-1404212539-109894-110030-1404212539-0-138970"
           }
         }
+      ]
+    },
+    "Arrayable<Format>": {
+      "anyOf": [
+        { "$ref": "#/definitions/Format" },
+        { "type": "array", "items": { "$ref": "#/definitions/Format" } }
       ]
     },
     "Format": {
@@ -8201,7 +8636,7 @@
           "type": "number",
           "description": "Skip reporting compressed size for files larger than this size.",
           "markdownDescription": "Skip reporting compressed size for files larger than this size.",
-          "default": "1_000_000 // 1MB"
+          "default": "1_000_000 // 1 MB"
         }
       },
       "additionalProperties": false
@@ -8211,19 +8646,20 @@
       "properties": {
         "devExports": {
           "type": ["boolean", "string"],
-          "description": "Generate exports that link to source code during development.\n- string: add as a custom condition.\n- true: all conditions point to source files, and add dist exports to `publishConfig`.",
-          "markdownDescription": "Generate exports that link to source code during development.\n- string: add as a custom condition.\n- true: all conditions point to source files, and add dist exports to `publishConfig`."
+          "description": "Generate exports that link to source code during development.\n- `string`: add as a custom condition.\n- `true`: all conditions point to source files, and add `dist` exports to `publishConfig`.",
+          "markdownDescription": "Generate exports that link to source code during development.\n- `string`: add as a custom condition.\n- `true`: all conditions point to source files, and add `dist` exports to `publishConfig`."
         },
         "packageJson": {
           "type": "boolean",
-          "description": "Exports for package.json file.",
-          "markdownDescription": "Exports for package.json file.",
+          "description": "Generate `exports` for `package.json` file.",
+          "markdownDescription": "Generate `exports` for `package.json` file.",
           "default": true
         },
         "all": {
           "type": "boolean",
-          "description": "Exports for all files.",
-          "markdownDescription": "Exports for all files."
+          "description": "Generate `exports` for all files.",
+          "markdownDescription": "Generate `exports` for all files.",
+          "default": false
         },
         "exclude": {
           "type": "array",
@@ -8248,9 +8684,15 @@
         },
         "inlinedDependencies": {
           "type": "boolean",
-          "description": "Generate `inlinedDependencies` field in package.json. Lists dependencies that are physically inlined into the bundle with their exact versions.",
-          "markdownDescription": "Generate `inlinedDependencies` field in package.json.\nLists dependencies that are physically inlined into the bundle with their exact versions.",
+          "description": "Generate `inlinedDependencies` field in `package.json`. Lists dependencies that are physically inlined into the bundle with their exact versions.",
+          "markdownDescription": "Generate `inlinedDependencies` field in `package.json`.\nLists dependencies that are physically inlined into the bundle with their exact versions.",
           "default": true
+        },
+        "extensions": {
+          "type": "boolean",
+          "description": "Add file extensions to subpath export keys.\n\nWhen enabled, all subpath exports (except the root `\".\"`) will include a `.js` extension in the key (e.g., `\"./utils.js\"` instead of `\"./utils\"`).\n\nThis follows the Node.js recommendation for subpath exports:",
+          "markdownDescription": "Add file extensions to subpath export keys.\n\nWhen enabled, all subpath exports (except the root `\".\"`) will include\na `.js` extension in the key (e.g., `\"./utils.js\"` instead of `\"./utils\"`).\n\nThis follows the Node.js recommendation for subpath exports:",
+          "default": false
         },
         "bin": {
           "anyOf": [
@@ -8258,8 +8700,8 @@
             { "type": "string" },
             { "type": "object", "additionalProperties": { "type": "string" } }
           ],
-          "description": "Auto-generate the `bin` field in package.json.\n\n- `true`: Auto-detect entry chunks with shebangs. Uses package name (without scope) as bin name.   Errors if multiple shebang entries are found.\n- `string`: Source file path to use as the bin entry. Bin name defaults to package name (without scope).\n- `Record<string, string>`: Map of bin command names to source file paths.",
-          "markdownDescription": "Auto-generate the `bin` field in package.json.\n\n- `true`: Auto-detect entry chunks with shebangs. Uses package name (without scope) as bin name.\n  Errors if multiple shebang entries are found.\n- `string`: Source file path to use as the bin entry. Bin name defaults to package name (without scope).\n- `Record<string, string>`: Map of bin command names to source file paths."
+          "description": "Generate the `bin` field in `package.json` for CLI executables.\n\nControls how command names are mapped to built entry files:\n\n- `true`: Auto-detect a single CLI entry from entry chunks that contain   a shebang (for example, `#!/usr/bin/env node`). The command name is   derived from the package name without its scope. Throws if multiple   shebang entries are found. Warns and skips generation if none are found.\n- `string`: Use the given source file path (relative to `cwd`) as the   CLI entry. The command name is derived from the package name without   its scope. Warns if the source file does not contain a shebang.\n- `Record<string, string>`: Explicitly map command names to source file   paths (relative to `cwd`). Warns for each source file that does not   contain a shebang.\n\nWhen  {@link  ExportsOptions.devExports }  is enabled, the `bin` field in `package.json` points to source files during local development, while `publishConfig.bin` points to built output paths for publishing.",
+          "markdownDescription": "Generate the `bin` field in `package.json` for CLI executables.\n\nControls how command names are mapped to built entry files:\n\n- `true`: Auto-detect a single CLI entry from entry chunks that contain\n  a shebang (for example, `#!/usr/bin/env node`). The command name is\n  derived from the package name without its scope. Throws if multiple\n  shebang entries are found. Warns and skips generation if none are found.\n- `string`: Use the given source file path (relative to `cwd`) as the\n  CLI entry. The command name is derived from the package name without\n  its scope. Warns if the source file does not contain a shebang.\n- `Record<string, string>`: Explicitly map command names to source file\n  paths (relative to `cwd`). Warns for each source file that does not\n  contain a shebang.\n\nWhen  {@link  ExportsOptions.devExports }  is enabled, the `bin` field in\n`package.json` points to source files during local development, while\n`publishConfig.bin` points to built output paths for publishing."
         }
       },
       "additionalProperties": false
@@ -8311,8 +8753,26 @@
           "type": "array",
           "minItems": 2,
           "items": [
-            { "description": "Failed to correctly infer type" },
-            { "description": "Failed to correctly infer type" }
+            {
+              "type": "object",
+              "properties": {
+                "publint": {
+                  "$comment": "(options?: Options) => Promise<Result>"
+                }
+              },
+              "required": ["publint"],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "formatMessage": {
+                  "$comment": "(\n  msg: Message,\n  pkg: Record<string, any>,\n  opts?: FormatMessageOptions) => string | undefined"
+                }
+              },
+              "required": ["formatMessage"],
+              "additionalProperties": false
+            }
           ],
           "maxItems": 2
         }
@@ -8350,7 +8810,19 @@
           "description": "Whether to automatically consider all published files as entrypoints in the absence of any other detected or configured entrypoints.",
           "markdownDescription": "Whether to automatically consider all published files as entrypoints\nin the absence of any other detected or configured entrypoints."
         },
-        "module": { "description": "Failed to correctly infer type" },
+        "module": {
+          "type": "object",
+          "properties": {
+            "createPackageFromTarballData": {
+              "$comment": "(tarball: Uint8Array) => Package"
+            },
+            "checkPackage": {
+              "$comment": "(pkg: Package, options?: CheckPackageOptions) => Promise<CheckResult>"
+            }
+          },
+          "required": ["createPackageFromTarballData", "checkPackage"],
+          "additionalProperties": false
+        },
         "profile": {
           "type": "string",
           "enum": ["strict", "node16", "esm-only"],
@@ -8367,9 +8839,32 @@
         },
         "ignoreRules": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "anyOf": [
+              { "type": "string" },
+              {
+                "type": "string",
+                "enum": [
+                  "no-resolution",
+                  "untyped-resolution",
+                  "false-cjs",
+                  "false-esm",
+                  "cjs-resolves-to-esm",
+                  "fallback-condition",
+                  "cjs-only-exports-default",
+                  "named-exports",
+                  "false-export-default",
+                  "missing-export-equals",
+                  "unexpected-module-syntax",
+                  "internal-resolution-error"
+                ]
+              }
+            ]
+          },
           "description": "List of problem types to ignore by rule name.\n\nThe available values are:\n- `no-resolution`\n- `untyped-resolution`\n- `false-cjs`\n- `false-esm`\n- `cjs-resolves-to-esm`\n- `fallback-condition`\n- `cjs-only-exports-default`\n- `named-exports`\n- `false-export-default`\n- `missing-export-equals`\n- `unexpected-module-syntax`\n- `internal-resolution-error`",
-          "markdownDescription": "List of problem types to ignore by rule name.\n\nThe available values are:\n- `no-resolution`\n- `untyped-resolution`\n- `false-cjs`\n- `false-esm`\n- `cjs-resolves-to-esm`\n- `fallback-condition`\n- `cjs-only-exports-default`\n- `named-exports`\n- `false-export-default`\n- `missing-export-equals`\n- `unexpected-module-syntax`\n- `internal-resolution-error`"
+          "markdownDescription": "List of problem types to ignore by rule name.\n\nThe available values are:\n- `no-resolution`\n- `untyped-resolution`\n- `false-cjs`\n- `false-esm`\n- `cjs-resolves-to-esm`\n- `fallback-condition`\n- `cjs-only-exports-default`\n- `named-exports`\n- `false-export-default`\n- `missing-export-equals`\n- `unexpected-module-syntax`\n- `internal-resolution-error`",
+          "default": [],
+          "uniqueItems": true
         }
       },
       "additionalProperties": false
@@ -8462,7 +8957,7 @@
       },
       "additionalProperties": false
     },
-    "alias-1803000291-109013-109155-1803000291-0-137895": {
+    "alias-1404212539-110088-110230-1404212539-0-138970": {
       "anyOf": [
         {
           "type": "object",
@@ -8608,7 +9103,7 @@
         {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/alias-1803000291-109013-109155-1803000291-0-137895"
+            "$ref": "#/definitions/alias-1404212539-110088-110230-1404212539-0-138970"
           }
         }
       ]
@@ -9001,8 +9496,26 @@
               "type": "array",
               "minItems": 2,
               "items": [
-                { "description": "Failed to correctly infer type" },
-                { "description": "Failed to correctly infer type" }
+                {
+                  "type": "object",
+                  "properties": {
+                    "publint": {
+                      "$comment": "(options?: Options) => Promise<Result>"
+                    }
+                  },
+                  "required": ["publint"],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "formatMessage": {
+                      "$comment": "(\n  msg: Message,\n  pkg: Record<string, any>,\n  opts?: FormatMessageOptions) => string | undefined"
+                    }
+                  },
+                  "required": ["formatMessage"],
+                  "additionalProperties": false
+                }
               ],
               "maxItems": 2
             }
@@ -9053,7 +9566,19 @@
               "description": "Whether to automatically consider all published files as entrypoints in the absence of any other detected or configured entrypoints.",
               "markdownDescription": "Whether to automatically consider all published files as entrypoints\nin the absence of any other detected or configured entrypoints."
             },
-            "module": { "description": "Failed to correctly infer type" },
+            "module": {
+              "type": "object",
+              "properties": {
+                "createPackageFromTarballData": {
+                  "$comment": "(tarball: Uint8Array) => Package"
+                },
+                "checkPackage": {
+                  "$comment": "(pkg: Package, options?: CheckPackageOptions) => Promise<CheckResult>"
+                }
+              },
+              "required": ["createPackageFromTarballData", "checkPackage"],
+              "additionalProperties": false
+            },
             "profile": {
               "type": "string",
               "enum": ["strict", "node16", "esm-only"],
@@ -9070,9 +9595,32 @@
             },
             "ignoreRules": {
               "type": "array",
-              "items": { "type": "string" },
+              "items": {
+                "anyOf": [
+                  { "type": "string" },
+                  {
+                    "type": "string",
+                    "enum": [
+                      "no-resolution",
+                      "untyped-resolution",
+                      "false-cjs",
+                      "false-esm",
+                      "cjs-resolves-to-esm",
+                      "fallback-condition",
+                      "cjs-only-exports-default",
+                      "named-exports",
+                      "false-export-default",
+                      "missing-export-equals",
+                      "unexpected-module-syntax",
+                      "internal-resolution-error"
+                    ]
+                  }
+                ]
+              },
               "description": "List of problem types to ignore by rule name.\n\nThe available values are:\n- `no-resolution`\n- `untyped-resolution`\n- `false-cjs`\n- `false-esm`\n- `cjs-resolves-to-esm`\n- `fallback-condition`\n- `cjs-only-exports-default`\n- `named-exports`\n- `false-export-default`\n- `missing-export-equals`\n- `unexpected-module-syntax`\n- `internal-resolution-error`",
-              "markdownDescription": "List of problem types to ignore by rule name.\n\nThe available values are:\n- `no-resolution`\n- `untyped-resolution`\n- `false-cjs`\n- `false-esm`\n- `cjs-resolves-to-esm`\n- `fallback-condition`\n- `cjs-only-exports-default`\n- `named-exports`\n- `false-export-default`\n- `missing-export-equals`\n- `unexpected-module-syntax`\n- `internal-resolution-error`"
+              "markdownDescription": "List of problem types to ignore by rule name.\n\nThe available values are:\n- `no-resolution`\n- `untyped-resolution`\n- `false-cjs`\n- `false-esm`\n- `cjs-resolves-to-esm`\n- `fallback-condition`\n- `cjs-only-exports-default`\n- `named-exports`\n- `false-export-default`\n- `missing-export-equals`\n- `unexpected-module-syntax`\n- `internal-resolution-error`",
+              "default": [],
+              "uniqueItems": true
             }
           }
         }
@@ -9109,7 +9657,7 @@
               "type": "number",
               "description": "Skip reporting compressed size for files larger than this size.",
               "markdownDescription": "Skip reporting compressed size for files larger than this size.",
-              "default": "1_000_000 // 1MB"
+              "default": "1_000_000 // 1 MB"
             }
           }
         }
@@ -9132,19 +9680,20 @@
             },
             "devExports": {
               "type": ["boolean", "string"],
-              "description": "Generate exports that link to source code during development.\n- string: add as a custom condition.\n- true: all conditions point to source files, and add dist exports to `publishConfig`.",
-              "markdownDescription": "Generate exports that link to source code during development.\n- string: add as a custom condition.\n- true: all conditions point to source files, and add dist exports to `publishConfig`."
+              "description": "Generate exports that link to source code during development.\n- `string`: add as a custom condition.\n- `true`: all conditions point to source files, and add `dist` exports to `publishConfig`.",
+              "markdownDescription": "Generate exports that link to source code during development.\n- `string`: add as a custom condition.\n- `true`: all conditions point to source files, and add `dist` exports to `publishConfig`."
             },
             "packageJson": {
               "type": "boolean",
-              "description": "Exports for package.json file.",
-              "markdownDescription": "Exports for package.json file.",
+              "description": "Generate `exports` for `package.json` file.",
+              "markdownDescription": "Generate `exports` for `package.json` file.",
               "default": true
             },
             "all": {
               "type": "boolean",
-              "description": "Exports for all files.",
-              "markdownDescription": "Exports for all files."
+              "description": "Generate `exports` for all files.",
+              "markdownDescription": "Generate `exports` for all files.",
+              "default": false
             },
             "exclude": {
               "type": "array",
@@ -9169,9 +9718,15 @@
             },
             "inlinedDependencies": {
               "type": "boolean",
-              "description": "Generate `inlinedDependencies` field in package.json. Lists dependencies that are physically inlined into the bundle with their exact versions.",
-              "markdownDescription": "Generate `inlinedDependencies` field in package.json.\nLists dependencies that are physically inlined into the bundle with their exact versions.",
+              "description": "Generate `inlinedDependencies` field in `package.json`. Lists dependencies that are physically inlined into the bundle with their exact versions.",
+              "markdownDescription": "Generate `inlinedDependencies` field in `package.json`.\nLists dependencies that are physically inlined into the bundle with their exact versions.",
               "default": true
+            },
+            "extensions": {
+              "type": "boolean",
+              "description": "Add file extensions to subpath export keys.\n\nWhen enabled, all subpath exports (except the root `\".\"`) will include a `.js` extension in the key (e.g., `\"./utils.js\"` instead of `\"./utils\"`).\n\nThis follows the Node.js recommendation for subpath exports:",
+              "markdownDescription": "Add file extensions to subpath export keys.\n\nWhen enabled, all subpath exports (except the root `\".\"`) will include\na `.js` extension in the key (e.g., `\"./utils.js\"` instead of `\"./utils\"`).\n\nThis follows the Node.js recommendation for subpath exports:",
+              "default": false
             },
             "bin": {
               "anyOf": [
@@ -9182,8 +9737,8 @@
                   "additionalProperties": { "type": "string" }
                 }
               ],
-              "description": "Auto-generate the `bin` field in package.json.\n\n- `true`: Auto-detect entry chunks with shebangs. Uses package name (without scope) as bin name.   Errors if multiple shebang entries are found.\n- `string`: Source file path to use as the bin entry. Bin name defaults to package name (without scope).\n- `Record<string, string>`: Map of bin command names to source file paths.",
-              "markdownDescription": "Auto-generate the `bin` field in package.json.\n\n- `true`: Auto-detect entry chunks with shebangs. Uses package name (without scope) as bin name.\n  Errors if multiple shebang entries are found.\n- `string`: Source file path to use as the bin entry. Bin name defaults to package name (without scope).\n- `Record<string, string>`: Map of bin command names to source file paths."
+              "description": "Generate the `bin` field in `package.json` for CLI executables.\n\nControls how command names are mapped to built entry files:\n\n- `true`: Auto-detect a single CLI entry from entry chunks that contain   a shebang (for example, `#!/usr/bin/env node`). The command name is   derived from the package name without its scope. Throws if multiple   shebang entries are found. Warns and skips generation if none are found.\n- `string`: Use the given source file path (relative to `cwd`) as the   CLI entry. The command name is derived from the package name without   its scope. Warns if the source file does not contain a shebang.\n- `Record<string, string>`: Explicitly map command names to source file   paths (relative to `cwd`). Warns for each source file that does not   contain a shebang.\n\nWhen  {@link  ExportsOptions.devExports }  is enabled, the `bin` field in `package.json` points to source files during local development, while `publishConfig.bin` points to built output paths for publishing.",
+              "markdownDescription": "Generate the `bin` field in `package.json` for CLI executables.\n\nControls how command names are mapped to built entry files:\n\n- `true`: Auto-detect a single CLI entry from entry chunks that contain\n  a shebang (for example, `#!/usr/bin/env node`). The command name is\n  derived from the package name without its scope. Throws if multiple\n  shebang entries are found. Warns and skips generation if none are found.\n- `string`: Use the given source file path (relative to `cwd`) as the\n  CLI entry. The command name is derived from the package name without\n  its scope. Warns if the source file does not contain a shebang.\n- `Record<string, string>`: Explicitly map command names to source file\n  paths (relative to `cwd`). Warns for each source file that does not\n  contain a shebang.\n\nWhen  {@link  ExportsOptions.devExports }  is enabled, the `bin` field in\n`package.json` points to source files during local development, while\n`publishConfig.bin` points to built output paths for publishing."
             }
           }
         }
@@ -9385,10 +9940,7 @@
       "type": "object",
       "properties": {
         "from": {
-          "anyOf": [
-            { "type": "string" },
-            { "type": "array", "items": { "type": "string" } }
-          ],
+          "$ref": "#/definitions/Arrayable<string>",
           "description": "Source path or glob pattern.",
           "markdownDescription": "Source path or glob pattern."
         },
@@ -9502,8 +10054,9 @@
       "properties": {
         "include": {
           "anyOf": [
-            { "$ref": "#/definitions/Arrayable<string>" },
-            { "type": "string", "const": "auto" }
+            { "type": "string", "const": "auto" },
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
           ],
           "description": "Workspace directories. Glob patterns are supported.\n- `auto`: Automatically detect `package.json` files in the workspace.",
           "markdownDescription": "Workspace directories. Glob patterns are supported.\n- `auto`: Automatically detect `package.json` files in the workspace.",

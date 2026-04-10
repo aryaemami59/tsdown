@@ -3,7 +3,10 @@
  */
 // #region Interfaces
 export interface AttwOptions extends CheckPackageOptions {
-  module?: typeof Attw;
+  module?: {
+    createPackageFromTarballData: typeof createPackageFromTarballData;
+    checkPackage: typeof checkPackage;
+  };
   profile?: "strict" | "node16" | "esm-only";
   level?: "error" | "warn";
   ignoreRules?: ("no-resolution" | "untyped-resolution" | "false-cjs" | "false-esm" | "cjs-resolves-to-esm" | "fallback-condition" | "cjs-only-exports-default" | "named-exports" | "false-export-default" | "missing-export-equals" | "unexpected-module-syntax" | "internal-resolution-error" | (string & {}))[];
@@ -18,7 +21,7 @@ export interface ChunkAddonObject {
   dts?: string;
 }
 export interface CopyEntry {
-  from: string | string[];
+  from: Arrayable<string>;
   to?: string;
   flatten?: boolean;
   verbose?: boolean;
@@ -86,7 +89,11 @@ export interface PackageJsonWithPath extends PackageJson {
   packageJsonPath: string;
 }
 export interface PublintOptions extends Omit<Options, "pack" | "pkgDir"> {
-  module?: [Publint, PublintUtils];
+  module?: [{
+    publint: typeof publint;
+  }, {
+    formatMessage: typeof formatMessage;
+  }];
 }
 export interface ReportOptions {
   gzip?: boolean;
@@ -120,11 +127,11 @@ export interface TsdownBundle extends AsyncDisposable {
   inlinedDeps: Map<string, Set<string>>;
 }
 export interface TsdownHooks {
-  "build:prepare": (_: BuildContext) => void | Promise<void>;
-  "build:before": (_: BuildContext & RolldownContext) => void | Promise<void>;
+  "build:prepare": (_: BuildContext) => Awaitable<void>;
+  "build:before": (_: BuildContext & RolldownContext) => Awaitable<void>;
   "build:done": (_: BuildContext & {
     chunks: RolldownChunk[];
-  }) => void | Promise<void>;
+  }) => Awaitable<void>;
 }
 export interface TsdownPlugin<A = any> extends Plugin<A> {
   tsdownConfig?: (_: UserConfig, _: InlineConfig) => Awaitable<UserConfig | void | null>;
@@ -140,10 +147,10 @@ export interface UserConfig {
   alias?: Record<string, string>;
   tsconfig?: string | boolean;
   platform?: "node" | "neutral" | "browser";
-  target?: string | string[] | false;
+  target?: Arrayable<string> | false;
   env?: Record<string, any>;
   envFile?: string;
-  envPrefix?: string | string[];
+  envPrefix?: Arrayable<string>;
   define?: Record<string, string>;
   shims?: boolean;
   treeshake?: boolean | TreeshakingOptions;
@@ -157,7 +164,7 @@ export interface UserConfig {
   inputOptions?: InputOptions | ((_: InputOptions, _: NormalizedFormat, _: {
     cjsDts: boolean;
   }) => Awaitable<InputOptions | void | null>);
-  format?: Format | Format[] | Partial<Record<Format, Partial<ResolvedConfig>>>;
+  format?: Arrayable<Format> | Partial<Record<Format, Partial<ResolvedConfig>>>;
   globalName?: string;
   outDir?: string;
   write?: boolean;
@@ -185,7 +192,7 @@ export interface UserConfig {
   watch?: boolean | Arrayable<string>;
   ignoreWatch?: Arrayable<string | RegExp>;
   devtools?: WithEnabled<DevtoolsOptions>;
-  onSuccess?: string | ((_: ResolvedConfig, _: AbortSignal) => void | Promise<void>);
+  onSuccess?: string | ((_: ResolvedConfig, _: AbortSignal) => Awaitable<void>);
   dts?: WithEnabled<DtsOptions>;
   unused?: WithEnabled<UnusedOptions>;
   publint?: WithEnabled<PublintOptions>;
@@ -221,7 +228,7 @@ export type Format = ModuleFormat;
 export type NoExternalFn = (_: string, _: string | undefined) => boolean | null | undefined | void;
 export type NormalizedFormat = InternalModuleFormat;
 export type OutExtensionFactory = (_: OutExtensionContext) => OutExtensionObject | undefined;
-export type PackageType = "module" | "commonjs" | undefined;
+export type PackageType = NonNullable<PackageJson["type"]> | undefined;
 export type ResolvedConfig = Overwrite<MarkPartial<Omit<UserConfig, "workspace" | "fromVite" | "publicDir" | "bundle" | "injectStyle" | "removeNodeProtocol" | "external" | "noExternal" | "inlineOnly" | "skipNodeModulesBundle" | "logLevel" | "failOnWarn" | "customLogger" | "envFile" | "envPrefix">, "globalName" | "inputOptions" | "outputOptions" | "minify" | "define" | "alias" | "onSuccess" | "outExtensions" | "hooks" | "copy" | "loader" | "name" | "banner" | "footer" | "checks" | "css">, {
   entry: Record<string, string>;
   rawEntry?: TsdownInputOption;

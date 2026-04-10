@@ -13,6 +13,7 @@ catalogs:
     '@clack/prompts': ^1.7.0
     giget: ^3.3.0
   dev:
+    '@sourcemeta/jsonschema': ^16.1.0
     '@sxzz/eslint-config': ^8.2.1
     '@sxzz/prettier-config': ^2.3.1
     '@sxzz/test-utils': ^0.5.18

@@ -23,7 +23,7 @@ export async function readPackageJson(
   }
 }
 
-export type PackageType = 'module' | 'commonjs' | undefined
+export type PackageType = NonNullable<PackageJson['type']> | undefined
 export function getPackageType(pkg: PackageJson | undefined): PackageType {
   if (pkg?.type) {
     if (!['module', 'commonjs'].includes(pkg.type)) {

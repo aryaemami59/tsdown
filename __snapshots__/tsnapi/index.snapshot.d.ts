@@ -3,7 +3,10 @@
  */
 // #region Interfaces
 export interface AttwOptions extends CheckPackageOptions {
-  module?: typeof Attw;
+  module?: {
+    createPackageFromTarballData: typeof createPackageFromTarballData;
+    checkPackage: typeof checkPackage;
+  };
   profile?: "strict" | "node16" | "esm-only";
   level?: "error" | "warn";
   ignoreRules?: ("no-resolution" | "untyped-resolution" | "false-cjs" | "false-esm" | "cjs-resolves-to-esm" | "fallback-condition" | "cjs-only-exports-default" | "named-exports" | "false-export-default" | "missing-export-equals" | "unexpected-module-syntax" | "internal-resolution-error" | (string & {}))[];
@@ -86,7 +89,11 @@ export interface PackageJsonWithPath extends PackageJson {
   packageJsonPath: string;
 }
 export interface PublintOptions extends Omit<Options, "pack" | "pkgDir"> {
-  module?: [Publint, PublintUtils];
+  module?: [{
+    publint: typeof publint;
+  }, {
+    formatMessage: typeof formatMessage;
+  }];
 }
 export interface ReportOptions {
   gzip?: boolean;

@@ -18,13 +18,16 @@ const inputFilePath = path.join(ROOT_DIR, 'src', 'index.ts')
 const rootNames = globSync(['src/**/*.ts'], {
   cwd: ROOT_DIR,
   exclude: [
-    'src/**/*.test.ts*',
-    '**/temp',
+    '__snapshots__/tsnapi/**',
+    '**/dist',
     '**/fixtures',
     '**/node_modules',
-    '**/dist',
-    'packages/**',
+    '**/temp',
+    'dist/**',
     'docs/**',
+    'packages/**',
+    'src/**/*.spec.ts*',
+    'src/**/*.test.ts*',
     'tests/**',
   ],
 })
@@ -107,14 +110,14 @@ const config = {
 
 const objectConfig = Object.entries(entries).map(([, output]) => ({
   ...config,
-  type: output.type,
-  path: inputFilePath,
   outputFile: path.join(SCHEMAS_DIR, `${output.outputFile}.schema.json`),
+  path: inputFilePath,
+  type: output.type,
 }))
 
 const schemaGenerators = objectConfig.map(({ outputFile, ...config }) => ({
-  outputFile,
   config,
+  outputFile,
   schemaGenerator: createGenerator(config),
 }))
 

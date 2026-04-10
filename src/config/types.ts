@@ -150,7 +150,6 @@ export type CIOption = 'ci-only' | 'local-only'
 
 export type WithEnabled<T> =
   | boolean
-  // | undefined
   | CIOption
   | (T & {
       /**

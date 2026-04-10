@@ -3,18 +3,17 @@ import { createDebug } from 'obug'
 import { importWithError } from '../../utils/general.ts'
 import type { ResolvedConfig } from '../../config/index.ts'
 import type { Buffer } from 'node:buffer'
-import type * as publintModule from 'publint'
-import type { Options } from 'publint'
-import type * as publintUtils from 'publint/utils'
-
-type Publint = typeof publintModule
-type PublintUtils = typeof publintUtils
+import type { Options, publint as publintFunction } from 'publint'
+import type { formatMessage as formatMessageFunction } from 'publint/utils'
 
 const debug = createDebug('tsdown:publint')
 const label = dim`[publint]`
 
 export interface PublintOptions extends Omit<Options, 'pack' | 'pkgDir'> {
-  module?: [Publint, PublintUtils]
+  module?: [
+    { publint: typeof publintFunction },
+    { formatMessage: typeof formatMessageFunction },
+  ]
 }
 
 export async function publint(
@@ -34,10 +33,11 @@ export async function publint(
   debug('Running publint')
 
   const { publint } =
-    options.publint.module?.[0] || (await importWithError<Publint>('publint'))
+    options.publint.module?.[0] ||
+    (await importWithError<typeof import('publint')>('publint'))
   const { formatMessage } =
     options.publint.module?.[1] ||
-    (await importWithError<PublintUtils>('publint/utils'))
+    (await importWithError<typeof import('publint/utils')>('publint/utils'))
 
   const { messages } = await publint({
     ...options.publint,

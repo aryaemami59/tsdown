@@ -157,7 +157,6 @@ export type CIOption = 'ci-only' | 'local-only'
 
 export type WithEnabled<T> =
   | boolean
-  // | undefined
   | CIOption
   | (T & {
       /**
@@ -258,7 +257,7 @@ export interface UserConfig {
    * { "target": false }
    * ```
    */
-  target?: string | string[] | false
+  target?: Arrayable<string> | false
 
   /**
    * Compile-time env variables, which can be accessed via `import.meta.env` or `process.env`.
@@ -283,7 +282,7 @@ export interface UserConfig {
    * When loading env variables from `envFile`, only include variables with these prefixes.
    * @default 'TSDOWN_'
    */
-  envPrefix?: string | string[]
+  envPrefix?: Arrayable<string>
   define?: Record<string, string>
 
   /**
@@ -411,7 +410,7 @@ export interface UserConfig {
    *
    * @default 'esm'
    */
-  format?: Format | Format[] | Partial<Record<Format, Partial<ResolvedConfig>>>
+  format?: Arrayable<Format> | Partial<Record<Format, Partial<ResolvedConfig>>>
   globalName?: string
   /**
    * @default 'dist'
@@ -581,7 +580,7 @@ export interface UserConfig {
    */
   onSuccess?:
     | string
-    | ((config: ResolvedConfig, signal: AbortSignal) => void | Promise<void>)
+    | ((config: ResolvedConfig, signal: AbortSignal) => Awaitable<void>)
 
   /**
    * Enables generation of TypeScript declaration files (`.d.ts`).

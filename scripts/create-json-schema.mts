@@ -1,7 +1,7 @@
 import { globSync } from 'node:fs'
 import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
-import { format, resolveConfig } from 'prettier'
+import { format, type Options } from 'prettier'
 import {
   createGenerator,
   DEFAULT_CONFIG,
@@ -18,13 +18,16 @@ const inputFilePath = path.join(ROOT_DIR, 'src', 'index.ts')
 const rootNames = globSync(['src/**/*.ts'], {
   cwd: ROOT_DIR,
   exclude: [
-    'src/**/*.test.ts*',
-    '**/temp',
+    '__snapshots__/tsnapi/**',
+    '**/dist',
     '**/fixtures',
     '**/node_modules',
-    '**/dist',
-    'packages/**',
+    '**/temp',
+    'dist/**',
     'docs/**',
+    'packages/**',
+    'src/**/*.spec.ts*',
+    'src/**/*.test.ts*',
     'tests/**',
   ],
 })
@@ -107,14 +110,14 @@ const config = {
 
 const objectConfig = Object.entries(entries).map(([, output]) => ({
   ...config,
-  type: output.type,
-  path: inputFilePath,
   outputFile: path.join(SCHEMAS_DIR, `${output.outputFile}.schema.json`),
+  path: inputFilePath,
+  type: output.type,
 }))
 
 const schemaGenerators = objectConfig.map(({ outputFile, ...config }) => ({
-  outputFile,
   config,
+  outputFile,
   schemaGenerator: createGenerator(config),
 }))
 
@@ -170,19 +173,23 @@ const schemas = schemaGenerators.map(
     ] as const,
 )
 
+const prettierOptions = {
+  endOfLine: 'lf',
+  objectWrap: 'collapse',
+  parser: 'json',
+  // printWidth: Number.POSITIVE_INFINITY,
+} as const satisfies Options
+
 const stringifiedSchemas = await Promise.all(
-  schemas.map(async ([outputFile, schema]) => {
-    const prettierConfig = await resolveConfig(outputFile, {
-      config: path.join(ROOT_DIR, 'package.json'),
+  schemas.map(async ([outputFile, generatedSchema]) => {
+    const stringifiedSchema = JSON.stringify(generatedSchema)
+
+    const formattedSchema = await format(stringifiedSchema, {
+      ...prettierOptions,
+      filepath: outputFile,
     })
 
-    return [
-      outputFile,
-      await format(JSON.stringify(schema), {
-        ...prettierConfig,
-        filepath: outputFile,
-      }),
-    ] as const
+    return [outputFile, formattedSchema] as const
   }),
 )
 

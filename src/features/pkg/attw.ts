@@ -31,6 +31,9 @@ const problemFlags: Record<ProblemKind, string> = {
 }
 
 export interface AttwOptions extends CheckPackageOptions {
+  /**
+   * @hidden
+   */
   module?: {
     createPackageFromTarballData: typeof createPackageFromTarballDataFunction
     checkPackage: typeof checkPackageFunction

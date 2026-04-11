@@ -8,6 +8,9 @@ import type { BuildOptions } from 'rolldown'
 
 export interface BuildContext {
   options: ResolvedConfig
+  /**
+   * @hidden
+   */
   hooks: Hookable<TsdownHooks>
 }
 

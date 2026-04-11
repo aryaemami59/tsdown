@@ -21,7 +21,7 @@ export interface ChunkAddonObject {
   dts?: string;
 }
 export interface CopyEntry {
-  from: string | string[];
+  from: Arrayable<string>;
   to?: string;
   flatten?: boolean;
   verbose?: boolean;
@@ -164,7 +164,7 @@ export interface UserConfig {
   inputOptions?: InputOptions | ((_: InputOptions, _: NormalizedFormat, _: {
     cjsDts: boolean;
   }) => Awaitable<InputOptions | void | null>);
-  format?: Format | Format[] | Partial<Record<Format, Partial<ResolvedConfig>>>;
+  format?: Arrayable<Format> | Partial<Record<Format, Partial<ResolvedConfig>>>;
   globalName?: string;
   outDir?: string;
   write?: boolean;
@@ -228,7 +228,7 @@ export type Format = ModuleFormat;
 export type NoExternalFn = (_: string, _: string | undefined) => boolean | null | undefined | void;
 export type NormalizedFormat = InternalModuleFormat;
 export type OutExtensionFactory = (_: OutExtensionContext) => OutExtensionObject | undefined;
-export type PackageType = "module" | "commonjs" | undefined;
+export type PackageType = NonNullable<PackageJson["type"]> | undefined;
 export type ResolvedConfig = Overwrite<MarkPartial<Omit<UserConfig, "workspace" | "fromVite" | "publicDir" | "bundle" | "injectStyle" | "removeNodeProtocol" | "external" | "noExternal" | "inlineOnly" | "skipNodeModulesBundle" | "logLevel" | "failOnWarn" | "customLogger" | "envFile" | "envPrefix">, "globalName" | "inputOptions" | "outputOptions" | "minify" | "define" | "alias" | "onSuccess" | "outExtensions" | "hooks" | "copy" | "loader" | "name" | "banner" | "footer" | "checks" | "css">, {
   entry: Record<string, string>;
   rawEntry?: TsdownInputOption;

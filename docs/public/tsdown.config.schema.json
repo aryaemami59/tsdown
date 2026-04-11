@@ -1759,8 +1759,7 @@
         },
         "format": {
           "anyOf": [
-            { "$ref": "#/definitions/Format" },
-            { "type": "array", "items": { "$ref": "#/definitions/Format" } },
+            { "$ref": "#/definitions/Arrayable<Format>" },
             {
               "type": "object",
               "properties": {
@@ -4492,7 +4491,8 @@
             "splitting": {
               "type": "boolean",
               "description": "Enable/disable CSS code splitting. When set to `false`, all CSS in the entire project will be extracted into a single CSS file named by  {@linkcode  fileName } . When set to `true`, CSS imported in async JS chunks will be preserved as chunks.\n\nDefaults to `false`, but if `unbundle` is `true`, it defaults to `true` to preserve chunk splitting.",
-              "markdownDescription": "Enable/disable CSS code splitting.\nWhen set to `false`, all CSS in the entire project will be extracted into\na single CSS file named by  {@linkcode  fileName } .\nWhen set to `true`, CSS imported in async JS chunks will be preserved as chunks.\n\nDefaults to `false`, but if `unbundle` is `true`, it defaults to `true` to preserve chunk splitting."
+              "markdownDescription": "Enable/disable CSS code splitting.\nWhen set to `false`, all CSS in the entire project will be extracted into\na single CSS file named by  {@linkcode  fileName } .\nWhen set to `true`, CSS imported in async JS chunks will be preserved as chunks.\n\nDefaults to `false`, but if `unbundle` is `true`, it defaults to `true` to preserve chunk splitting.",
+              "default": false
             },
             "fileName": {
               "type": "string",
@@ -5414,6 +5414,12 @@
             "$ref": "#/definitions/alias-1404212539-109894-110030-1404212539-0-138970"
           }
         }
+      ]
+    },
+    "Arrayable<Format>": {
+      "anyOf": [
+        { "$ref": "#/definitions/Format" },
+        { "type": "array", "items": { "$ref": "#/definitions/Format" } }
       ]
     },
     "Format": {
@@ -9938,10 +9944,7 @@
       "type": "object",
       "properties": {
         "from": {
-          "anyOf": [
-            { "type": "string" },
-            { "type": "array", "items": { "type": "string" } }
-          ],
+          "$ref": "#/definitions/Arrayable<string>",
           "description": "Source path or glob pattern.",
           "markdownDescription": "Source path or glob pattern."
         },

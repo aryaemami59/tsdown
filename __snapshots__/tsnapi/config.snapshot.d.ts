@@ -29,7 +29,7 @@ export interface UserConfig {
   inputOptions?: InputOptions | ((_: InputOptions, _: NormalizedFormat, _: {
     cjsDts: boolean;
   }) => Awaitable<InputOptions | void | null>);
-  format?: Format | Format[] | Partial<Record<Format, Partial<ResolvedConfig>>>;
+  format?: Arrayable<Format> | Partial<Record<Format, Partial<ResolvedConfig>>>;
   globalName?: string;
   outDir?: string;
   write?: boolean;

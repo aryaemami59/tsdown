@@ -403,7 +403,7 @@ export interface UserConfig {
    *
    * @default 'esm'
    */
-  format?: Format | Format[] | Partial<Record<Format, Partial<ResolvedConfig>>>
+  format?: Arrayable<Format> | Partial<Record<Format, Partial<ResolvedConfig>>>
   globalName?: string
   /**
    * @default 'dist'

@@ -62,8 +62,7 @@
         },
         "target": {
           "anyOf": [
-            { "type": "string" },
-            { "type": "array", "items": { "type": "string" } },
+            { "$ref": "#/definitions/Arrayable<string>" },
             { "type": "boolean", "const": false }
           ],
           "description": "Specifies the compilation target environment(s).\n\nDetermines the JavaScript version or runtime(s) for which the code should be compiled. If not set, defaults to the value of `engines.node` in your project's `package.json`. If no `engines.node` field exists, no syntax transformations are applied.\n\nAccepts a single target (e.g., `'es2020'`, `'node18'`, `'baseline-widely-available'`), an array of targets, or `false` to disable all transformations.",
@@ -81,10 +80,7 @@
           "markdownDescription": "Path to env file providing compile-time env variables."
         },
         "envPrefix": {
-          "anyOf": [
-            { "type": "string" },
-            { "type": "array", "items": { "type": "string" } }
-          ],
+          "$ref": "#/definitions/Arrayable<string>",
           "description": "When loading env variables from `envFile`, only include variables with these prefixes.",
           "markdownDescription": "When loading env variables from `envFile`, only include variables with these prefixes.",
           "default": "TSDOWN_"

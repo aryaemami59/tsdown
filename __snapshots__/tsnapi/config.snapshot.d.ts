@@ -12,10 +12,10 @@ export interface UserConfig {
   alias?: Record<string, string>;
   tsconfig?: string | boolean;
   platform?: "node" | "neutral" | "browser";
-  target?: string | string[] | false;
+  target?: Arrayable<string> | false;
   env?: Record<string, any>;
   envFile?: string;
-  envPrefix?: string | string[];
+  envPrefix?: Arrayable<string>;
   define?: Record<string, string>;
   shims?: boolean;
   treeshake?: boolean | TreeshakingOptions;
@@ -57,7 +57,7 @@ export interface UserConfig {
   watch?: boolean | Arrayable<string>;
   ignoreWatch?: Arrayable<string | RegExp>;
   devtools?: WithEnabled<DevtoolsOptions>;
-  onSuccess?: string | ((_: ResolvedConfig, _: AbortSignal) => void | Promise<void>);
+  onSuccess?: string | ((_: ResolvedConfig, _: AbortSignal) => Awaitable<void>);
   dts?: WithEnabled<DtsOptions>;
   unused?: WithEnabled<UnusedOptions>;
   publint?: WithEnabled<PublintOptions>;

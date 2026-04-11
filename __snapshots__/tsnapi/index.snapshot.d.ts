@@ -127,11 +127,11 @@ export interface TsdownBundle extends AsyncDisposable {
   inlinedDeps: Map<string, Set<string>>;
 }
 export interface TsdownHooks {
-  "build:prepare": (_: BuildContext) => void | Promise<void>;
-  "build:before": (_: BuildContext & RolldownContext) => void | Promise<void>;
+  "build:prepare": (_: BuildContext) => Awaitable<void>;
+  "build:before": (_: BuildContext & RolldownContext) => Awaitable<void>;
   "build:done": (_: BuildContext & {
     chunks: RolldownChunk[];
-  }) => void | Promise<void>;
+  }) => Awaitable<void>;
 }
 export interface TsdownPlugin<A = any> extends Plugin<A> {
   tsdownConfig?: (_: UserConfig, _: InlineConfig) => Awaitable<UserConfig | void | null>;
@@ -147,10 +147,10 @@ export interface UserConfig {
   alias?: Record<string, string>;
   tsconfig?: string | boolean;
   platform?: "node" | "neutral" | "browser";
-  target?: string | string[] | false;
+  target?: Arrayable<string> | false;
   env?: Record<string, any>;
   envFile?: string;
-  envPrefix?: string | string[];
+  envPrefix?: Arrayable<string>;
   define?: Record<string, string>;
   shims?: boolean;
   treeshake?: boolean | TreeshakingOptions;
@@ -192,7 +192,7 @@ export interface UserConfig {
   watch?: boolean | Arrayable<string>;
   ignoreWatch?: Arrayable<string | RegExp>;
   devtools?: WithEnabled<DevtoolsOptions>;
-  onSuccess?: string | ((_: ResolvedConfig, _: AbortSignal) => void | Promise<void>);
+  onSuccess?: string | ((_: ResolvedConfig, _: AbortSignal) => Awaitable<void>);
   dts?: WithEnabled<DtsOptions>;
   unused?: WithEnabled<UnusedOptions>;
   publint?: WithEnabled<PublintOptions>;

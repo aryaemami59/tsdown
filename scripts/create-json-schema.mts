@@ -15,22 +15,24 @@ const SCHEMAS_DIR = path.join(ROOT_DIR, 'docs', 'public')
 
 const inputFilePath = path.join(ROOT_DIR, 'src', 'index.ts')
 
-const rootNames = globSync(['src/**/*.ts'], {
-  cwd: ROOT_DIR,
-  exclude: [
-    '__snapshots__/tsnapi/**',
-    '**/dist',
-    '**/fixtures',
-    '**/node_modules',
-    '**/temp',
-    'dist/**',
-    'docs/**',
-    'packages/**',
-    'src/**/*.spec.ts*',
-    'src/**/*.test.ts*',
-    'tests/**',
-  ],
-})
+const rootNames = globSync(
+  ['src/**/*.ts', 'packages/css/**/*.ts', 'packages/exe/**/*.ts'],
+  {
+    cwd: ROOT_DIR,
+    exclude: [
+      '__snapshots__/tsnapi/**',
+      '**/dist',
+      '**/fixtures',
+      '**/node_modules',
+      '**/temp',
+      'dist/**',
+      'docs/**',
+      '**/*.spec.ts*',
+      '**/*.test.ts*',
+      'tests/**',
+    ],
+  },
+)
 
 const compilerOptions = {
   allowImportingTsExtensions: true,
@@ -91,7 +93,7 @@ const config = {
   ...DEFAULT_CONFIG,
   additionalProperties: false,
   discriminatorType: 'json-schema',
-  encodeRefs: false,
+  encodeRefs: true,
   expose: 'export',
   fullDescription: false,
   functions: 'hide',

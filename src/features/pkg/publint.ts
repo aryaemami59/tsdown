@@ -10,6 +10,9 @@ const debug = createDebug('tsdown:publint')
 const label = dim`[publint]`
 
 export interface PublintOptions extends Omit<Options, 'pack' | 'pkgDir'> {
+  /**
+   * @hidden
+   */
   module?: [
     { publint: typeof publintFunction },
     { formatMessage: typeof formatMessageFunction },

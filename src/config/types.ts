@@ -36,14 +36,13 @@ import type {
 import type { CssOptions } from '@tsdown/css'
 import type { Hookable } from 'hookable'
 import type {
+  BuildOptions,
   ChecksOptions,
-  ExternalOption,
   InputOptions,
   InternalModuleFormat,
-  MinifyOptions,
   ModuleFormat,
-  ModuleTypes,
   OutputOptions,
+  TransformOptions,
   TreeshakingOptions,
 } from 'rolldown'
 import type { Options as RolldownPluginDtsOptions } from 'rolldown-plugin-dts'
@@ -148,6 +147,9 @@ export interface Workspace {
 
 export type CIOption = 'ci-only' | 'local-only'
 
+/**
+ * @hidden
+ */
 export type WithEnabled<T> =
   | boolean
   | CIOption
@@ -186,20 +188,20 @@ export interface UserConfig {
   /**
    * @deprecated Use {@linkcode DepsConfig.neverBundle | deps.neverBundle} instead.
    */
-  external?: ExternalOption
+  external?: DepsConfig['neverBundle']
   /**
    * @deprecated Use {@linkcode DepsConfig.alwaysBundle | deps.alwaysBundle} instead.
    */
-  noExternal?: Arrayable<string | RegExp> | NoExternalFn
+  noExternal?: DepsConfig['alwaysBundle']
   /**
    * @deprecated Use {@linkcode DepsConfig.onlyBundle | deps.onlyBundle} instead.
    */
-  inlineOnly?: Arrayable<string | RegExp> | false
+  inlineOnly?: DepsConfig['onlyBundle']
   /**
    * @deprecated Use {@linkcode DepsConfig.skipNodeModulesBundle | deps.skipNodeModulesBundle} instead.
    * @default false
    */
-  skipNodeModulesBundle?: boolean
+  skipNodeModulesBundle?: DepsConfig['skipNodeModulesBundle']
 
   alias?: Record<string, string>
 
@@ -276,7 +278,7 @@ export interface UserConfig {
    * @default 'TSDOWN_'
    */
   envPrefix?: Arrayable<string>
-  define?: Record<string, string>
+  define?: TransformOptions['define']
 
   /**
    * @default false
@@ -288,7 +290,7 @@ export interface UserConfig {
    * @see {@link https://rolldown.rs/options/treeshake} for more details.
    * @default true
    */
-  treeshake?: boolean | TreeshakingOptions
+  treeshake?: InputOptions['treeshake']
 
   /**
    * Sets how input files are processed.
@@ -299,7 +301,7 @@ export interface UserConfig {
    * { ".jpg": "asset", ".png": "base64" }
    * ```
    */
-  loader?: ModuleTypes
+  loader?: InputOptions['moduleTypes']
 
   /**
    * Remove the `node:` prefix from built-in Node.js module imports.
@@ -379,10 +381,14 @@ export interface UserConfig {
     legacyCjs?: boolean
   }
 
+  /**
+   * @hidden
+   */
   plugins?: TsdownPluginOption
 
   /**
    * Use with caution; ensure you understand the implications.
+   * @hidden
    */
   inputOptions?:
     | InputOptions
@@ -404,7 +410,7 @@ export interface UserConfig {
    * @default 'esm'
    */
   format?: Arrayable<Format> | Partial<Record<Format, Partial<ResolvedConfig>>>
-  globalName?: string
+  globalName?: OutputOptions['name']
   /**
    * @default 'dist'
    */
@@ -414,7 +420,7 @@ export interface UserConfig {
    * This option is incompatible with watch mode.
    * @default true
    */
-  write?: boolean
+  write?: BuildOptions['write']
   /**
    * Whether to generate source map files.
    *
@@ -424,7 +430,7 @@ export interface UserConfig {
    *
    * @default false
    */
-  sourcemap?: Sourcemap
+  sourcemap?: OutputOptions['sourcemap']
   /**
    * Clean directories before build.
    *
@@ -435,7 +441,7 @@ export interface UserConfig {
   /**
    * @default false
    */
-  minify?: boolean | 'dce-only' | MinifyOptions
+  minify?: OutputOptions['minify']
   footer?: ChunkAddon
   banner?: ChunkAddon
 
@@ -493,6 +499,7 @@ export interface UserConfig {
 
   /**
    * Use with caution; ensure you understand the implications.
+   * @hidden
    */
   outputOptions?:
     | OutputOptions
@@ -629,6 +636,8 @@ export interface UserConfig {
   /**
    * **[experimental]** CSS options.
    * Requires `@tsdown/css` to be installed.
+   *
+   * @hidden
    */
   css?: CssOptions
 
@@ -658,6 +667,9 @@ export interface UserConfig {
    */
   copy?: CopyOptions | CopyOptionsFn
 
+  /**
+   * @hidden
+   */
   hooks?:
     | Partial<TsdownHooks>
     | ((hooks: Hookable<TsdownHooks>) => Awaitable<void>)

@@ -5,10 +5,10 @@
 export interface UserConfig {
   entry?: TsdownInputOption;
   deps?: DepsConfig;
-  external?: ExternalOption;
-  noExternal?: Arrayable<string | RegExp> | NoExternalFn;
-  inlineOnly?: Arrayable<string | RegExp> | false;
-  skipNodeModulesBundle?: boolean;
+  external?: DepsConfig["neverBundle"];
+  noExternal?: DepsConfig["alwaysBundle"];
+  inlineOnly?: DepsConfig["onlyBundle"];
+  skipNodeModulesBundle?: DepsConfig["skipNodeModulesBundle"];
   alias?: Record<string, string>;
   tsconfig?: string | boolean;
   platform?: "node" | "neutral" | "browser";
@@ -16,10 +16,10 @@ export interface UserConfig {
   env?: Record<string, any>;
   envFile?: string;
   envPrefix?: Arrayable<string>;
-  define?: Record<string, string>;
+  define?: TransformOptions["define"];
   shims?: boolean;
-  treeshake?: boolean | TreeshakingOptions;
-  loader?: ModuleTypes;
+  treeshake?: InputOptions["treeshake"];
+  loader?: InputOptions["moduleTypes"];
   removeNodeProtocol?: boolean;
   nodeProtocol?: "strip" | boolean;
   checks?: ChecksOptions & {
@@ -30,12 +30,12 @@ export interface UserConfig {
     cjsDts: boolean;
   }) => Awaitable<InputOptions | void | null>);
   format?: Arrayable<Format> | Partial<Record<Format, Partial<ResolvedConfig>>>;
-  globalName?: string;
+  globalName?: OutputOptions["name"];
   outDir?: string;
-  write?: boolean;
-  sourcemap?: Sourcemap;
+  write?: BuildOptions["write"];
+  sourcemap?: OutputOptions["sourcemap"];
   clean?: boolean | string[];
-  minify?: boolean | "dce-only" | MinifyOptions;
+  minify?: OutputOptions["minify"];
   footer?: ChunkAddon;
   banner?: ChunkAddon;
   unbundle?: boolean;

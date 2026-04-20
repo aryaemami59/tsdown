@@ -46,7 +46,9 @@ export interface ReportOptions {
 
   /**
    * Skip reporting compressed size for files larger than this size.
-   * @default 1_000_000 // 1 MB
+   * Defaults to `1_000_000` (1 MB).
+   *
+   * @default 1000000
    */
   maxCompressSize?: number
 }

@@ -261,27 +261,63 @@ const schemas = objectConfig.map(
     ])
 
     if (schema.definitions) {
-      Object.entries(schema.definitions).forEach(([definitionKey]) => {
-        if (schema.definitions && definitionKey.startsWith('TsConfigJson.')) {
-          const configKey = definitionKey.replace('TsConfigJson.', '')
-
-          const configKeysSegments = configKey.split('.')
-
-          if (configKeysSegments.length > 1) {
-            delete schema.definitions[definitionKey]
-
+      Object.entries(schema.definitions).forEach(
+        ([definitionKey, definition]) => {
+          if (
+            schema.definitions == null ||
+            typeof schema.definitions !== 'object' ||
+            schema.definitions === null
+          ) {
             return
           }
 
-          const unCapitalizedConfigKey = unCapitalize(configKey)
+          if (
+            definitionKey === 'PackageJsonWithPath' &&
+            typeof definition === 'object' &&
+            'properties' in definition &&
+            definition.properties != null &&
+            'packageJsonPath' in definition.properties &&
+            definition.properties.packageJsonPath != null &&
+            typeof definition.properties.packageJsonPath === 'object'
+          ) {
+            const $ref = `https://www.schemastore.org/package.json`
 
-          const $ref = `https://www.schemastore.org/tsconfig.json#/definitions/${unCapitalizedConfigKey}Definition/properties/${unCapitalizedConfigKey}`
-
-          schema.definitions[definitionKey] = {
-            $ref,
+            schema.definitions[definitionKey] = {
+              ...definition,
+              allOf: [
+                { $ref },
+                {
+                  properties: {
+                    packageJsonPath: {
+                      ...definition.properties.packageJsonPath,
+                    },
+                  },
+                },
+              ],
+            }
           }
-        }
-      })
+
+          if (definitionKey.startsWith('TsConfigJson.')) {
+            const configKey = definitionKey.replace('TsConfigJson.', '')
+
+            const configKeysSegments = configKey.split('.')
+
+            if (configKeysSegments.length > 1) {
+              delete schema.definitions[definitionKey]
+
+              return
+            }
+
+            const unCapitalizedConfigKey = unCapitalize(configKey)
+
+            const $ref = `https://www.schemastore.org/tsconfig.json#/definitions/${unCapitalizedConfigKey}Definition/properties/${unCapitalizedConfigKey}`
+
+            schema.definitions[definitionKey] = {
+              $ref,
+            }
+          }
+        },
+      )
     }
 
     return {

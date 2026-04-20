@@ -1105,3 +1105,49 @@ test('.node file bundle', async (context) => {
     files,
   })
 })
+
+test('publint', async (context) => {
+  const files = {
+    'src/index.ts': `const foo = 42\n\nexport default foo`,
+    'package.json': JSON.stringify({
+      name: 'test-pkg-publint',
+      version: '1.0.0',
+      main: 'dist/index.mjs',
+      types: 'dist/index.d.mts',
+      exports: {
+        '.': {
+          import: {
+            types: './dist/index.d.mts',
+            default: './dist/index.mjs',
+          },
+          require: {
+            types: './dist/index.d.cts',
+            default: './dist/index.cjs',
+          },
+        },
+        './package.json': './package.json',
+      },
+      type: 'module',
+    }),
+  }
+
+  const { fileMap } = await testBuild({
+    context,
+    files,
+    options: {
+      entry: { index: 'src/index.ts' },
+      format: ['cjs', 'esm'],
+      platform: 'node',
+      dts: true,
+      publint: {
+        enabled: true,
+        strict: true,
+      },
+    },
+  })
+
+  expect(fileMap['index.mjs']).toContain(`export { foo as default };`)
+  expect(fileMap['index.cjs']).toContain(`module.exports = foo;`)
+  expect(fileMap['index.d.mts']).toContain(`export { foo as default };`)
+  expect(fileMap['index.d.cts']).toContain(`export = foo;`)
+})

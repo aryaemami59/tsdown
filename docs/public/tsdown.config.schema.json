@@ -2343,7 +2343,11 @@
     "PackageJsonWithPath": {
       "type": "object",
       "properties": { "packageJsonPath": { "type": "string" } },
-      "required": ["packageJsonPath"]
+      "required": ["packageJsonPath"],
+      "allOf": [
+        { "$ref": "https://www.schemastore.org/package.json" },
+        { "properties": { "packageJsonPath": { "type": "string" } } }
+      ]
     },
     "ResolvedDepsConfig": {
       "type": "object",

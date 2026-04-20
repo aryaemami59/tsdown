@@ -154,9 +154,6 @@ export interface Workspace {
 
 export type CIOption = 'ci-only' | 'local-only'
 
-/**
- * @hidden
- */
 export type WithEnabled<T> =
   | boolean
   | CIOption

@@ -191,6 +191,26 @@ const objectConfig = Object.values(entries).map((entry) => {
   }
 })
 
+/**
+ * Takes a string and returns the same string with
+ * the first letter converted to lowercase.
+ * The function version of the native
+ * {@linkcode Uncapitalize} utility type in TypeScript.
+ *
+ * @param inputString - String that is going to be uncapitalized.
+ * @returns Uncapitalized version of the {@linkcode inputString | input string}.
+ *
+ * @template StringToCapitalize - The type of the input string. This is used to preserve the string literal type of the input string in the output.
+ *
+ * @see {@linkcode Uncapitalize}
+ */
+function unCapitalize<StringToCapitalize extends string>(
+  inputString: StringToCapitalize,
+): Uncapitalize<StringToCapitalize> {
+  return (inputString.charAt(0).toLowerCase() +
+    inputString.slice(1)) as Uncapitalize<StringToCapitalize>
+}
+
 const schemas = objectConfig.map(
   ({ outputFile, schemaGenerator, schemaGeneratorConfig }) => {
     const schema = schemaGenerator.createSchema([
@@ -203,6 +223,7 @@ const schemas = objectConfig.map(
       // 'CopyOptions',
       // 'CssOptions',
       // 'DevtoolsOptions',
+      // 'DtsOptions',
       // 'ExportsOptions',
       // 'Format',
       // 'LogLevel',
@@ -238,6 +259,30 @@ const schemas = objectConfig.map(
       // 'Workspace',
       'UserConfig',
     ])
+
+    if (schema.definitions) {
+      Object.entries(schema.definitions).forEach(([definitionKey]) => {
+        if (schema.definitions && definitionKey.startsWith('TsConfigJson.')) {
+          const configKey = definitionKey.replace('TsConfigJson.', '')
+
+          const configKeysSegments = configKey.split('.')
+
+          if (configKeysSegments.length > 1) {
+            delete schema.definitions[definitionKey]
+
+            return
+          }
+
+          const unCapitalizedConfigKey = unCapitalize(configKey)
+
+          const $ref = `https://www.schemastore.org/tsconfig.json#/definitions/${unCapitalizedConfigKey}Definition/properties/${unCapitalizedConfigKey}`
+
+          schema.definitions[definitionKey] = {
+            $ref,
+          }
+        }
+      })
+    }
 
     return {
       outputFile,

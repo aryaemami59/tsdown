@@ -1,8 +1,8 @@
-import type { UserConfig as TsdownUserConfig } from '../src/index.ts'
+// import type { UserConfig as TsdownUserConfig } from '../src/index.ts'
 
 type AnyNonNullishValue = NonNullable<unknown>
 
-type Simplify<BaseType> = BaseType extends
+export type Simplify<BaseType> = BaseType extends
   | ((...args: never[]) => unknown)
   | (abstract new (...args: never[]) => unknown)
   | (new (...args: never[]) => unknown)
@@ -21,4 +21,4 @@ type Simplify<BaseType> = BaseType extends
             : BaseType[KeyType]
     }
 
-export type UserConfig = Simplify<Simplify<Simplify<TsdownUserConfig>>>
+// export type UserConfig = Simplify<Simplify<Simplify<TsdownUserConfig>>>

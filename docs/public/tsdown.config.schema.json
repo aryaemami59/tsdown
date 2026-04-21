@@ -251,6 +251,12 @@
               "markdownDescription": "Whether to emit warnings when the `output.name` option is missing when needed.\n\nSee [`output.name`](https://rolldown.rs/reference/OutputOptions.name).",
               "default": true
             },
+            "invalidAnnotation": {
+              "type": "boolean",
+              "description": "Whether to emit warnings when a `#__PURE__` / `@__PURE__` annotation has no effect due to its position.\n\nAnnotations placed where they cannot annotate a call expression (e.g. before a non-call expression, before a statement declaration, or between an identifier and `=` in a variable declarator) are ignored by the parser. Matches Rollup's `INVALID_ANNOTATION` log code.",
+              "markdownDescription": "Whether to emit warnings when a `#__PURE__` / `@__PURE__` annotation has no effect due to its position.\n\nAnnotations placed where they cannot annotate a call expression (e.g. before a non-call expression,\nbefore a statement declaration, or between an identifier and `=` in a variable declarator) are\nignored by the parser. Matches Rollup's `INVALID_ANNOTATION` log code.",
+              "default": true
+            },
             "mixedExports": {
               "type": "boolean",
               "description": "Whether to emit warnings when the way to export values is ambiguous.\n\nSee [`output.exports`](https://rolldown.rs/reference/OutputOptions.exports).",
@@ -349,8 +355,8 @@
             },
             "largeBarrelModules": {
               "type": "boolean",
-              "description": "Whether to emit info logs when a barrel module has a very large number of re-exports (more than 5000).\n\nSuch modules can significantly slow down module resolution. Consider using [`@rolldown/plugin-transform-imports`](https://github.com/rolldown/plugins/tree/main/packages/transform-imports) to rewrite barrel imports at the source level so the barrel file is never loaded.",
-              "markdownDescription": "Whether to emit info logs when a barrel module has a very large number of re-exports (more than 5000).\n\nSuch modules can significantly slow down module resolution. Consider using\n[`@rolldown/plugin-transform-imports`](https://github.com/rolldown/plugins/tree/main/packages/transform-imports)\nto rewrite barrel imports at the source level so the barrel file is never loaded.",
+              "description": "Whether to emit info logs when a barrel module has a very large number of re-exports (more than 5000).\n\nSuch modules can significantly slow down module resolution. Consider using [`@rolldown/plugin-transform-imports`](https://github.com/rolldown/plugins/tree/main/packages/transform-imports) to rewrite barrel imports at the source level so the barrel file is never loaded.\n\nSee [Large barrel modules](https://rolldown.rs/in-depth/lazy-barrel-optimization#large-barrel-modules) for more details.",
+              "markdownDescription": "Whether to emit info logs when a barrel module has a very large number of re-exports (more than 5000).\n\nSuch modules can significantly slow down module resolution. Consider using\n[`@rolldown/plugin-transform-imports`](https://github.com/rolldown/plugins/tree/main/packages/transform-imports)\nto rewrite barrel imports at the source level so the barrel file is never loaded.\n\nSee [Large barrel modules](https://rolldown.rs/in-depth/lazy-barrel-optimization#large-barrel-modules) for more details.",
               "default": true
             }
           },
@@ -2051,6 +2057,23 @@
                           "description": "Remove whitespace.",
                           "markdownDescription": "Remove whitespace.",
                           "default": true
+                        },
+                        "legalComments": {
+                          "anyOf": [
+                            { "type": "string", "const": "none" },
+                            { "type": "string", "const": "inline" },
+                            { "type": "string", "const": "eof" },
+                            { "type": "string", "const": "external" },
+                            {
+                              "type": "object",
+                              "properties": { "linked": { "type": "string" } },
+                              "required": ["linked"],
+                              "additionalProperties": false
+                            }
+                          ],
+                          "description": "How to handle legal comments (comments containing `@license`, `@preserve`, or starting with `//!`/`/*!`).\n\n* `\"none\"` - Do not preserve any legal comments.\n* `\"inline\"` - Preserve all legal comments inline.\n* `\"eof\"` - Move all legal comments to the end of the file.\n* `\"external\"` - Extract legal comments without linking.\n* `{ linked: \"path/to/legal.txt\" }` - Extract legal comments and add a link comment to the given path.",
+                          "markdownDescription": "How to handle legal comments (comments containing `@license`, `@preserve`, or starting with `//!`/`/*!`).\n\n* `\"none\"` - Do not preserve any legal comments.\n* `\"inline\"` - Preserve all legal comments inline.\n* `\"eof\"` - Move all legal comments to the end of the file.\n* `\"external\"` - Extract legal comments without linking.\n* `{ linked: \"path/to/legal.txt\" }` - Extract legal comments and add a link comment to the given path.",
+                          "default": "\"none\" (when minifying)"
                         }
                       },
                       "additionalProperties": false
@@ -2311,6 +2334,17 @@
           "description": "Skip bundling all `node_modules` dependencies.\n\n**Note:** This option cannot be used together with  {@linkcode  alwaysBundle } .",
           "markdownDescription": "Skip bundling all `node_modules` dependencies.\n\n**Note:** This option cannot be used together with  {@linkcode  alwaysBundle } .",
           "default": false
+        },
+        "dts": {
+          "type": "object",
+          "properties": {
+            "alwaysBundle": { "$ref": "#/definitions/DepsConfig" },
+            "neverBundle": { "$ref": "#/definitions/DepsConfig" }
+          },
+          "required": ["alwaysBundle", "neverBundle"],
+          "additionalProperties": false,
+          "description": "Override dependency bundling options for declaration file generation.",
+          "markdownDescription": "Override dependency bundling options for declaration file generation."
         }
       },
       "additionalProperties": false
@@ -2387,9 +2421,20 @@
             { "type": "boolean", "const": false }
           ]
         },
-        "skipNodeModulesBundle": { "type": "boolean" }
+        "skipNodeModulesBundle": { "type": "boolean" },
+        "dts": {
+          "type": "object",
+          "properties": {
+            "alwaysBundle": { "$ref": "#/definitions/ResolvedDepsConfig" },
+            "neverBundle": { "$ref": "#/definitions/ResolvedDepsConfig" }
+          },
+          "required": ["alwaysBundle", "neverBundle"],
+          "additionalProperties": false,
+          "description": "Override dependency bundling options for declaration file generation.",
+          "markdownDescription": "Override dependency bundling options for declaration file generation."
+        }
       },
-      "required": ["skipNodeModulesBundle"],
+      "required": ["skipNodeModulesBundle", "dts"],
       "additionalProperties": false
     },
     "DtsOptions": {
@@ -3110,8 +3155,8 @@
             },
             "cjsDefault": {
               "type": "boolean",
-              "description": "Determines how the default export is emitted.\n\nIf set to `true`, and you are only exporting a single item using `export default ...`, the output will use `export = ...` instead of the standard ES module syntax. This is useful for compatibility with CommonJS.",
-              "markdownDescription": "Determines how the default export is emitted.\n\nIf set to `true`, and you are only exporting a single item using `export default ...`,\nthe output will use `export = ...` instead of the standard ES module syntax.\nThis is useful for compatibility with CommonJS."
+              "description": "Determines how the default export is emitted.\n\nIf set to `true`, and you are only exporting a single item using `export default ...`, the output will use `export = ...` instead of the standard ES module syntax. This is useful for compatibility with CommonJS. This only controls the output format and does not enable support for CommonJS-style `.d.ts` input.",
+              "markdownDescription": "Determines how the default export is emitted.\n\nIf set to `true`, and you are only exporting a single item using `export default ...`,\nthe output will use `export = ...` instead of the standard ES module syntax.\nThis is useful for compatibility with CommonJS.\nThis only controls the output format and does not enable support for\nCommonJS-style `.d.ts` input."
             },
             "sideEffects": {
               "type": "boolean",
@@ -3489,8 +3534,8 @@
                   "additionalProperties": { "type": "string" }
                 }
               ],
-              "description": "Generate the `bin` field in `package.json` for CLI executables.\n\nControls how command names are mapped to built entry files:\n\n- `true`: Auto-detect a single CLI entry from entry chunks that contain   a shebang (for example, `#!/usr/bin/env node`). The command name is   derived from the package name without its scope. Throws if multiple   shebang entries are found. Warns and skips generation if none are found.\n- `string`: Use the given source file path (relative to `cwd`) as the   CLI entry. The command name is derived from the package name without   its scope. Warns if the source file does not contain a shebang.\n- `Record<string, string>`: Explicitly map command names to source file   paths (relative to `cwd`). Warns for each source file that does not   contain a shebang.\n\nWhen  {@link  ExportsOptions.devExports }  is enabled, the `bin` field in `package.json` points to source files during local development, while `publishConfig.bin` points to built output paths for publishing.",
-              "markdownDescription": "Generate the `bin` field in `package.json` for CLI executables.\n\nControls how command names are mapped to built entry files:\n\n- `true`: Auto-detect a single CLI entry from entry chunks that contain\n  a shebang (for example, `#!/usr/bin/env node`). The command name is\n  derived from the package name without its scope. Throws if multiple\n  shebang entries are found. Warns and skips generation if none are found.\n- `string`: Use the given source file path (relative to `cwd`) as the\n  CLI entry. The command name is derived from the package name without\n  its scope. Warns if the source file does not contain a shebang.\n- `Record<string, string>`: Explicitly map command names to source file\n  paths (relative to `cwd`). Warns for each source file that does not\n  contain a shebang.\n\nWhen  {@link  ExportsOptions.devExports }  is enabled, the `bin` field in\n`package.json` points to source files during local development, while\n`publishConfig.bin` points to built output paths for publishing."
+              "description": "Generate the `bin` field in `package.json` for CLI executables.\n\nBehavior depends on the value:\n\n- *Unset* (default): Soft auto-detect. Scans entry chunks for shebangs   (e.g. `#!/usr/bin/env node`). If exactly one is found, it is used as   the bin entry. If multiple are found, a warning is shown and no `bin`   field is written. If none are found, nothing happens silently.\n- `true`: Strict auto-detect. Same as the default, but throws if   multiple shebang entries are found, and warns if none are found.   Use this when your package is known to ship a CLI and you want to   fail fast on misconfiguration.\n- `false`: Disable bin generation entirely, even if shebangs are   present.\n- `string`: Use the given source file path (relative to `cwd`) as the   CLI entry. The command name is derived from the package name without   its scope. Warns if the source file does not contain a shebang.\n- `Record<string, string>`: Explicitly map command names to source file   paths (relative to `cwd`). Warns for each source file that does not   contain a shebang.\n\nWhen  {@link  ExportsOptions.devExports }  is enabled, the `bin` field in `package.json` points to source files during local development, while `publishConfig.bin` points to built output paths for publishing.",
+              "markdownDescription": "Generate the `bin` field in `package.json` for CLI executables.\n\nBehavior depends on the value:\n\n- *Unset* (default): Soft auto-detect. Scans entry chunks for shebangs\n  (e.g. `#!/usr/bin/env node`). If exactly one is found, it is used as\n  the bin entry. If multiple are found, a warning is shown and no `bin`\n  field is written. If none are found, nothing happens silently.\n- `true`: Strict auto-detect. Same as the default, but throws if\n  multiple shebang entries are found, and warns if none are found.\n  Use this when your package is known to ship a CLI and you want to\n  fail fast on misconfiguration.\n- `false`: Disable bin generation entirely, even if shebangs are\n  present.\n- `string`: Use the given source file path (relative to `cwd`) as the\n  CLI entry. The command name is derived from the package name without\n  its scope. Warns if the source file does not contain a shebang.\n- `Record<string, string>`: Explicitly map command names to source file\n  paths (relative to `cwd`). Warns for each source file that does not\n  contain a shebang.\n\nWhen  {@link  ExportsOptions.devExports }  is enabled, the `bin` field in\n`package.json` points to source files during local development, while\n`publishConfig.bin` points to built output paths for publishing."
             }
           }
         }

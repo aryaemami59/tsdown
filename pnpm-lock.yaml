@@ -13,6 +13,9 @@ catalogs:
       specifier: ^3.2.0
       version: 3.2.0
   dev:
+    '@sourcemeta/jsonschema':
+      specifier: ^15.6.3
+      version: 15.6.3
     '@sxzz/eslint-config':
       specifier: ^8.1.0
       version: 8.1.0
@@ -286,6 +289,9 @@ importers:
       '@arethetypeswrong/core':
         specifier: catalog:peer
         version: 0.18.3
+      '@sourcemeta/jsonschema':
+        specifier: catalog:dev
+        version: 15.6.3
       '@sxzz/eslint-config':
         specifier: catalog:dev
         version: 8.1.0(@typescript-eslint/eslint-plugin@8.60.0(@typescript-eslint/parser@8.60.0(eslint@10.4.1(jiti@2.7.0))(typescript@6.0.3))(eslint@10.4.1(jiti@2.7.0))(typescript@6.0.3))(@typescript-eslint/parser@8.60.0(eslint@10.4.1(jiti@2.7.0))(typescript@6.0.3))(@typescript-eslint/rule-tester@8.60.0(eslint@10.4.1(jiti@2.7.0))(typescript@6.0.3))(@typescript-eslint/typescript-estree@8.60.0(typescript@6.0.3))(@typescript-eslint/utils@8.60.0(eslint@10.4.1(jiti@2.7.0))(typescript@6.0.3))(@unocss/eslint-plugin@66.7.0(eslint@10.4.1(jiti@2.7.0))(typescript@6.0.3))(eslint@10.4.1(jiti@2.7.0))(prettier@3.8.3)(typescript@6.0.3)
@@ -2063,6 +2069,13 @@ packages:
   '@sindresorhus/base62@1.0.0':
     resolution: {integrity: sha512-TeheYy0ILzBEI/CO55CP6zJCSdSWeRtGnHy8U8dWSUH4I68iqTsy7HkMktR4xakThc9jotkPQUXT4ITdbV7cHA==}
     engines: {node: '>=18'}
+
+  '@sourcemeta/jsonschema@15.6.3':
+    resolution: {integrity: sha512-qEYz2neXVrUg4RrDlscolT2RuAUhJ9N2fXE2w2BUwClQ4tqhKDHUVFiTcBE1zm0ODBwYYtsKn7SydQogOiWJ9w==}
+    engines: {node: '>=16'}
+    cpu: [x64, arm64]
+    os: [darwin, linux, win32]
+    hasBin: true
 
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
@@ -6050,6 +6063,8 @@ snapshots:
   '@shikijs/vscode-textmate@10.0.2': {}
 
   '@sindresorhus/base62@1.0.0': {}
+
+  '@sourcemeta/jsonschema@15.6.3': {}
 
   '@standard-schema/spec@1.1.0': {}
 

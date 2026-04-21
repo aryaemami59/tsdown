@@ -1,0 +1,59 @@
+{
+  "attw": {
+    "enabled": true,
+    "ignoreRules": ["cjs-only-exports-default"],
+    "level": "error"
+  },
+  "checks": {},
+  "removeNodeProtocol": false,
+  "clean": true,
+  "devtools": {
+    "clean": true,
+    "enabled": true,
+    "ui": true
+  },
+  "dts": {
+    "compilerOptions": {
+      "allowImportingTsExtensions": true,
+      "erasableSyntaxOnly": true,
+      "jsx": "react"
+    },
+    "enabled": true,
+    "tsconfigRaw": {
+      "typeAcquisition": {
+        "enable": false,
+        "exclude": [],
+        "include": []
+      },
+      "watchOptions": {
+        "synchronousWatchDirectory": true
+      }
+    }
+  },
+  "entry": {
+    "index": "src/index.ts"
+  },
+  "format": {
+    "esm": {
+      "pkg": {
+        "license": "MIT",
+        "packageJsonPath": "package.json"
+      }
+    }
+  },
+  "publint": {
+    "enabled": true,
+    "level": "warning"
+  },
+  "report": {
+    "brotli": false,
+    "enabled": true,
+    "gzip": true,
+    "maxCompressSize": 1000000
+  },
+  "tsconfig": "tsconfig.json",
+  "unused": {
+    "depKinds": ["dependencies", "peerDependencies"]
+  },
+  "write": true
+}

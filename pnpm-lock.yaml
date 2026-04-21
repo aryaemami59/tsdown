@@ -13,6 +13,9 @@ catalogs:
       specifier: ^3.2.0
       version: 3.2.0
   dev:
+    '@sourcemeta/jsonschema':
+      specifier: ^15.5.0
+      version: 15.5.0
     '@sxzz/eslint-config':
       specifier: ^8.0.0
       version: 8.0.0
@@ -283,6 +286,9 @@ importers:
       '@arethetypeswrong/core':
         specifier: catalog:peer
         version: 0.18.2
+      '@sourcemeta/jsonschema':
+        specifier: catalog:dev
+        version: 15.5.0
       '@sxzz/eslint-config':
         specifier: catalog:dev
         version: 8.0.0(@typescript-eslint/eslint-plugin@8.59.2(@typescript-eslint/parser@8.59.2(eslint@10.3.0(jiti@2.7.0))(typescript@6.0.3))(eslint@10.3.0(jiti@2.7.0))(typescript@6.0.3))(@typescript-eslint/parser@8.59.2(eslint@10.3.0(jiti@2.7.0))(typescript@6.0.3))(@typescript-eslint/rule-tester@8.59.1(eslint@10.3.0(jiti@2.7.0))(typescript@6.0.3))(@typescript-eslint/typescript-estree@8.59.2(typescript@6.0.3))(@typescript-eslint/utils@8.59.2(eslint@10.3.0(jiti@2.7.0))(typescript@6.0.3))(@unocss/eslint-plugin@66.6.8(eslint@10.3.0(jiti@2.7.0))(typescript@6.0.3))(eslint@10.3.0(jiti@2.7.0))(prettier@3.8.3)(typescript@6.0.3)
@@ -1975,6 +1981,13 @@ packages:
   '@sindresorhus/base62@1.0.0':
     resolution: {integrity: sha512-TeheYy0ILzBEI/CO55CP6zJCSdSWeRtGnHy8U8dWSUH4I68iqTsy7HkMktR4xakThc9jotkPQUXT4ITdbV7cHA==}
     engines: {node: '>=18'}
+
+  '@sourcemeta/jsonschema@15.5.0':
+    resolution: {integrity: sha512-4AgdIxbzGTxa98mfxEOfADgLhJOAzfgS7WfSGsy65rciLmDFC9i5iAWCOtdIRomeJ7LWvI4G/vlFbmVdm8hrVg==}
+    engines: {node: '>=16'}
+    cpu: [x64, arm64]
+    os: [darwin, linux, win32]
+    hasBin: true
 
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
@@ -6106,6 +6119,8 @@ snapshots:
 
   '@sindresorhus/base62@1.0.0': {}
 
+  '@sourcemeta/jsonschema@15.5.0': {}
+
   '@standard-schema/spec@1.1.0': {}
 
   '@sxzz/eslint-config@8.0.0(@typescript-eslint/eslint-plugin@8.59.2(@typescript-eslint/parser@8.59.2(eslint@10.3.0(jiti@2.7.0))(typescript@6.0.3))(eslint@10.3.0(jiti@2.7.0))(typescript@6.0.3))(@typescript-eslint/parser@8.59.2(eslint@10.3.0(jiti@2.7.0))(typescript@6.0.3))(@typescript-eslint/rule-tester@8.59.1(eslint@10.3.0(jiti@2.7.0))(typescript@6.0.3))(@typescript-eslint/typescript-estree@8.59.2(typescript@6.0.3))(@typescript-eslint/utils@8.59.2(eslint@10.3.0(jiti@2.7.0))(typescript@6.0.3))(@unocss/eslint-plugin@66.6.8(eslint@10.3.0(jiti@2.7.0))(typescript@6.0.3))(eslint@10.3.0(jiti@2.7.0))(prettier@3.8.3)(typescript@6.0.3)':
@@ -8528,7 +8543,7 @@ snapshots:
 
   path-scurry@2.0.2:
     dependencies:
-      lru-cache: 11.3.5
+      lru-cache: 11.3.6
       minipass: 7.1.3
 
   path-to-regexp@6.3.0: {}

@@ -3,23 +3,29 @@ import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
 import { format, resolveConfig, type Options } from 'prettier'
 import {
-  createGenerator,
+  createFormatter,
+  createParser,
   DEFAULT_CONFIG,
+  SchemaGenerator,
   ts,
   type CompletedConfig,
   type Config,
+  type Definition,
   type Schema,
-  type SchemaGenerator,
 } from 'ts-json-schema-generator'
 
 const ROOT_DIR = path.join(import.meta.dirname, '..')
 
 const SCHEMAS_DIR = path.join(ROOT_DIR, 'docs', 'public')
 
-const DEFAULT_INPUT_FILE_PATH = path.join(ROOT_DIR, 'src', 'index.ts')
+// const DEFAULT_INPUT_FILE_PATH = path.join(ROOT_DIR, 'src', 'index.ts')
 
 const rootNames = globSync(
-  ['src/**/*.ts', 'packages/css/**/*.ts', 'packages/exe/**/*.ts'],
+  [
+    'src/**/*.?(c|m)ts?(x)',
+    'packages/{css,exe}/src/**/*.?(c|m)ts?(x)',
+    // '**/*.?(c|m)ts?(x)',
+  ],
   {
     cwd: ROOT_DIR,
     exclude: [
@@ -30,8 +36,7 @@ const rootNames = globSync(
       '**/temp',
       'dist/**',
       'docs/**',
-      '**/*.spec.ts*',
-      '**/*.test.ts*',
+      '**/*.{test,spec}?(-d).?(c|m)ts?(x)',
       'tests/**',
     ],
   },
@@ -129,7 +134,7 @@ const entries = {
     outputFile: 'tsdown.config',
     overrideConfig: {
       path: 'src/index.ts',
-      type: ['UserConfig'],
+      type: ['*'],
     },
   },
 } as const satisfies Record<string, Entry>
@@ -140,13 +145,13 @@ const defaultSchemaGeneratorConfig = {
   discriminatorType: 'json-schema',
   encodeRefs: true,
   expose: 'export',
-  extraTags: [],
+  extraTags: ['deprecationMessage', 'markdownDeprecationMessage'],
   fullDescription: false,
   functions: 'hide',
   jsDoc: 'extended',
   markdownDescription: true,
   minify: false,
-  path: DEFAULT_INPUT_FILE_PATH,
+  path: 'src/**/*.ts',
   skipTypeCheck: false,
   sortProps: true,
   strictTuples: true,
@@ -160,10 +165,20 @@ const objectConfig = Object.values(entries).map((entry) => {
   const entryOverrideConfig = entry.overrideConfig ?? ({} satisfies Config)
 
   const entryPath =
-    entryOverrideConfig.path ?? defaultSchemaGeneratorConfig.path
+    'path' in entryOverrideConfig &&
+    typeof entryOverrideConfig.path === 'string'
+      ? entryOverrideConfig.path
+      : defaultSchemaGeneratorConfig.path
 
   const entryType =
-    entryOverrideConfig.type ?? defaultSchemaGeneratorConfig.type
+    'type' in entryOverrideConfig &&
+    (typeof entryOverrideConfig.type === 'string' ||
+      (Array.isArray(entryOverrideConfig.type) &&
+        entryOverrideConfig.type.every(
+          (typeName) => typeof typeName === 'string',
+        )))
+      ? entryOverrideConfig.type
+      : defaultSchemaGeneratorConfig.type
 
   const schemaGeneratorConfig = {
     ...defaultSchemaGeneratorConfig,
@@ -175,7 +190,18 @@ const objectConfig = Object.values(entries).map((entry) => {
     type: Array.isArray(entryType) ? entryType : [entryType],
   } as const satisfies Config satisfies CompletedConfig
 
-  const schemaGenerator = createGenerator(schemaGeneratorConfig)
+  const parser = createParser(tsProgram, schemaGeneratorConfig)
+
+  const formatter = createFormatter(schemaGeneratorConfig)
+
+  const schemaGenerator = new SchemaGenerator(
+    tsProgram,
+    parser,
+    formatter,
+    schemaGeneratorConfig,
+  )
+
+  // const schemaGenerator = createGenerator(schemaGeneratorConfig)
 
   return {
     outputFile: path.join(
@@ -261,63 +287,102 @@ const schemas = objectConfig.map(
     ])
 
     if (schema.definitions) {
-      Object.entries(schema.definitions).forEach(
-        ([definitionKey, definition]) => {
-          if (
-            schema.definitions == null ||
-            typeof schema.definitions !== 'object' ||
-            schema.definitions === null
-          ) {
-            return
-          }
+      const newSchemaDefinitions = Object.fromEntries<Definition>(
+        Object.entries(schema.definitions)
+          .filter(
+            (entry): entry is [string, Definition] =>
+              typeof entry[1] === 'object' && entry[1] !== null,
+          )
+          .map(([definitionKey, definition]) => {
+            if (
+              definitionKey === 'PackageJsonWithPath' &&
+              'properties' in definition &&
+              typeof definition.properties === 'object' &&
+              definition.properties !== null &&
+              'packageJsonPath' in definition.properties &&
+              typeof definition.properties.packageJsonPath === 'object' &&
+              definition.properties.packageJsonPath !== null
+            ) {
+              const $ref = 'https://www.schemastore.org/package.json'
 
-          if (
-            definitionKey === 'PackageJsonWithPath' &&
-            typeof definition === 'object' &&
-            'properties' in definition &&
-            definition.properties != null &&
-            'packageJsonPath' in definition.properties &&
-            definition.properties.packageJsonPath != null &&
-            typeof definition.properties.packageJsonPath === 'object'
-          ) {
-            const $ref = `https://www.schemastore.org/package.json`
-
-            schema.definitions[definitionKey] = {
-              ...definition,
-              allOf: [
-                { $ref },
-                {
-                  properties: {
-                    packageJsonPath: {
-                      ...definition.properties.packageJsonPath,
+              const newDefinition = {
+                ...definition,
+                allOf: [
+                  { $ref },
+                  {
+                    properties: {
+                      packageJsonPath: {
+                        ...definition.properties.packageJsonPath,
+                      },
                     },
                   },
-                },
-              ],
-            }
-          }
+                ],
+              } satisfies Definition
 
-          if (definitionKey.startsWith('TsConfigJson.')) {
-            const configKey = definitionKey.replace('TsConfigJson.', '')
-
-            const configKeysSegments = configKey.split('.')
-
-            if (configKeysSegments.length > 1) {
-              delete schema.definitions[definitionKey]
-
-              return
+              return [definitionKey, newDefinition] as const satisfies [
+                definitionKey: string,
+                newDefinition: Definition,
+              ]
             }
 
-            const unCapitalizedConfigKey = unCapitalize(configKey)
+            if (definitionKey.startsWith('TsConfigJson.')) {
+              const configKey = definitionKey.replace('TsConfigJson.', '')
 
-            const $ref = `https://www.schemastore.org/tsconfig.json#/definitions/${unCapitalizedConfigKey}Definition/properties/${unCapitalizedConfigKey}`
+              const configKeysSegments = configKey.split('.')
 
-            schema.definitions[definitionKey] = {
-              $ref,
+              if (configKeysSegments.length > 1) {
+                // delete schema.definitions?.[definitionKey]
+
+                // const firstConfigKeySegment = configKeysSegments[0] ?? ''
+
+                // const unCapitalizedFirstConfigKeySegment = unCapitalize(
+                //   firstConfigKeySegment,
+                // )
+
+                // const lastConfigKeySegment = configKeysSegments.at(-1) ?? ''
+
+                // const unCapitalizedLastConfigKeySegment =
+                //   unCapitalize(lastConfigKeySegment)
+
+                // const $ref = `https://www.schemastore.org/tsconfig.json#/definitions/${unCapitalizedFirstConfigKeySegment}Definition/properties/${unCapitalizedLastConfigKeySegment}`
+
+                // const newDefinition = {
+                //   $ref,
+                // } satisfies Definition
+
+                return [definitionKey, null] as const satisfies [
+                  definitionKey: string,
+                  newDefinition: null,
+                ]
+              }
+
+              const unCapitalizedConfigKey = unCapitalize(configKey)
+
+              const $ref = `https://www.schemastore.org/tsconfig.json#/definitions/${unCapitalizedConfigKey}Definition/properties/${unCapitalizedConfigKey}`
+
+              const newDefinition = {
+                $ref,
+              } satisfies Definition
+
+              // schema.definitions[definitionKey] = {
+              //   $ref,
+              // }
+
+              return [definitionKey, newDefinition] as const satisfies [
+                definitionKey: string,
+                newDefinition: Definition,
+              ]
             }
-          }
-        },
+
+            return [definitionKey, definition] as const satisfies [
+              definitionKey: string,
+              newDefinition: Definition | boolean,
+            ]
+          })
+          .filter((entry) => entry[1] != null),
       )
+
+      schema.definitions = newSchemaDefinitions
     }
 
     return {

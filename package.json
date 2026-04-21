@@ -79,6 +79,8 @@
     "lint:fix": "pnpm run lint --fix",
     "build": "node -C dev ./src/run.ts && pnpm run build-schema",
     "build-schema": "node ./scripts/create-json-schema.mts",
+    "lint-schema": "jsonschema lint ./docs/public/tsdown.config.schema.json",
+    "validate-schema": "jsonschema validate docs/public/tsdown.config.schema.json tsdown.config.json",
     "dev": "pnpm run build",
     "test": "vitest",
     "typecheck": "tsgo --noEmit",
@@ -153,6 +155,7 @@
   },
   "devDependencies": {
     "@arethetypeswrong/core": "catalog:peer",
+    "@sourcemeta/jsonschema": "catalog:dev",
     "@sxzz/eslint-config": "catalog:dev",
     "@sxzz/prettier-config": "catalog:dev",
     "@sxzz/test-utils": "catalog:dev",

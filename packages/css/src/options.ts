@@ -65,8 +65,6 @@ export interface CssOptions {
    * When set to `true`, CSS imported in async JS chunks will be preserved as chunks.
    *
    * Defaults to `false`, but if `unbundle` is `true`, it defaults to `true` to preserve chunk splitting.
-   *
-   * @default false
    */
   splitting?: boolean
 
@@ -135,7 +133,6 @@ export interface CssOptions {
    * When not `false`, `.module.css` files (and preprocessor variants) are
    * treated as CSS modules with scoped class names.
    *
-   * @default options.modules === false ? false : (options.modules ?? {})
    * @see https://github.com/css-modules/css-modules
    *
    * @default {}

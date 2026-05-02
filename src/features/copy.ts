@@ -10,22 +10,30 @@ export interface CopyEntry {
    * Source path or glob pattern.
    */
   from: Arrayable<string>
+
   /**
-   * Destination path.
-   * If not specified, defaults to the output directory ("outDir").
+   * Destination path. If not specified, defaults to the
+   * {@linkcode ResolvedConfig.outDir | output directory}.
+   *
+   * @default resolvedConfig.outDir
    */
   to?: string
+
   /**
-   * Whether to flatten the copied files (not preserving directory structure).
+   * Whether to flatten the copied files (not preserving directory
+   * structure).
    *
    * @default true
    */
   flatten?: boolean
+
   /**
    * Output copied items to console.
+   *
    * @default false
    */
   verbose?: boolean
+
   /**
    * Change destination file or folder name.
    */
@@ -33,11 +41,26 @@ export interface CopyEntry {
     | string
     | ((name: string, extension: string, fullPath: string) => string)
 }
+/**
+ * Files or directories to copy to the output directory. Accepts a single
+ * string path, a {@linkcode CopyEntry} object, or an array of either.
+ */
 export type CopyOptions = Arrayable<string | CopyEntry>
+
+/**
+ * A function form of {@linkcode CopyOptions} that receives the resolved
+ * config and returns the copy entries. Useful for dynamic copy configurations.
+ */
 export type CopyOptionsFn = (options: ResolvedConfig) => Awaitable<CopyOptions>
 
 type ResolvedCopyEntry = CopyEntry & { from: string; to: string }
 
+/**
+ * Copy static files to the output directory according to the
+ * {@linkcode ResolvedConfig.copy | copy} option.
+ *
+ * @param options - The {@linkcode ResolvedConfig | resolved config}. If {@linkcode ResolvedConfig.copy | copy} is falsy this is a no-op.
+ */
 export async function copy(options: ResolvedConfig): Promise<void> {
   if (!options.copy) return
 
@@ -58,6 +81,14 @@ export async function copy(options: ResolvedConfig): Promise<void> {
   )
 }
 
+/**
+ * Resolve the {@linkcode ResolvedConfig.copy | copy} option into a flat list
+ * of `{ from, to }` pairs, expanding glob patterns and applying `rename` /
+ * `flatten` rules.
+ *
+ * @param options - The {@linkcode ResolvedConfig | resolved config} whose {@linkcode ResolvedConfig.copy | copy} field is processed.
+ * @returns Fully {@linkcode ResolvedCopyEntry | resolved copy entries} with absolute {@linkcode ResolvedCopyEntry.from | from} and {@linkcode ResolvedCopyEntry.to | to} paths.
+ */
 export async function resolveCopyEntries(
   options: ResolvedConfig,
 ): Promise<ResolvedCopyEntry[]> {
@@ -109,7 +140,7 @@ function resolveCopyEntry(
   entry: CopyEntry & { from: string },
   cwd: string,
   outDir: string,
-): CopyEntry & { from: string; to: string } {
+): ResolvedCopyEntry {
   const { flatten = true, rename } = entry
   const from = path.resolve(cwd, entry.from)
   const to = entry.to ? path.resolve(cwd, entry.to) : outDir

@@ -1,7 +1,7 @@
 import { getCompatibleVersions } from 'baseline-browser-mapping'
 
 // Update on each major release
-const targetDate = '2026-01-01'
+const targetDate = '2026-05-01'
 
 // https://oxc.rs/docs/guide/usage/transformer/lowering#target
 const baselineToOxcTargetMap: Record<string, string> = {

@@ -3,8 +3,7 @@ import { createDebug } from 'obug'
 import { importWithError } from '../../utils/general.ts'
 import type { ResolvedConfig } from '../../config/index.ts'
 import type { Buffer } from 'node:buffer'
-import type { Options, publint as publintFunction } from 'publint'
-import type { formatMessage as formatMessageFunction } from 'publint/utils'
+import type { Options } from 'publint'
 
 const debug = createDebug('tsdown:publint')
 const label = dim`[publint]`
@@ -14,8 +13,8 @@ export interface PublintOptions extends Omit<Options, 'pack' | 'pkgDir'> {
    * @hidden
    */
   module?: [
-    { publint: typeof publintFunction },
-    { formatMessage: typeof formatMessageFunction },
+    publint: typeof import('publint'),
+    publintUtils: typeof import('publint/utils'),
   ]
 }
 

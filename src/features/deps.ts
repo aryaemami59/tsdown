@@ -49,13 +49,14 @@ export interface DepsConfig {
    */
   onlyBundle?: Arrayable<string | RegExp> | false
   /**
-   * @deprecated Use {@linkcode onlyBundle} instead.
+   * @deprecated Use {@linkcode DepsConfig.onlyBundle | onlyBundle} instead.
    */
   onlyAllowBundle?: Arrayable<string | RegExp> | false
   /**
    * Skip bundling all `node_modules` dependencies.
    *
-   * **Note:** This option cannot be used together with {@linkcode alwaysBundle}.
+   * **Note:** This option cannot be used together with
+   * {@linkcode DepsConfig.alwaysBundle | alwaysBundle}.
    *
    * @default false
    */

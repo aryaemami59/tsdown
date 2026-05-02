@@ -61,16 +61,17 @@ export interface CssOptions {
   /**
    * Enable/disable CSS code splitting.
    * When set to `false`, all CSS in the entire project will be extracted into
-   * a single CSS file named by {@linkcode fileName}.
+   * a single CSS file named by {@linkcode CssOptions.fileName | fileName}.
    * When set to `true`, CSS imported in async JS chunks will be preserved as chunks.
    *
-   * Defaults to `false`, but if `unbundle` is `true`, it defaults to `true` to preserve chunk splitting.
+   * Defaults to `false`, but if {@linkcode CssOptions.unbundle | unbundle} is
+   * `true`, it defaults to `true` to preserve chunk splitting.
    */
   splitting?: boolean
 
   /**
-   * Specify the name of the CSS file generated when {@linkcode splitting} is
-   * `false`.
+   * Specify the name of the CSS file generated when
+   * {@linkcode CssOptions.splitting | splitting} is `false`.
    *
    * @default 'style.css'
    */
@@ -81,7 +82,7 @@ export interface CssOptions {
    * Accepts esbuild-style target strings (e.g., `'chrome99'`, `'safari16.2'`).
    * Defaults to the top-level `target` option.
    *
-   * @see https://vite.dev/config/build-options#build-csstarget
+   * @see {@link https://vite.dev/config/build-options#build-csstarget}
    * @default tsdownConfig.target
    */
   target?: string | string[] | false
@@ -113,10 +114,11 @@ export interface CssOptions {
    * - `object`: Inline PostCSS options with optional `plugins` array.
    * - Omitted: Auto-detect PostCSS config from the project root.
    *
-   * Only used when {@linkcode transformer} is `'postcss'`.
+   * Only used when {@linkcode CssOptions.transformer | transformer} is
+   * `'postcss'`.
    * Requires `postcss` to be installed.
    *
-   * @see https://github.com/postcss/postcss
+   * @see {@link https://github.com/postcss/postcss}
    */
   postcss?: PostCSSOptions
 
@@ -133,7 +135,7 @@ export interface CssOptions {
    * When not `false`, `.module.css` files (and preprocessor variants) are
    * treated as CSS modules with scoped class names.
    *
-   * @see https://github.com/css-modules/css-modules
+   * @see {@link https://github.com/css-modules/css-modules}
    *
    * @default {}
    */
@@ -149,7 +151,7 @@ export interface CssOptions {
    *   targets/minify transform.
    *
    * @default 'lightningcss'
-   * @see https://vite.dev/config/shared-options#css-transformer
+   * @see {@link https://vite.dev/config/shared-options#css-transformer}
    */
   transformer?: 'postcss' | 'lightningcss'
 }

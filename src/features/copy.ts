@@ -13,6 +13,8 @@ export interface CopyEntry {
   /**
    * Destination path.
    * If not specified, defaults to the output directory ("outDir").
+   *
+   * @default tsdownConfig.outDir
    */
   to?: string
   /**

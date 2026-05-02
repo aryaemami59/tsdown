@@ -3,17 +3,17 @@ import { expandBaselineTarget, resolvePackageTarget } from './target.ts'
 
 test('expandBaselineTarget', () => {
   expect(expandBaselineTarget(['baseline-widely-available'])).toEqual([
-    'chrome111',
-    'edge111',
-    'firefox114',
-    'safari16.4',
-    'ios16.4',
+    'chrome118',
+    'edge118',
+    'firefox119',
+    'safari17',
+    'ios17',
   ])
 
   expect(expandBaselineTarget(['es2020'])).toEqual(['es2020'])
 
   expect(expandBaselineTarget(['node18', 'baseline-widely-available'])).toEqual(
-    ['node18', 'chrome111', 'edge111', 'firefox114', 'safari16.4', 'ios16.4'],
+    ['node18', 'chrome118', 'edge118', 'firefox119', 'safari17', 'ios17'],
   )
 })
 

@@ -13,12 +13,30 @@ const BASELINE_WIDELY_AVAILABLE_TARGET: string[] = [
   'ios17',
 ]
 
+/**
+ * Expand the special `'baseline-widely-available'` shorthand into its
+ * concrete browser/runtime target strings.
+ *
+ * @param targets - Array of target strings, possibly containing the shorthand.
+ * @returns Expanded target array with the shorthand replaced by the corresponding baseline browser versions.
+ */
 export function expandBaselineTarget(targets: string[]): string[] {
   return targets.flatMap((t) =>
     t === 'baseline-widely-available' ? BASELINE_WIDELY_AVAILABLE_TARGET : t,
   )
 }
 
+/**
+ * Resolve the compilation target from the user config, falling back to the
+ * minimum Node.js version declared in `package.json` `engines.node`.
+ *
+ * @param logger - Logger used to print the resolved targets.
+ * @param target - Raw target option (`false` disables targeting entirely).
+ * @param color - Ansis color function used to highlight target strings in logs.
+ * @param pkg - Parsed `package.json`; used to infer a target from `engines.node` when `target` is omitted.
+ * @param nameLabel - Optional build name label prepended to log lines.
+ * @returns The resolved target strings, or `undefined` when targeting is disabled or cannot be inferred.
+ */
 export function resolveTarget(
   logger: Logger,
   target: string | string[] | false | undefined,
@@ -49,6 +67,13 @@ export function resolveTarget(
   return targets
 }
 
+/**
+ * Derive a Rolldown-compatible target string from `package.json`
+ * `engines.node`, e.g. `'>=18'` → `'node18.0.0'`.
+ *
+ * @param pkg - Parsed `package.json`.
+ * @returns A `nodeX.Y.Z` target string, or `undefined` if `engines.node` is absent or cannot be resolved to a concrete version.
+ */
 export function resolvePackageTarget(pkg?: PackageJson): string | undefined {
   const nodeVersion = pkg?.engines?.node
   if (!nodeVersion) return

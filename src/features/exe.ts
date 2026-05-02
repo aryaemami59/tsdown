@@ -13,13 +13,25 @@ import { importWithError, typeAssert } from '../utils/general.ts'
 import type { ResolvedConfig, RolldownChunk } from '../config/types.ts'
 import type { ExeExtensionOptions, ExeTarget } from '@tsdown/exe'
 
+/**
+ * Options for bundling as a Node.js Single Executable Application (SEA).
+ *
+ * @see {@link https://tsdown.dev/options/exe | exe option documentation}
+ */
 export interface ExeOptions extends ExeExtensionOptions {
+  /**
+   * Options passed directly to Node.js SEA configuration.
+   *
+   * @see {@link https://nodejs.org/api/single-executable-applications.html | Node.js SEA documentation}
+   */
   seaConfig?: Omit<SeaConfig, 'main' | 'output' | 'mainFormat'>
+
   /**
    * Output file name without any suffix or extension.
    * For example, do not include `.exe`, platform suffixes, or architecture suffixes.
    */
   fileName?: string | ((chunk: RolldownChunk) => string)
+
   /**
    * Output directory for executables.
    * @default 'build'
@@ -34,43 +46,71 @@ export interface ExeOptions extends ExeExtensionOptions {
  */
 export interface SeaConfig {
   main?: string
+
   /**
    * Optional, if not specified, uses the current Node.js binary
    */
   executable?: string
+
   output?: string
+
   /**
    * @default tsdownConfig.format === 'es' ? 'module' : 'commonjs'
    */
   mainFormat?: 'commonjs' | 'module'
+
   /**
    * @default true
    */
   disableExperimentalSEAWarning?: boolean
+
   /**
    * @default false
    */
   useSnapshot?: boolean
+
   /**
    * @default false
    */
   useCodeCache?: boolean
-  execArgv?: string[]
+
   /**
+   * Extra Node.js CLI arguments injected into the executable.
+   */
+  execArgv?: string[]
+
+  /**
+   * Controls how `execArgv` is extended at runtime.
+   *
+   * - `'none'`: No extension; the embedded `execArgv` is used as-is.
+   * - `'env'`: Extend with the `NODE_OPTIONS` environment variable.
+   * - `'cli'`: Extend with command-line arguments passed to the executable.
+   *
    * @default 'env'
    */
   execArgvExtension?: 'none' | 'env' | 'cli'
+
+  /**
+   * Assets to embed into the executable, as a map of asset name to file path.
+   */
   assets?: Record<string, string>
 }
 
 const debug = createDebug('tsdown:exe')
 
-export function validateSea({
-  dts,
-  entry,
-  logger,
-  nameLabel,
-}: Omit<ResolvedConfig, 'format'>): void {
+/**
+ * Validate the resolved config for SEA compatibility, throwing or warning
+ * for unsupported combinations (Bun/Deno runtimes, old Node.js, multiple
+ * entries, DTS alongside executable output).
+ *
+ * @param resolvedConfig - Resolved config (without `format`) to validate.
+ * @throws An {@linkcode Error} When running under Bun or Deno, when the Node.js version is below 25.7.0, or when more than one entry point is provided.
+ */
+export function validateSea(
+  resolvedConfig: Omit<ResolvedConfig, 'format'>,
+): void {
+  const { dts, entry, logger, nameLabel } = resolvedConfig
+
   if (process.versions.bun || process.versions.deno) {
     throw new Error(
       'The `exe` option is not supported in Bun and Deno environments.',
@@ -102,6 +142,14 @@ export function validateSea({
   )
 }
 
+/**
+ * Build Node.js Single Executable Application(s) from the output chunks
+ * produced by Rolldown, using the {@linkcode ResolvedConfig.exe | exe} option.
+ * Skips silently when `config.exe` is falsy.
+ *
+ * @param config - Resolved config that contains the `exe` settings and output directory.
+ * @param chunks - Rolldown output chunks from the current build; DTS chunks are excluded automatically.
+ */
 export async function buildExe(
   config: ResolvedConfig,
   chunks: RolldownChunk[],

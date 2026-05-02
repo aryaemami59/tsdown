@@ -10,6 +10,7 @@ export interface CopyEntry {
    * Source path or glob pattern.
    */
   from: Arrayable<string>
+
   /**
    * Destination path.
    * If not specified, defaults to the output directory ("outDir").
@@ -17,17 +18,22 @@ export interface CopyEntry {
    * @default tsdownConfig.outDir
    */
   to?: string
+
   /**
-   * Whether to flatten the copied files (not preserving directory structure).
+   * Whether to flatten the copied files (not preserving directory
+   * structure).
    *
    * @default true
    */
   flatten?: boolean
+
   /**
    * Output copied items to console.
+   *
    * @default false
    */
   verbose?: boolean
+
   /**
    * Change destination file or folder name.
    */
@@ -35,11 +41,26 @@ export interface CopyEntry {
     | string
     | ((name: string, extension: string, fullPath: string) => string)
 }
+/**
+ * Files or directories to copy to the output directory. Accepts a single
+ * string path, a {@linkcode CopyEntry} object, or an array of either.
+ */
 export type CopyOptions = Arrayable<string | CopyEntry>
+
+/**
+ * A function form of {@linkcode CopyOptions} that receives the resolved
+ * config and returns the copy entries. Useful for dynamic copy configurations.
+ */
 export type CopyOptionsFn = (options: ResolvedConfig) => Awaitable<CopyOptions>
 
 type ResolvedCopyEntry = CopyEntry & { from: string; to: string }
 
+/**
+ * Copy static files to the output directory according to the
+ * {@linkcode ResolvedConfig.copy | copy} option.
+ *
+ * @param options - The resolved config; if `copy` is falsy this is a no-op.
+ */
 export async function copy(options: ResolvedConfig): Promise<void> {
   if (!options.copy) return
 
@@ -60,6 +81,14 @@ export async function copy(options: ResolvedConfig): Promise<void> {
   )
 }
 
+/**
+ * Resolve the {@linkcode ResolvedConfig.copy | copy} option into a flat list
+ * of `{ from, to }` pairs, expanding glob patterns and applying `rename` /
+ * `flatten` rules.
+ *
+ * @param options - The resolved config whose `copy` field is processed.
+ * @returns Fully resolved copy entries with absolute `from` and `to` paths.
+ */
 export async function resolveCopyEntries(
   options: ResolvedConfig,
 ): Promise<ResolvedCopyEntry[]> {

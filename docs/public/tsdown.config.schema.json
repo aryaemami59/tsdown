@@ -7,14 +7,15 @@
       "properties": {
         "entry": {
           "$ref": "#/definitions/TsdownInputOption",
-          "description": "Defaults to `'src/index.ts'` if it exists.",
-          "markdownDescription": "Defaults to `'src/index.ts'` if it exists.",
+          "description": "Specifies the entry files for your project. These files serve as the starting points for the bundling process. You can define entry files either via the CLI or in the configuration file. Defaults to `'src/index.ts'` if it exists.",
+          "markdownDescription": "Specifies the entry files for your project. These files serve as the\nstarting points for the bundling process. You can define entry files\neither via the CLI or in the configuration file. Defaults to\n`'src/index.ts'` if it exists.",
           "default": { "index": "src/index.ts" }
         },
         "deps": {
           "$ref": "#/definitions/DepsConfig",
           "description": "Dependency handling options.",
-          "markdownDescription": "Dependency handling options."
+          "markdownDescription": "Dependency handling options.",
+          "default": {}
         },
         "external": {
           "anyOf": [
@@ -47,19 +48,26 @@
         },
         "skipNodeModulesBundle": {
           "type": "boolean",
-          "deprecated": "Use {@linkcode DepsConfig.skipNodeModulesBundle deps.skipNodeModulesBundle} instead.",
-          "default": false
+          "default": false,
+          "deprecated": "Use {@linkcode DepsConfig.skipNodeModulesBundle deps.skipNodeModulesBundle} instead."
         },
         "alias": {
           "type": "object",
-          "additionalProperties": { "type": "string" }
+          "additionalProperties": { "type": "string" },
+          "description": "Map import paths to other paths or modules at build time.",
+          "markdownDescription": "Map import paths to other paths or modules at build time."
         },
-        "tsconfig": { "type": ["string", "boolean"], "default": true },
+        "tsconfig": {
+          "type": ["string", "boolean"],
+          "description": "Configures TypeScript configuration file resolution and usage.\n- `true` (default): Automatically find and use the nearest `tsconfig.json` file.\n- `false`: Do not use any `tsconfig.json` file.\n- `string`: Path to a specific `tsconfig.json` file to use. It can be an absolute path or a path relative to the  {@linkcode  UserConfig.cwd cwd } .",
+          "markdownDescription": "Configures TypeScript configuration file resolution and usage.\n- `true` (default): Automatically find and use the nearest `tsconfig.json` file.\n- `false`: Do not use any `tsconfig.json` file.\n- `string`: Path to a specific `tsconfig.json` file to use. It can be an absolute path or a path relative to the  {@linkcode  UserConfig.cwd cwd } .",
+          "default": true
+        },
         "platform": {
           "type": "string",
           "enum": ["node", "neutral", "browser"],
-          "description": "Specifies the target runtime platform for the build.\n\n- `node`: Node.js and compatible runtimes (e.g., Deno, Bun).   For CJS format, this is always set to `node` and cannot be changed.\n- `neutral`: A platform-agnostic target with no specific runtime assumptions.\n- `browser`: Web browsers.",
-          "markdownDescription": "Specifies the target runtime platform for the build.\n\n- `node`: Node.js and compatible runtimes (e.g., Deno, Bun).\n  For CJS format, this is always set to `node` and cannot be changed.\n- `neutral`: A platform-agnostic target with no specific runtime assumptions.\n- `browser`: Web browsers.",
+          "description": "Specifies the target runtime platform for the build.\n\n- `'node'`: Targets the  {@link  https://nodejs.org Node.js }  runtime and compatible environments such as Deno and Bun. This is the default platform, and Node.js built-in modules (e.g., `fs`, `path`) will be resolved automatically. Ideal for toolchains or server-side projects.   For CJS format, this is always set to `'node'` and cannot be changed.\n- `'neutral'`: A platform-agnostic target with no specific runtime assumptions. Use this if your code is intended to run in multiple environments or you want full control over runtime behavior. This is particularly useful for libraries or shared code that may be used in both Node.js and browser environments.\n- `'browser'`: Targets web browsers (e.g., Chrome, Firefox). This is suitable for front-end projects. If your code uses Node.js built-in modules, a warning will be displayed, and you may need to use polyfills or shims to ensure compatibility.",
+          "markdownDescription": "Specifies the target runtime platform for the build.\n\n- `'node'`: Targets the  {@link  https://nodejs.org Node.js }  runtime and compatible environments such as Deno and Bun. This is the default platform, and Node.js built-in modules (e.g., `fs`, `path`) will be resolved automatically. Ideal for toolchains or server-side projects.\n  For CJS format, this is always set to `'node'` and cannot be changed.\n- `'neutral'`: A platform-agnostic target with no specific runtime assumptions. Use this if your code is intended to run in multiple environments or you want full control over runtime behavior. This is particularly useful for libraries or shared code that may be used in both Node.js and browser environments.\n- `'browser'`: Targets web browsers (e.g., Chrome, Firefox). This is suitable for front-end projects. If your code uses Node.js built-in modules, a warning will be displayed, and you may need to use polyfills or shims to ensure compatibility.",
           "default": "node"
         },
         "target": {
@@ -68,7 +76,7 @@
             { "type": "boolean", "const": false }
           ],
           "description": "Specifies the compilation target environment(s).\n\nDetermines the JavaScript version or runtime(s) for which the code should be compiled. If not set, defaults to the value of `engines.node` in your project's `package.json`. If no `engines.node` field exists, no syntax transformations are applied.\n\nAccepts a single target (e.g., `'es2020'`, `'node18'`, `'baseline-widely-available'`), an array of targets, or `false` to disable all transformations.",
-          "markdownDescription": "Specifies the compilation target environment(s).\n\nDetermines the JavaScript version or runtime(s) for which the code should be compiled.\nIf not set, defaults to the value of `engines.node` in your project's `package.json`.\nIf no `engines.node` field exists, no syntax transformations are applied.\n\nAccepts a single target (e.g., `'es2020'`, `'node18'`, `'baseline-widely-available'`), an array of targets, or `false` to disable all transformations."
+          "markdownDescription": "Specifies the compilation target environment(s).\n\nDetermines the JavaScript version or runtime(s) for which the code should be compiled.\nIf not set, defaults to the value of `engines.node` in your project's `package.json`.\nIf no `engines.node` field exists, no syntax transformations are applied.\n\nAccepts a single target (e.g., `'es2020'`, `'node18'`,\n`'baseline-widely-available'`), an array of targets, or `false` to disable\nall transformations."
         },
         "env": {
           "type": "object",
@@ -90,10 +98,16 @@
         "define": {
           "type": "object",
           "additionalProperties": { "type": "string" },
-          "description": "Replace global variables or [property accessors](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Property_accessors) with the provided values.\n\nSee Oxc's [`define` option](https://oxc.rs/docs/guide/usage/transformer/global-variable-replacement.html#define) for more details.",
-          "markdownDescription": "Replace global variables or [property accessors](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Property_accessors) with the provided values.\n\nSee Oxc's [`define` option](https://oxc.rs/docs/guide/usage/transformer/global-variable-replacement.html#define) for more details."
+          "description": "Define global constants that are replaced at build time.",
+          "markdownDescription": "Define global constants that are replaced at build time.",
+          "default": {}
         },
-        "shims": { "type": "boolean", "default": false },
+        "shims": {
+          "type": "boolean",
+          "description": "Inject shims for compatibility between module formats. When targeting ESM output, enables shims for  {@linkcode  https://nodejs.org/api/modules.html#dirname __dirname }  and  {@linkcode  https://nodejs.org/api/modules.html#filename __filename }  (which are not natively available in ESM). The shims are tree-shaken away if unused. The  {@linkcode  https://nodejs.org/api/modules.html#requireid require }  function in ESM output with  {@linkcode  UserConfig.platform platform: 'node' }  is always shimmed automatically, regardless of this option. When targeting CJS output, ESM-specific variables ( {@linkcode  https://nodejs.org/api/esm.html#importmetaurl import.meta.url } ,  {@linkcode  https://nodejs.org/api/esm.html#importmetadirname import.meta.dirname } ,  {@linkcode  https://nodejs.org/api/esm.html#importmetafilename import.meta.filename } ) are always shimmed regardless of this option.",
+          "markdownDescription": "Inject shims for compatibility between module formats. When targeting ESM\noutput, enables shims for\n {@linkcode  https://nodejs.org/api/modules.html#dirname __dirname }  and\n {@linkcode  https://nodejs.org/api/modules.html#filename __filename } \n(which are not natively available in ESM). The shims are tree-shaken away\nif unused. The\n {@linkcode  https://nodejs.org/api/modules.html#requireid require } \nfunction in ESM output with\n {@linkcode  UserConfig.platform platform: 'node' }  is always shimmed\nautomatically, regardless of this option. When targeting CJS output,\nESM-specific variables\n( {@linkcode  https://nodejs.org/api/esm.html#importmetaurl import.meta.url } ,\n {@linkcode  https://nodejs.org/api/esm.html#importmetadirname import.meta.dirname } ,\n {@linkcode  https://nodejs.org/api/esm.html#importmetafilename import.meta.filename } )\nare always shimmed regardless of this option.",
+          "default": false
+        },
         "treeshake": {
           "anyOf": [
             { "type": "boolean" },
@@ -379,13 +393,13 @@
                     "entry": {
                       "type": "object",
                       "additionalProperties": { "type": "string" },
-                      "description": "Resolved entry map (after glob expansion)",
-                      "markdownDescription": "Resolved entry map (after glob expansion)"
+                      "description": "Resolved entry map (after glob expansion).",
+                      "markdownDescription": "Resolved entry map (after glob expansion)."
                     },
                     "rawEntry": {
                       "$ref": "#/definitions/TsdownInputOption",
-                      "description": "Original entry config before glob resolution (for watch mode re-globbing)",
-                      "markdownDescription": "Original entry config before glob resolution (for watch mode re-globbing)"
+                      "description": "Original entry config before glob resolution (for `watch` mode re-globbing).",
+                      "markdownDescription": "Original entry config before glob resolution\n(for `watch` mode re-globbing)."
                     },
                     "nameLabel": { "type": "string" },
                     "format": { "$ref": "#/definitions/NormalizedFormat" },
@@ -401,6 +415,7 @@
                         { "type": "boolean" }
                       ]
                     },
+                    "logger": { "$ref": "#/definitions/Logger" },
                     "ignoreWatch": {
                       "type": "array",
                       "items": {
@@ -413,8 +428,8 @@
                     "deps": { "$ref": "#/definitions/ResolvedDepsConfig" },
                     "root": {
                       "type": "string",
-                      "description": "Resolved root directory of input files",
-                      "markdownDescription": "Resolved root directory of input files"
+                      "description": "Resolved root directory of input files.",
+                      "markdownDescription": "Resolved root directory of input files."
                     },
                     "configDeps": {
                       "type": "object",
@@ -586,13 +601,13 @@
                     "entry": {
                       "type": "object",
                       "additionalProperties": { "type": "string" },
-                      "description": "Resolved entry map (after glob expansion)",
-                      "markdownDescription": "Resolved entry map (after glob expansion)"
+                      "description": "Resolved entry map (after glob expansion).",
+                      "markdownDescription": "Resolved entry map (after glob expansion)."
                     },
                     "rawEntry": {
                       "$ref": "#/definitions/TsdownInputOption",
-                      "description": "Original entry config before glob resolution (for watch mode re-globbing)",
-                      "markdownDescription": "Original entry config before glob resolution (for watch mode re-globbing)"
+                      "description": "Original entry config before glob resolution (for `watch` mode re-globbing).",
+                      "markdownDescription": "Original entry config before glob resolution\n(for `watch` mode re-globbing)."
                     },
                     "nameLabel": { "type": "string" },
                     "format": { "$ref": "#/definitions/NormalizedFormat" },
@@ -608,6 +623,7 @@
                         { "type": "boolean" }
                       ]
                     },
+                    "logger": { "$ref": "#/definitions/Logger" },
                     "ignoreWatch": {
                       "type": "array",
                       "items": {
@@ -620,8 +636,8 @@
                     "deps": { "$ref": "#/definitions/ResolvedDepsConfig" },
                     "root": {
                       "type": "string",
-                      "description": "Resolved root directory of input files",
-                      "markdownDescription": "Resolved root directory of input files"
+                      "description": "Resolved root directory of input files.",
+                      "markdownDescription": "Resolved root directory of input files."
                     },
                     "configDeps": {
                       "type": "object",
@@ -793,13 +809,13 @@
                     "entry": {
                       "type": "object",
                       "additionalProperties": { "type": "string" },
-                      "description": "Resolved entry map (after glob expansion)",
-                      "markdownDescription": "Resolved entry map (after glob expansion)"
+                      "description": "Resolved entry map (after glob expansion).",
+                      "markdownDescription": "Resolved entry map (after glob expansion)."
                     },
                     "rawEntry": {
                       "$ref": "#/definitions/TsdownInputOption",
-                      "description": "Original entry config before glob resolution (for watch mode re-globbing)",
-                      "markdownDescription": "Original entry config before glob resolution (for watch mode re-globbing)"
+                      "description": "Original entry config before glob resolution (for `watch` mode re-globbing).",
+                      "markdownDescription": "Original entry config before glob resolution\n(for `watch` mode re-globbing)."
                     },
                     "nameLabel": { "type": "string" },
                     "format": { "$ref": "#/definitions/NormalizedFormat" },
@@ -815,6 +831,7 @@
                         { "type": "boolean" }
                       ]
                     },
+                    "logger": { "$ref": "#/definitions/Logger" },
                     "ignoreWatch": {
                       "type": "array",
                       "items": {
@@ -827,8 +844,8 @@
                     "deps": { "$ref": "#/definitions/ResolvedDepsConfig" },
                     "root": {
                       "type": "string",
-                      "description": "Resolved root directory of input files",
-                      "markdownDescription": "Resolved root directory of input files"
+                      "description": "Resolved root directory of input files.",
+                      "markdownDescription": "Resolved root directory of input files."
                     },
                     "configDeps": {
                       "type": "object",
@@ -1000,13 +1017,13 @@
                     "entry": {
                       "type": "object",
                       "additionalProperties": { "type": "string" },
-                      "description": "Resolved entry map (after glob expansion)",
-                      "markdownDescription": "Resolved entry map (after glob expansion)"
+                      "description": "Resolved entry map (after glob expansion).",
+                      "markdownDescription": "Resolved entry map (after glob expansion)."
                     },
                     "rawEntry": {
                       "$ref": "#/definitions/TsdownInputOption",
-                      "description": "Original entry config before glob resolution (for watch mode re-globbing)",
-                      "markdownDescription": "Original entry config before glob resolution (for watch mode re-globbing)"
+                      "description": "Original entry config before glob resolution (for `watch` mode re-globbing).",
+                      "markdownDescription": "Original entry config before glob resolution\n(for `watch` mode re-globbing)."
                     },
                     "nameLabel": { "type": "string" },
                     "format": { "$ref": "#/definitions/NormalizedFormat" },
@@ -1022,6 +1039,7 @@
                         { "type": "boolean" }
                       ]
                     },
+                    "logger": { "$ref": "#/definitions/Logger" },
                     "ignoreWatch": {
                       "type": "array",
                       "items": {
@@ -1034,8 +1052,8 @@
                     "deps": { "$ref": "#/definitions/ResolvedDepsConfig" },
                     "root": {
                       "type": "string",
-                      "description": "Resolved root directory of input files",
-                      "markdownDescription": "Resolved root directory of input files"
+                      "description": "Resolved root directory of input files.",
+                      "markdownDescription": "Resolved root directory of input files."
                     },
                     "configDeps": {
                       "type": "object",
@@ -1207,13 +1225,13 @@
                     "entry": {
                       "type": "object",
                       "additionalProperties": { "type": "string" },
-                      "description": "Resolved entry map (after glob expansion)",
-                      "markdownDescription": "Resolved entry map (after glob expansion)"
+                      "description": "Resolved entry map (after glob expansion).",
+                      "markdownDescription": "Resolved entry map (after glob expansion)."
                     },
                     "rawEntry": {
                       "$ref": "#/definitions/TsdownInputOption",
-                      "description": "Original entry config before glob resolution (for watch mode re-globbing)",
-                      "markdownDescription": "Original entry config before glob resolution (for watch mode re-globbing)"
+                      "description": "Original entry config before glob resolution (for `watch` mode re-globbing).",
+                      "markdownDescription": "Original entry config before glob resolution\n(for `watch` mode re-globbing)."
                     },
                     "nameLabel": { "type": "string" },
                     "format": { "$ref": "#/definitions/NormalizedFormat" },
@@ -1229,6 +1247,7 @@
                         { "type": "boolean" }
                       ]
                     },
+                    "logger": { "$ref": "#/definitions/Logger" },
                     "ignoreWatch": {
                       "type": "array",
                       "items": {
@@ -1241,8 +1260,8 @@
                     "deps": { "$ref": "#/definitions/ResolvedDepsConfig" },
                     "root": {
                       "type": "string",
-                      "description": "Resolved root directory of input files",
-                      "markdownDescription": "Resolved root directory of input files"
+                      "description": "Resolved root directory of input files.",
+                      "markdownDescription": "Resolved root directory of input files."
                     },
                     "configDeps": {
                       "type": "object",
@@ -1414,13 +1433,13 @@
                     "entry": {
                       "type": "object",
                       "additionalProperties": { "type": "string" },
-                      "description": "Resolved entry map (after glob expansion)",
-                      "markdownDescription": "Resolved entry map (after glob expansion)"
+                      "description": "Resolved entry map (after glob expansion).",
+                      "markdownDescription": "Resolved entry map (after glob expansion)."
                     },
                     "rawEntry": {
                       "$ref": "#/definitions/TsdownInputOption",
-                      "description": "Original entry config before glob resolution (for watch mode re-globbing)",
-                      "markdownDescription": "Original entry config before glob resolution (for watch mode re-globbing)"
+                      "description": "Original entry config before glob resolution (for `watch` mode re-globbing).",
+                      "markdownDescription": "Original entry config before glob resolution\n(for `watch` mode re-globbing)."
                     },
                     "nameLabel": { "type": "string" },
                     "format": { "$ref": "#/definitions/NormalizedFormat" },
@@ -1436,6 +1455,7 @@
                         { "type": "boolean" }
                       ]
                     },
+                    "logger": { "$ref": "#/definitions/Logger" },
                     "ignoreWatch": {
                       "type": "array",
                       "items": {
@@ -1448,8 +1468,8 @@
                     "deps": { "$ref": "#/definitions/ResolvedDepsConfig" },
                     "root": {
                       "type": "string",
-                      "description": "Resolved root directory of input files",
-                      "markdownDescription": "Resolved root directory of input files"
+                      "description": "Resolved root directory of input files.",
+                      "markdownDescription": "Resolved root directory of input files."
                     },
                     "configDeps": {
                       "type": "object",
@@ -1621,13 +1641,13 @@
                     "entry": {
                       "type": "object",
                       "additionalProperties": { "type": "string" },
-                      "description": "Resolved entry map (after glob expansion)",
-                      "markdownDescription": "Resolved entry map (after glob expansion)"
+                      "description": "Resolved entry map (after glob expansion).",
+                      "markdownDescription": "Resolved entry map (after glob expansion)."
                     },
                     "rawEntry": {
                       "$ref": "#/definitions/TsdownInputOption",
-                      "description": "Original entry config before glob resolution (for watch mode re-globbing)",
-                      "markdownDescription": "Original entry config before glob resolution (for watch mode re-globbing)"
+                      "description": "Original entry config before glob resolution (for `watch` mode re-globbing).",
+                      "markdownDescription": "Original entry config before glob resolution\n(for `watch` mode re-globbing)."
                     },
                     "nameLabel": { "type": "string" },
                     "format": { "$ref": "#/definitions/NormalizedFormat" },
@@ -1643,6 +1663,7 @@
                         { "type": "boolean" }
                       ]
                     },
+                    "logger": { "$ref": "#/definitions/Logger" },
                     "ignoreWatch": {
                       "type": "array",
                       "items": {
@@ -1655,8 +1676,8 @@
                     "deps": { "$ref": "#/definitions/ResolvedDepsConfig" },
                     "root": {
                       "type": "string",
-                      "description": "Resolved root directory of input files",
-                      "markdownDescription": "Resolved root directory of input files"
+                      "description": "Resolved root directory of input files.",
+                      "markdownDescription": "Resolved root directory of input files."
                     },
                     "configDeps": {
                       "type": "object",
@@ -1810,20 +1831,25 @@
               "additionalProperties": false
             }
           ],
-          "description": "Output format(s). Available formats are\n- `esm`: ESM\n- `cjs`: CommonJS\n- `iife`: IIFE\n- `umd`: UMD",
-          "markdownDescription": "Output format(s). Available formats are\n- `esm`: ESM\n- `cjs`: CommonJS\n- `iife`: IIFE\n- `umd`: UMD",
+          "description": "Specify the desired output format(s) for the build. Available formats are:\n- `'esm'`, `'es'` and `'module'`:  {@link  https://nodejs.org/api/esm.html#modules-ecmascript-modules ECMAScript Module format } , ideal for modern JavaScript environments, including browsers and Node.js.\n- `'cjs'` and `'commonjs'`:  {@link  https://nodejs.org/api/modules.html#modules-commonjs-modules CommonJS Module format } , commonly used in Node.js projects.\n- `'iife'`:  {@link  https://developer.mozilla.org/en-US/docs/Glossary/IIFE Immediately Invoked Function Expression } , suitable for embedding in `<script>` tags or standalone browser usage.\n- `'umd'`:  {@link  https://github.com/umdjs/umd Universal Module Definition } , a format that works on  {@link  https://github.com/amdjs/amdjs-api/wiki/AMD AMD } ,  {@link  https://nodejs.org/api/modules.html#modules-commonjs-modules CommonJS } , and global variables.\n\nYou can override specific configuration options for each output format by setting `format` as an object in your config file. This allows you to tailor settings such as  {@linkcode  UserConfig.target target }  or other options for each `format` individually.",
+          "markdownDescription": "Specify the desired output format(s) for the build. Available formats are:\n- `'esm'`, `'es'` and `'module'`:  {@link  https://nodejs.org/api/esm.html#modules-ecmascript-modules ECMAScript Module format } , ideal for modern JavaScript environments, including browsers and Node.js.\n- `'cjs'` and `'commonjs'`:  {@link  https://nodejs.org/api/modules.html#modules-commonjs-modules CommonJS Module format } , commonly used in Node.js projects.\n- `'iife'`:  {@link  https://developer.mozilla.org/en-US/docs/Glossary/IIFE Immediately Invoked Function Expression } , suitable for embedding in `<script>` tags or standalone browser usage.\n- `'umd'`:  {@link  https://github.com/umdjs/umd Universal Module Definition } , a format that works on  {@link  https://github.com/amdjs/amdjs-api/wiki/AMD AMD } ,  {@link  https://nodejs.org/api/modules.html#modules-commonjs-modules CommonJS } , and global variables.\n\nYou can override specific configuration options for each output format by\nsetting `format` as an object in your config file. This allows you to\ntailor settings such as  {@linkcode  UserConfig.target target }  or other\noptions for each `format` individually.",
           "default": "esm"
         },
         "globalName": {
           "type": "string",
-          "description": "Specifies the global variable name that contains the exports of `umd` / `iife`  {@link  OutputOptions.format formats } .",
-          "markdownDescription": "Specifies the global variable name that contains the exports of `umd` / `iife`  {@link  OutputOptions.format formats } ."
+          "description": "The global variable name exposed when using  {@linkcode  https://developer.mozilla.org/en-US/docs/Glossary/IIFE iife }  or  {@linkcode  https://github.com/umdjs/umd umd }  format.",
+          "markdownDescription": "The global variable name exposed when using\n {@linkcode  https://developer.mozilla.org/en-US/docs/Glossary/IIFE iife } \nor  {@linkcode  https://github.com/umdjs/umd umd }  format."
         },
-        "outDir": { "type": "string", "default": "dist" },
+        "outDir": {
+          "type": "string",
+          "description": "Directory to write output files into. The directory will be created if it does not exist.",
+          "markdownDescription": "Directory to write output files into. The directory will be created if it\ndoes not exist.",
+          "default": "dist"
+        },
         "write": {
           "type": "boolean",
-          "description": "Whether to write the files to disk. This option is incompatible with watch mode.",
-          "markdownDescription": "Whether to write the files to disk.\nThis option is incompatible with watch mode.",
+          "description": "Whether to write the files to disk. This option is incompatible with `watch` mode.",
+          "markdownDescription": "Whether to write the files to disk. This option is incompatible with\n`watch` mode.",
           "default": true
         },
         "sourcemap": {
@@ -1832,8 +1858,8 @@
             { "type": "string", "const": "inline" },
             { "type": "string", "const": "hidden" }
           ],
-          "description": "Whether to generate source map files. Note that this option will always be `true` if you have  {@link  https://www.typescriptlang.org/tsconfig/#declarationMap `declarationMap` }  option enabled in your `tsconfig.json`.",
-          "markdownDescription": "Whether to generate source map files. Note that this option will always be\n`true` if you have\n {@link  https://www.typescriptlang.org/tsconfig/#declarationMap `declarationMap` } \noption enabled in your `tsconfig.json`.",
+          "description": "Whether to generate source map files. Note that this option will always be `true` if you have  {@linkcode  https://www.typescriptlang.org/tsconfig/#declarationMap declarationMap }  option enabled in your `tsconfig.json`. It accepts the following values:\n- `false` (default): Disable source maps.\n- `true`: Generate separate `.map` files alongside the output. A `//# sourceMappingURL` comment is appended to each output file pointing to the `.map` file.\n- `'inline'`: Embed the source map directly in the output file as a base64-encoded data URL. No separate `.map` file is generated. Similar to TypeScript's  {@linkcode  https://www.typescriptlang.org/tsconfig/#inlineSourceMap inlineSourceMap } .\n- `'hidden'`: Generate separate `.map` files but **do not** append the `//# sourceMappingURL` comment to the output. Useful when you want source maps available for error monitoring services but do not want browsers to load them automatically.",
+          "markdownDescription": "Whether to generate source map files. Note that this option will always be\n`true` if you have\n {@linkcode  https://www.typescriptlang.org/tsconfig/#declarationMap declarationMap } \noption enabled in your `tsconfig.json`. It accepts the following values:\n- `false` (default): Disable source maps.\n- `true`: Generate separate `.map` files alongside the output. A `//# sourceMappingURL` comment is appended to each output file pointing to the `.map` file.\n- `'inline'`: Embed the source map directly in the output file as a base64-encoded data URL. No separate `.map` file is generated. Similar to TypeScript's  {@linkcode  https://www.typescriptlang.org/tsconfig/#inlineSourceMap inlineSourceMap } .\n- `'hidden'`: Generate separate `.map` files but **do not** append the `//# sourceMappingURL` comment to the output. Useful when you want source maps available for error monitoring services but do not want browsers to load them automatically.",
           "default": false
         },
         "clean": {
@@ -1841,8 +1867,8 @@
             { "type": "boolean" },
             { "type": "array", "items": { "type": "string" } }
           ],
-          "description": "Clean directories before build.\n\nDefault to output directory.",
-          "markdownDescription": "Clean directories before build.\n\nDefault to output directory.",
+          "description": "Clean directories before build. Default to output directory.",
+          "markdownDescription": "Clean directories before build. Default to output directory.",
           "default": true
         },
         "minify": {
@@ -2055,30 +2081,40 @@
               "additionalProperties": false
             }
           ],
+          "description": "Minify the output files. Powered by  {@linkcode  https://oxc.rs Oxc }  (currently in alpha), which removes whitespace, comments, and renames variables to reduce bundle size.",
+          "markdownDescription": "Minify the output files. Powered by\n {@linkcode  https://oxc.rs Oxc }  (currently in alpha), which removes\nwhitespace, comments, and renames variables to reduce bundle size.",
           "default": false
         },
-        "footer": { "$ref": "#/definitions/ChunkAddon" },
-        "banner": { "$ref": "#/definitions/ChunkAddon" },
+        "footer": {
+          "$ref": "#/definitions/ChunkAddon",
+          "description": "Code to append to each output chunk.",
+          "markdownDescription": "Code to append to each output chunk."
+        },
+        "banner": {
+          "$ref": "#/definitions/ChunkAddon",
+          "description": "Code to prepend to each output chunk.",
+          "markdownDescription": "Code to prepend to each output chunk."
+        },
         "unbundle": {
           "type": "boolean",
           "description": "Determines whether `unbundle` is enabled. When set to `true`, the output files will mirror the input file structure.",
-          "markdownDescription": "Determines whether `unbundle` is enabled.\nWhen set to `true`, the output files will mirror the input file structure.",
+          "markdownDescription": "Determines whether `unbundle` is enabled. When set to `true`, the output\nfiles will mirror the input file structure.",
           "default": false
         },
         "root": {
           "type": "string",
-          "description": "Specifies the root directory of input files, similar to TypeScript's  {@link  https://www.typescriptlang.org/tsconfig/#rootDir `rootDir` } . This determines the output directory structure.\n\nBy default, the root is computed as the common base directory of all entry files.",
-          "markdownDescription": "Specifies the root directory of input files, similar to TypeScript's\n {@link  https://www.typescriptlang.org/tsconfig/#rootDir `rootDir` } .\nThis determines the output directory structure.\n\nBy default, the root is computed as the common base directory of all entry files."
+          "description": "Specifies the root directory of input files, similar to TypeScript's  {@linkcode  https://www.typescriptlang.org/tsconfig/#rootDir rootDir } . This determines the output directory structure. By default, the root is computed as the common base directory of all entry files.",
+          "markdownDescription": "Specifies the root directory of input files, similar to TypeScript's\n {@linkcode  https://www.typescriptlang.org/tsconfig/#rootDir rootDir } .\nThis determines the output directory structure. By default, the root is\ncomputed as the common base directory of all entry files."
         },
         "bundle": {
           "type": "boolean",
-          "deprecated": "Use {@linkcode UserConfig.unbundle unbundle} instead.",
-          "default": true
+          "default": true,
+          "deprecated": "Use {@linkcode UserConfig.unbundle unbundle} instead."
         },
         "fixedExtension": {
           "type": "boolean",
-          "description": "Use a fixed extension for output files. The extension will always be `.cjs` or `.mjs`. Otherwise, it will depend on the package type.\n\nDefaults to `true` if  {@linkcode  UserConfig.platform platform }  is set to `node`, `false` otherwise.",
-          "markdownDescription": "Use a fixed extension for output files.\nThe extension will always be `.cjs` or `.mjs`.\nOtherwise, it will depend on the package type.\n\nDefaults to `true` if  {@linkcode  UserConfig.platform platform }  is set to\n`node`, `false` otherwise.",
+          "description": "Use a fixed extension for output files. The extension will always be `.cjs` or `.mjs`. Otherwise, it will depend on the package type. Defaults to `true` if  {@linkcode  UserConfig.platform platform }  is set to `'node'`, `false` otherwise.",
+          "markdownDescription": "Use a fixed extension for output files.\nThe extension will always be `.cjs` or `.mjs`.\nOtherwise, it will depend on the package type. Defaults to `true` if\n {@linkcode  UserConfig.platform platform }  is set to `'node'`, `false`\notherwise.",
           "default": "platform === 'node'"
         },
         "hash": {
@@ -2087,7 +2123,12 @@
           "markdownDescription": "If enabled, appends hash to chunk filenames.",
           "default": true
         },
-        "cjsDefault": { "type": "boolean", "default": true },
+        "cjsDefault": {
+          "type": "boolean",
+          "description": "It helps improve compatibility when generating CommonJS (CJS) modules. When your module has **only a single `default` export** and the output format is set to CJS, `tsdown` will automatically transform:\n- `export default` into `module.exports =` in the generated JavaScript   file. For TypeScript declaration files (`.d.ts`), it will transform:\n- `export default` into `export =`. This ensures that consumers using CommonJS `require` syntax (`require('your-module')`) will receive the `default` export directly, improving interoperability with tools and environments that expect this behavior.",
+          "markdownDescription": "It helps improve compatibility when generating CommonJS (CJS) modules.\nWhen your module has **only a single `default` export** and the output\nformat is set to CJS, `tsdown` will automatically transform:\n- `export default` into `module.exports =` in the generated JavaScript\n  file.\nFor TypeScript declaration files (`.d.ts`), it will transform:\n- `export default` into `export =`.\nThis ensures that consumers using CommonJS `require` syntax\n(`require('your-module')`) will receive the `default` export directly,\nimproving interoperability with tools and environments that expect this\nbehavior.",
+          "default": true
+        },
         "cwd": {
           "type": "string",
           "description": "The working directory of the config file.\n- Defaults to  {@linkcode  process.cwd process.cwd() }  for root config.\n- Defaults to the package directory for  {@linkcode  UserConfig.workspace workspace }  config.",
@@ -2096,13 +2137,13 @@
         },
         "name": {
           "type": "string",
-          "description": "The name to show in CLI output. This is useful for monorepos or workspaces. When using workspace mode, this option defaults to the package name from `package.json`. In non-workspace mode, this option must be set explicitly for the name to show in the CLI output.",
-          "markdownDescription": "The name to show in CLI output. This is useful for monorepos or workspaces.\nWhen using workspace mode, this option defaults to the package name from `package.json`.\nIn non-workspace mode, this option must be set explicitly for the name to show in the CLI output."
+          "description": "The name to show in CLI output. This is useful for monorepos or workspaces. When using `workspace` mode, this option defaults to the  {@linkcode  PackageJsonWithPath.name package name }  from `package.json`. In non-workspace mode, this option must be set explicitly for the name to show in the CLI output.",
+          "markdownDescription": "The name to show in CLI output. This is useful for monorepos or workspaces.\nWhen using `workspace` mode, this option defaults to the\n {@linkcode  PackageJsonWithPath.name package name }  from `package.json`.\nIn non-workspace mode, this option must be set explicitly for the name to\nshow in the CLI output."
         },
         "logLevel": {
           "$ref": "#/definitions/LogLevel",
-          "description": "Log level.",
-          "markdownDescription": "Log level.",
+          "description": "Controls the verbosity of console logging during the build.\n\n- `'silent'`: Suppress all log output.\n- `'error'`: Show errors only.\n- `'warn'`: Show warnings and errors.\n- `'info'`: Show all messages including informational output.",
+          "markdownDescription": "Controls the verbosity of console logging during the build.\n\n- `'silent'`: Suppress all log output.\n- `'error'`: Show errors only.\n- `'warn'`: Show warnings and errors.\n- `'info'`: Show all messages including informational output.",
           "default": "info"
         },
         "failOnWarn": {
@@ -2110,17 +2151,22 @@
             { "type": "boolean" },
             { "$ref": "#/definitions/CIOption" }
           ],
-          "description": "If true, fails the build on warnings.",
-          "markdownDescription": "If true, fails the build on warnings.",
+          "description": "Fail the build with a non-zero exit code when warnings are emitted.\n\n- `true`: Always fail on warnings.\n- `false`: Never fail on warnings.\n- `'ci-only'`: Fail on warnings only when running in a CI environment.\n- `'local-only'`: Fail on warnings only when running locally.",
+          "markdownDescription": "Fail the build with a non-zero exit code when warnings are emitted.\n\n- `true`: Always fail on warnings.\n- `false`: Never fail on warnings.\n- `'ci-only'`: Fail on warnings only when running in a CI environment.\n- `'local-only'`: Fail on warnings only when running locally.",
           "default": false
+        },
+        "customLogger": {
+          "$ref": "#/definitions/Logger",
+          "description": "Custom logger.",
+          "markdownDescription": "Custom logger."
         },
         "fromVite": {
           "anyOf": [
             { "type": "boolean" },
             { "type": "string", "const": "vitest" }
           ],
-          "description": "Reuse config from Vite or Vitest.",
-          "markdownDescription": "Reuse config from Vite or Vitest.",
+          "description": "Reuse config from  {@link  https://vite.dev Vite }  or  {@link  https://vitest.dev Vitest } .",
+          "markdownDescription": "Reuse config from  {@link  https://vite.dev Vite }  or\n {@link  https://vitest.dev Vitest } .",
           "default": false
         },
         "watch": {
@@ -2128,45 +2174,48 @@
             { "type": "boolean" },
             { "$ref": "#/definitions/Arrayable%3Cstring%3E" }
           ],
+          "description": "Enable `watch` mode to watch files and rebuild on changes. When set to `true`, all files in the project will be watched. You can also specify an array of file paths or glob patterns to watch specific files or directories.",
+          "markdownDescription": "Enable `watch` mode to watch files and rebuild on changes. When set to\n`true`, all files in the project will be watched. You can also specify an\narray of file paths or glob patterns to watch specific files or\ndirectories.",
           "default": false
         },
         "ignoreWatch": {
           "$ref": "#/definitions/Arrayable%3C(string%7Cstring479082557)%3E",
-          "description": "Files or patterns to not watch while in watch mode.",
-          "markdownDescription": "Files or patterns to not watch while in watch mode."
+          "description": "Files or patterns to not watch while in `watch` mode.",
+          "markdownDescription": "Files or patterns to not watch while in `watch` mode.",
+          "default": []
         },
         "devtools": {
           "$ref": "#/definitions/WithEnabled%3CDevtoolsOptions%3E",
-          "description": "Enable devtools.\n\nDevTools is still under development, and this is for early testers only.\n\nThis may slow down the build process significantly.",
-          "markdownDescription": "Enable devtools.\n\nDevTools is still under development, and this is for early testers only.\n\nThis may slow down the build process significantly.",
+          "description": "Enable devtools. DevTools is still under development, and this is for early testers only. This may slow down the build process significantly.",
+          "markdownDescription": "Enable devtools. DevTools is still under development, and this is for\nearly testers only. This may slow down the build process significantly.",
           "default": false
         },
         "onSuccess": {
           "type": "string",
-          "description": "You can specify command to be executed after a successful build, specially useful for Watch mode.",
-          "markdownDescription": "You can specify command to be executed after a successful build, specially\nuseful for Watch mode."
+          "description": "You can specify command to be executed after a successful build, especially useful for `watch` mode.",
+          "markdownDescription": "You can specify command to be executed after a successful build, especially\nuseful for `watch` mode."
         },
         "dts": {
           "$ref": "#/definitions/WithEnabled%3CDtsOptions%3E",
-          "description": "Enables generation of TypeScript declaration files (`.d.ts`).\n\nBy default, this option is auto-detected based on your project's `package.json`:\n- If  {@linkcode  UserConfig.exe exe }  is enabled, declaration file generation is disabled by default.\n- If the  {@linkcode  PackageJsonWithPath.types types }  field is present, or if the main  {@linkcode  PackageJsonWithPath.exports exports }  contains a `types` entry, declaration file generation is enabled by default.\n- If the  {@link  https://www.typescriptlang.org/tsconfig/#declaration `declaration` }  option is set in `tsconfig.json`, declaration file generation is enabled by default.\n- Otherwise, declaration file generation is disabled by default.",
-          "markdownDescription": "Enables generation of TypeScript declaration files (`.d.ts`).\n\nBy default, this option is auto-detected based on your project's `package.json`:\n- If  {@linkcode  UserConfig.exe exe }  is enabled, declaration file generation is disabled by default.\n- If the  {@linkcode  PackageJsonWithPath.types types }  field is present, or if the main  {@linkcode  PackageJsonWithPath.exports exports }  contains a `types` entry, declaration file generation is enabled by default.\n- If the  {@link  https://www.typescriptlang.org/tsconfig/#declaration `declaration` }  option is set in `tsconfig.json`, declaration file generation is enabled by default.\n- Otherwise, declaration file generation is disabled by default."
+          "description": "Enables generation of TypeScript declaration files (`.d.ts`).\n\nBy default, this option is auto-detected based on your project's `package.json`:\n- If  {@linkcode  UserConfig.exe exe }  is enabled, declaration file generation is disabled by default.\n- If the  {@linkcode  PackageJsonWithPath.types types }  field is present, or if the main  {@linkcode  PackageJsonWithPath.exports exports }  contains a `types` entry, declaration file generation is enabled by default.\n- If the  {@linkcode  https://www.typescriptlang.org/tsconfig/#declaration declaration }  option is set to `true` in `tsconfig.json`, declaration file generation is enabled by default.\n- Otherwise, declaration file generation is disabled by default.\n\nPerformance depends on whether  {@linkcode  https://www.typescriptlang.org/tsconfig/#isolatedDeclarations isolatedDeclarations }  is enabled in `tsconfig.json`. With `isolatedDeclarations`, declarations are generated via `oxc-transform` (very fast). Without it, the TypeScript compiler is used (slower).",
+          "markdownDescription": "Enables generation of TypeScript declaration files (`.d.ts`).\n\nBy default, this option is auto-detected based on your project's `package.json`:\n- If  {@linkcode  UserConfig.exe exe }  is enabled, declaration file generation is disabled by default.\n- If the  {@linkcode  PackageJsonWithPath.types types }  field is present, or if the main  {@linkcode  PackageJsonWithPath.exports exports }  contains a `types` entry, declaration file generation is enabled by default.\n- If the  {@linkcode  https://www.typescriptlang.org/tsconfig/#declaration declaration }  option is set to `true` in `tsconfig.json`, declaration file generation is enabled by default.\n- Otherwise, declaration file generation is disabled by default.\n\nPerformance depends on whether\n {@linkcode  https://www.typescriptlang.org/tsconfig/#isolatedDeclarations isolatedDeclarations } \nis enabled in `tsconfig.json`. With `isolatedDeclarations`, declarations\nare generated via `oxc-transform` (very fast). Without it, the TypeScript\ncompiler is used (slower)."
         },
         "unused": {
           "$ref": "#/definitions/WithEnabled%3Cinterface-715603908-146-604-715603908-0-884%3E",
-          "description": "Enable unused dependencies check with  {@link  https://github.com/unplugin/unplugin-unused `unplugin-unused` } . Requires  {@link  https://github.com/unplugin/unplugin-unused `unplugin-unused` }  to be installed.",
-          "markdownDescription": "Enable unused dependencies check with\n {@link  https://github.com/unplugin/unplugin-unused `unplugin-unused` } .\nRequires\n {@link  https://github.com/unplugin/unplugin-unused `unplugin-unused` }  to\nbe installed.",
+          "description": "Enable unused dependencies check with  {@linkcode  https://github.com/unplugin/unplugin-unused unplugin-unused } . Requires  {@linkcode  https://github.com/unplugin/unplugin-unused unplugin-unused }  to be installed.",
+          "markdownDescription": "Enable unused dependencies check with\n {@linkcode  https://github.com/unplugin/unplugin-unused unplugin-unused } .\nRequires\n {@linkcode  https://github.com/unplugin/unplugin-unused unplugin-unused } \nto be installed.",
           "default": false
         },
         "publint": {
           "$ref": "#/definitions/WithEnabled%3CPublintOptions%3E",
-          "description": "Run  {@linkcode  https://publint.dev/docs `publint` }  after bundling. Requires  {@linkcode  https://publint.dev/docs `publint` }  to be installed.",
-          "markdownDescription": "Run  {@linkcode  https://publint.dev/docs `publint` }  after bundling.\nRequires  {@linkcode  https://publint.dev/docs `publint` }  to be installed.",
+          "description": "Run  {@linkcode  https://publint.dev/docs publint }  after bundling. Requires  {@linkcode  https://publint.dev/docs publint }  to be installed.",
+          "markdownDescription": "Run  {@linkcode  https://publint.dev/docs publint }  after bundling.\nRequires  {@linkcode  https://publint.dev/docs publint }  to be installed.",
           "default": false
         },
         "attw": {
           "$ref": "#/definitions/WithEnabled%3CAttwOptions%3E",
-          "description": "Run  {@link  https://github.com/arethetypeswrong/arethetypeswrong.github.io `arethetypeswrong` }  after bundling. Requires  {@link  https://github.com/arethetypeswrong/arethetypeswrong.github.io/tree/HEAD/packages/core `@arethetypeswrong/core` }  to be installed.",
-          "markdownDescription": "Run\n {@link  https://github.com/arethetypeswrong/arethetypeswrong.github.io `arethetypeswrong` } \nafter bundling. Requires\n {@link  https://github.com/arethetypeswrong/arethetypeswrong.github.io/tree/HEAD/packages/core `@arethetypeswrong/core` } \nto be installed.",
+          "description": "Run  {@linkcode  https://github.com/arethetypeswrong/arethetypeswrong.github.io `arethetypeswrong` }  after bundling. Requires  {@linkcode  https://github.com/arethetypeswrong/arethetypeswrong.github.io/tree/HEAD/packages/core `@arethetypeswrong/core` }  to be installed.",
+          "markdownDescription": "Run\n {@linkcode  https://github.com/arethetypeswrong/arethetypeswrong.github.io `arethetypeswrong` } \nafter bundling. Requires\n {@linkcode  https://github.com/arethetypeswrong/arethetypeswrong.github.io/tree/HEAD/packages/core `@arethetypeswrong/core` } \nto be installed.",
           "default": false
         },
         "report": {
@@ -2202,8 +2251,8 @@
         },
         "exe": {
           "$ref": "#/definitions/WithEnabled%3CExeOptions%3E",
-          "description": "Bundle as executable using Node.js SEA (Single Executable Applications).\n\nThis will bundle the output into a single executable file using Node.js SEA. Note that this is only supported on Node.js 25.7.0 and later, and is not supported in Bun or Deno.",
-          "markdownDescription": "Bundle as executable using Node.js SEA (Single Executable Applications).\n\nThis will bundle the output into a single executable file using Node.js SEA.\nNote that this is only supported on Node.js 25.7.0 and later, and is not supported in Bun or Deno.",
+          "description": "Bundle as executable using Node.js SEA (Single Executable Applications). This will bundle the output into a single executable file using Node.js SEA. Note that this is only supported on Node.js 25.7.0 and later, and is not supported in Bun or Deno.",
+          "markdownDescription": "Bundle as executable using Node.js SEA (Single Executable Applications).\nThis will bundle the output into a single executable file using Node.js\nSEA. Note that this is only supported on Node.js 25.7.0 and later, and is\nnot supported in Bun or Deno.",
           "default": false
         },
         "workspace": {
@@ -2212,8 +2261,8 @@
             { "$ref": "#/definitions/Arrayable%3Cstring%3E" },
             { "type": "boolean", "const": true }
           ],
-          "description": "Enable workspace mode. This allows you to build multiple packages in a monorepo.",
-          "markdownDescription": "Enable workspace mode.\nThis allows you to build multiple packages in a monorepo."
+          "description": "Enable `workspace` mode. This allows you to build multiple packages in a monorepo.",
+          "markdownDescription": "Enable `workspace` mode. This allows you to build multiple packages in a\nmonorepo."
         }
       },
       "additionalProperties": false,
@@ -2221,11 +2270,11 @@
       "markdownDescription": "Options for tsdown."
     },
     "TsdownInputOption": {
-      "$ref": "#/definitions/Arrayable%3C(string%7Calias-923471658-74155-74281-923471658-0-218972%3Cstring%2Cdef-alias-src_utils_types.ts-2028-2063-src_utils_types.ts-0-2064%3Cstring%3E%3E)%3E",
+      "$ref": "#/definitions/Arrayable%3C(string%7Calias-923471658-74155-74281-923471658-0-218972%3Cstring%2Cdef-alias-src_utils_types.ts-2744-2969-src_utils_types.ts-0-2970%3Cstring%3E578674576%3E)%3E",
       "description": "Extended input option that supports glob negation patterns.\n\nWhen using object form, values can be:\n- A single glob pattern string\n- An array of glob patterns, including negation patterns (prefixed with `!`)",
       "markdownDescription": "Extended input option that supports glob negation patterns.\n\nWhen using object form, values can be:\n- A single glob pattern string\n- An array of glob patterns, including negation patterns (prefixed with `!`)"
     },
-    "Arrayable<(string|alias-923471658-74155-74281-923471658-0-218972<string,def-alias-src_utils_types.ts-2028-2063-src_utils_types.ts-0-2064<string>>)>": {
+    "Arrayable<(string|alias-923471658-74155-74281-923471658-0-218972<string,def-alias-src_utils_types.ts-2744-2969-src_utils_types.ts-0-2970<string>578674576>)>": {
       "anyOf": [
         { "type": "string" },
         {
@@ -2248,13 +2297,17 @@
             ]
           }
         }
-      ]
+      ],
+      "description": "A single item of type  {@linkcode  T }  or an array of  {@linkcode  T } . Useful for config options that accept either a single value or a list.",
+      "markdownDescription": "A single item of type  {@linkcode  T }  or an array of  {@linkcode  T } . Useful for\nconfig options that accept either a single value or a list."
     },
     "Arrayable<string>": {
       "anyOf": [
         { "type": "string" },
         { "type": "array", "items": { "type": "string" } }
-      ]
+      ],
+      "description": "A single item of type  {@linkcode  T }  or an array of  {@linkcode  T } . Useful for config options that accept either a single value or a list.",
+      "markdownDescription": "A single item of type  {@linkcode  T }  or an array of  {@linkcode  T } . Useful for\nconfig options that accept either a single value or a list."
     },
     "DepsConfig": {
       "type": "object",
@@ -2279,7 +2332,7 @@
         "alwaysBundle": {
           "$ref": "#/definitions/Arrayable%3C(string%7Cstring479082557)%3E",
           "description": "Force dependencies to be bundled, even if they are in `dependencies`, `peerDependencies`, or `optionalDependencies`.",
-          "markdownDescription": "Force dependencies to be bundled, even if they are in `dependencies`, `peerDependencies`, or `optionalDependencies`."
+          "markdownDescription": "Force dependencies to be bundled, even if they are in `dependencies`,\n`peerDependencies`, or `optionalDependencies`."
         },
         "onlyBundle": {
           "anyOf": [
@@ -2322,13 +2375,17 @@
             ]
           }
         }
-      ]
+      ],
+      "description": "A single item of type  {@linkcode  T }  or an array of  {@linkcode  T } . Useful for config options that accept either a single value or a list.",
+      "markdownDescription": "A single item of type  {@linkcode  T }  or an array of  {@linkcode  T } . Useful for\nconfig options that accept either a single value or a list."
     },
     "Arrayable<Format>": {
       "anyOf": [
         { "$ref": "#/definitions/Format" },
         { "type": "array", "items": { "$ref": "#/definitions/Format" } }
-      ]
+      ],
+      "description": "A single item of type  {@linkcode  T }  or an array of  {@linkcode  T } . Useful for config options that accept either a single value or a list.",
+      "markdownDescription": "A single item of type  {@linkcode  T }  or an array of  {@linkcode  T } . Useful for\nconfig options that accept either a single value or a list."
     },
     "Format": {
       "type": "string",
@@ -2342,12 +2399,1778 @@
     },
     "PackageJsonWithPath": {
       "type": "object",
-      "properties": { "packageJsonPath": { "type": "string" } },
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name is what your thing is called. Some rules:\n- The name must be less than or equal to 214 characters. This includes the scope for scoped packages.\n- The name can’t start with a dot or an underscore.\n- New packages must not have uppercase letters in the name.\n- The name ends up being part of a URL, an argument on the command line, and a folder name. Therefore, the name can’t contain any non-URL-safe characters.",
+          "markdownDescription": "The name is what your thing is called.\nSome rules:\n- The name must be less than or equal to 214 characters. This includes the scope for scoped packages.\n- The name can’t start with a dot or an underscore.\n- New packages must not have uppercase letters in the name.\n- The name ends up being part of a URL, an argument on the command line, and a folder name. Therefore, the name can’t contain any non-URL-safe characters."
+        },
+        "version": {
+          "type": "string",
+          "description": "Version must be parseable by `node-semver`, which is bundled with npm as a dependency. (`npm install semver` to use it yourself.)",
+          "markdownDescription": "Version must be parseable by `node-semver`, which is bundled with npm as a dependency. (`npm install semver` to use it yourself.)"
+        },
+        "description": {
+          "type": "string",
+          "description": "Put a description in it. It’s a string. This helps people discover your package, as it’s listed in `npm search`.",
+          "markdownDescription": "Put a description in it. It’s a string. This helps people discover your package, as it’s listed in `npm search`."
+        },
+        "keywords": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Put keywords in it. It’s an array of strings. This helps people discover your package as it’s listed in `npm search`.",
+          "markdownDescription": "Put keywords in it. It’s an array of strings. This helps people discover your package as it’s listed in `npm search`."
+        },
+        "homepage": {
+          "type": "string",
+          "description": "The url to the project homepage.",
+          "markdownDescription": "The url to the project homepage."
+        },
+        "bugs": {
+          "anyOf": [
+            { "type": "string" },
+            {
+              "type": "object",
+              "properties": {
+                "url": { "type": "string" },
+                "email": { "type": "string" }
+              },
+              "additionalProperties": false
+            }
+          ],
+          "description": "The url to your project’s issue tracker and / or the email address to which issues should be reported. These are helpful for people who encounter issues with your package.",
+          "markdownDescription": "The url to your project’s issue tracker and / or the email address to which issues should be reported. These are helpful for people who encounter issues with your package."
+        },
+        "license": {
+          "type": "string",
+          "description": "You should specify a license for your package so that people know how they are permitted to use it, and any restrictions you’re placing on it.",
+          "markdownDescription": "You should specify a license for your package so that people know how they are permitted to use it, and any restrictions you’re placing on it."
+        },
+        "repository": {
+          "anyOf": [
+            { "type": "string" },
+            {
+              "type": "object",
+              "properties": {
+                "type": { "type": "string" },
+                "url": { "type": "string" },
+                "directory": {
+                  "type": "string",
+                  "description": "If the `package.json` for your package is not in the root directory (for example if it is part of a monorepo), you can specify the directory in which it lives:",
+                  "markdownDescription": "If the `package.json` for your package is not in the root directory (for example if it is part of a monorepo), you can specify the directory in which it lives:"
+                }
+              },
+              "required": ["type", "url"],
+              "additionalProperties": false
+            }
+          ],
+          "description": "Specify the place where your code lives. This is helpful for people who want to contribute. If the git repo is on GitHub, then the `npm docs` command will be able to find you. For GitHub, GitHub gist, Bitbucket, or GitLab repositories you can use the same shortcut syntax you use for npm install:",
+          "markdownDescription": "Specify the place where your code lives. This is helpful for people who want to contribute. If the git repo is on GitHub, then the `npm docs` command will be able to find you.\nFor GitHub, GitHub gist, Bitbucket, or GitLab repositories you can use the same shortcut syntax you use for npm install:"
+        },
+        "scripts": {
+          "type": "object",
+          "properties": {
+            "build": { "type": "string" },
+            "coverage": { "type": "string" },
+            "deploy": { "type": "string" },
+            "dev": { "type": "string" },
+            "format": { "type": "string" },
+            "lint": { "type": "string" },
+            "preview": { "type": "string" },
+            "release": { "type": "string" },
+            "typecheck": { "type": "string" },
+            "watch": { "type": "string" },
+            "dependencies": { "type": "string" },
+            "prepublishOnly": { "type": "string" },
+            "install": { "type": "string" },
+            "pack": { "type": "string" },
+            "prepare": { "type": "string" },
+            "publish": { "type": "string" },
+            "restart": { "type": "string" },
+            "start": { "type": "string" },
+            "stop": { "type": "string" },
+            "test": { "type": "string" },
+            "version": { "type": "string" },
+            "preinstall": { "type": "string" },
+            "prepack": { "type": "string" },
+            "preprepare": { "type": "string" },
+            "prepublish": { "type": "string" },
+            "prerestart": { "type": "string" },
+            "prestart": { "type": "string" },
+            "prestop": { "type": "string" },
+            "pretest": { "type": "string" },
+            "preversion": { "type": "string" },
+            "postinstall": { "type": "string" },
+            "postpack": { "type": "string" },
+            "postprepare": { "type": "string" },
+            "postpublish": { "type": "string" },
+            "postrestart": { "type": "string" },
+            "poststart": { "type": "string" },
+            "poststop": { "type": "string" },
+            "posttest": { "type": "string" },
+            "postversion": { "type": "string" },
+            "pnpm:devPreinstall": { "type": "string" }
+          },
+          "additionalProperties": { "type": "string" },
+          "description": "The `scripts` field is a dictionary containing script commands that are run at various times in the lifecycle of your package.",
+          "markdownDescription": "The `scripts` field is a dictionary containing script commands that are run at various times in the lifecycle of your package."
+        },
+        "private": {
+          "type": "boolean",
+          "description": "If you set `\"private\": true` in your package.json, then npm will refuse to publish it.",
+          "markdownDescription": "If you set `\"private\": true` in your package.json, then npm will refuse to publish it."
+        },
+        "author": {
+          "anyOf": [
+            { "type": "string" },
+            {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "email": { "type": "string" },
+                "url": { "type": "string" }
+              },
+              "required": ["name"],
+              "additionalProperties": false
+            }
+          ],
+          "description": "The “author” is one person.",
+          "markdownDescription": "The “author” is one person."
+        },
+        "contributors": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              { "type": "string" },
+              {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "email": { "type": "string" },
+                  "url": { "type": "string" }
+                },
+                "required": ["name"],
+                "additionalProperties": false
+              }
+            ],
+            "description": "A “person” is an object with a “name” field and optionally “url” and “email”. Or you can shorten that all into a single string, and npm will parse it for you.",
+            "markdownDescription": "A “person” is an object with a “name” field and optionally “url” and “email”. Or you can shorten that all into a single string, and npm will parse it for you."
+          },
+          "description": "“contributors” is an array of people.",
+          "markdownDescription": "“contributors” is an array of people."
+        },
+        "funding": {
+          "anyOf": [
+            { "type": "string" },
+            {
+              "type": "object",
+              "properties": {
+                "url": { "type": "string" },
+                "type": { "type": "string" }
+              },
+              "required": ["url"],
+              "additionalProperties": false
+            },
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  { "type": "string" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "url": { "type": "string" },
+                      "type": { "type": "string" }
+                    },
+                    "required": ["url"],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          ],
+          "description": "An object containing a URL that provides up-to-date information about ways to help fund development of your package, a string URL, or an array of objects and string URLs",
+          "markdownDescription": "An object containing a URL that provides up-to-date information\nabout ways to help fund development of your package,\na string URL, or an array of objects and string URLs"
+        },
+        "files": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "The optional `files` field is an array of file patterns that describes the entries to be included when your package is installed as a dependency. File patterns follow a similar syntax to `.gitignore`, but reversed: including a file, directory, or glob pattern (`*`, `**\\/*`, and such) will make it so that file is included in the tarball when it’s packed. Omitting the field will make it default to `[\"*\"]`, which means it will include all files.",
+          "markdownDescription": "The optional `files` field is an array of file patterns that describes the entries to be included when your package is installed as a dependency. File patterns follow a similar syntax to `.gitignore`, but reversed: including a file, directory, or glob pattern (`*`, `**\\/*`, and such) will make it so that file is included in the tarball when it’s packed. Omitting the field will make it default to `[\"*\"]`, which means it will include all files."
+        },
+        "main": {
+          "type": "string",
+          "description": "The main field is a module ID that is the primary entry point to your program. That is, if your package is named `foo`, and a user installs it, and then does `require(\"foo\")`, then your main module’s exports object will be returned. This should be a module ID relative to the root of your package folder. For most modules, it makes the most sense to have a main script and often not much else.",
+          "markdownDescription": "The main field is a module ID that is the primary entry point to your program. That is, if your package is named `foo`, and a user installs it, and then does `require(\"foo\")`, then your main module’s exports object will be returned.\nThis should be a module ID relative to the root of your package folder.\nFor most modules, it makes the most sense to have a main script and often not much else."
+        },
+        "browser": {
+          "anyOf": [
+            { "type": "string" },
+            {
+              "type": "object",
+              "additionalProperties": {
+                "anyOf": [
+                  { "type": "string" },
+                  { "type": "boolean", "const": false }
+                ]
+              }
+            }
+          ],
+          "description": "If your module is meant to be used client-side the browser field should be used instead of the main field. This is helpful to hint users that it might rely on primitives that aren’t available in Node.js modules. (e.g. window)",
+          "markdownDescription": "If your module is meant to be used client-side the browser field should be used instead of the main field. This is helpful to hint users that it might rely on primitives that aren’t available in Node.js modules. (e.g. window)"
+        },
+        "unpkg": {
+          "type": "string",
+          "description": "The `unpkg` field is used to specify the URL to a UMD module for your package. This is used by default in the unpkg.com CDN service.",
+          "markdownDescription": "The `unpkg` field is used to specify the URL to a UMD module for your package. This is used by default in the unpkg.com CDN service."
+        },
+        "bin": {
+          "anyOf": [
+            { "type": "string" },
+            { "type": "object", "additionalProperties": { "type": "string" } }
+          ],
+          "description": "A map of command name to local file name. On install, npm will symlink that file into `prefix/bin` for global installs, or `./node_modules/.bin/` for local installs.",
+          "markdownDescription": "A map of command name to local file name. On install, npm will symlink that file into `prefix/bin` for global installs, or `./node_modules/.bin/` for local installs."
+        },
+        "man": {
+          "anyOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ],
+          "description": "Specify either a single file or an array of filenames to put in place for the `man` program to find.",
+          "markdownDescription": "Specify either a single file or an array of filenames to put in place for the `man` program to find."
+        },
+        "dependencies": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Dependencies are specified in a simple object that maps a package name to a version range. The version range is a string which has one or more space-separated descriptors. Dependencies can also be identified with a tarball or git URL.",
+          "markdownDescription": "Dependencies are specified in a simple object that maps a package name to a version range. The version range is a string which has one or more space-separated descriptors. Dependencies can also be identified with a tarball or git URL."
+        },
+        "devDependencies": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "If someone is planning on downloading and using your module in their program, then they probably don’t want or need to download and build the external test or documentation framework that you use. In this case, it’s best to map these additional items in a `devDependencies` object.",
+          "markdownDescription": "If someone is planning on downloading and using your module in their program, then they probably don’t want or need to download and build the external test or documentation framework that you use.\nIn this case, it’s best to map these additional items in a `devDependencies` object."
+        },
+        "optionalDependencies": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "If a dependency can be used, but you would like npm to proceed if it cannot be found or fails to install, then you may put it in the `optionalDependencies` object. This is a map of package name to version or url, just like the `dependencies` object. The difference is that build failures do not cause installation to fail.",
+          "markdownDescription": "If a dependency can be used, but you would like npm to proceed if it cannot be found or fails to install, then you may put it in the `optionalDependencies` object. This is a map of package name to version or url, just like the `dependencies` object. The difference is that build failures do not cause installation to fail."
+        },
+        "peerDependencies": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "In some cases, you want to express the compatibility of your package with a host tool or library, while not necessarily doing a `require` of this host. This is usually referred to as a plugin. Notably, your module may be exposing a specific interface, expected and specified by the host documentation.",
+          "markdownDescription": "In some cases, you want to express the compatibility of your package with a host tool or library, while not necessarily doing a `require` of this host. This is usually referred to as a plugin. Notably, your module may be exposing a specific interface, expected and specified by the host documentation."
+        },
+        "types": {
+          "type": "string",
+          "description": "TypeScript typings, typically ending by `.d.ts`.",
+          "markdownDescription": "TypeScript typings, typically ending by `.d.ts`."
+        },
+        "typings": {
+          "type": "string",
+          "description": "This field is synonymous with `types`.",
+          "markdownDescription": "This field is synonymous with `types`."
+        },
+        "module": {
+          "type": "string",
+          "description": "Non-Standard Node.js alternate entry-point to main. An initial implementation for supporting CJS packages (from main), and use module for ESM modules.",
+          "markdownDescription": "Non-Standard Node.js alternate entry-point to main.\nAn initial implementation for supporting CJS packages (from main), and use module for ESM modules."
+        },
+        "type": {
+          "type": "string",
+          "enum": ["module", "commonjs"],
+          "description": "Make main entry-point be loaded as an ESM module, support \"export\" syntax instead of \"require\"\n\nDocs:\n- https://nodejs.org/docs/latest-v14.x/api/esm.html#esm_package_json_type_field",
+          "markdownDescription": "Make main entry-point be loaded as an ESM module, support \"export\" syntax instead of \"require\"\n\nDocs:\n- https://nodejs.org/docs/latest-v14.x/api/esm.html#esm_package_json_type_field",
+          "default": "commonjs"
+        },
+        "exports": {
+          "anyOf": [
+            { "type": "string" },
+            {
+              "type": "object",
+              "properties": {
+                ".": {
+                  "anyOf": [
+                    { "type": "string" },
+                    {
+                      "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "import": {
+                  "anyOf": [
+                    { "type": "string" },
+                    {
+                      "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "require": {
+                  "anyOf": [
+                    { "type": "string" },
+                    {
+                      "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "types": {
+                  "anyOf": [
+                    { "type": "string" },
+                    {
+                      "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "node": {
+                  "anyOf": [
+                    { "type": "string" },
+                    {
+                      "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "browser": {
+                  "anyOf": [
+                    { "type": "string" },
+                    {
+                      "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "default": {
+                  "anyOf": [
+                    { "type": "string" },
+                    {
+                      "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  { "type": "string" },
+                  {
+                    "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "anyOf": [
+                        { "type": "string" },
+                        {
+                          "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  { "type": "string" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      ".": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "anyOf": [
+                                { "type": "string" },
+                                {
+                                  "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      "import": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "anyOf": [
+                                { "type": "string" },
+                                {
+                                  "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      "require": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "anyOf": [
+                                { "type": "string" },
+                                {
+                                  "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      "types": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "anyOf": [
+                                { "type": "string" },
+                                {
+                                  "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      "node": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "anyOf": [
+                                { "type": "string" },
+                                {
+                                  "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      "browser": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "anyOf": [
+                                { "type": "string" },
+                                {
+                                  "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      "default": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "anyOf": [
+                                { "type": "string" },
+                                {
+                                  "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "additionalProperties": {
+                      "anyOf": [
+                        { "type": "string" },
+                        {
+                          "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "anyOf": [
+                              { "type": "string" },
+                              {
+                                "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "description": "Alternate and extensible alternative to \"main\" entry point.\n\nWhen using `{type: \"module\"}`, any ESM module file MUST end with `.mjs` extension.\n\nDocs:\n- https://nodejs.org/docs/latest-v14.x/api/esm.html#esm_exports_sugar",
+          "markdownDescription": "Alternate and extensible alternative to \"main\" entry point.\n\nWhen using `{type: \"module\"}`, any ESM module file MUST end with `.mjs` extension.\n\nDocs:\n- https://nodejs.org/docs/latest-v14.x/api/esm.html#esm_exports_sugar"
+        },
+        "imports": {
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              { "type": "string" },
+              { "type": "object", "additionalProperties": { "type": "string" } }
+            ]
+          },
+          "description": "Docs:\n- https://nodejs.org/api/packages.html#imports",
+          "markdownDescription": "Docs:\n- https://nodejs.org/api/packages.html#imports"
+        },
+        "workspaces": {
+          "anyOf": [
+            { "type": "array", "items": { "type": "string" } },
+            {
+              "type": "object",
+              "properties": {
+                "packages": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Workspace package paths. Glob patterns are supported.",
+                  "markdownDescription": "Workspace package paths. Glob patterns are supported."
+                },
+                "nohoist": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Packages to block from hoisting to the workspace root. Uses glob patterns to match module paths in the dependency tree.\n\nDocs:\n- https://classic.yarnpkg.com/blog/2018/02/15/nohoist/",
+                  "markdownDescription": "Packages to block from hoisting to the workspace root.\nUses glob patterns to match module paths in the dependency tree.\n\nDocs:\n- https://classic.yarnpkg.com/blog/2018/02/15/nohoist/"
+                }
+              },
+              "additionalProperties": false
+            }
+          ],
+          "description": "The field is used to define a set of sub-packages (or workspaces) within a monorepo.\n\nThis field is an array of glob patterns or an object with specific configurations for managing multiple packages in a single repository.",
+          "markdownDescription": "The field is used to define a set of sub-packages (or workspaces) within a monorepo.\n\nThis field is an array of glob patterns or an object with specific configurations for managing\nmultiple packages in a single repository."
+        },
+        "typesVersions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          },
+          "description": "The field is used to specify different TypeScript declaration files for different versions of TypeScript, allowing for version-specific type definitions.",
+          "markdownDescription": "The field is used to specify different TypeScript declaration files for\ndifferent versions of TypeScript, allowing for version-specific type definitions."
+        },
+        "os": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "You can specify which operating systems your module will run on: ```json {   \"os\": [\"darwin\", \"linux\"] } ``` You can also block instead of allowing operating systems, just prepend the blocked os with a '!': ```json {   \"os\": [\"!win32\"] } ``` The host operating system is determined by `process.platform` It is allowed to both block and allow an item, although there isn't any good reason to do this.",
+          "markdownDescription": "You can specify which operating systems your module will run on:\n```json\n{\n  \"os\": [\"darwin\", \"linux\"]\n}\n```\nYou can also block instead of allowing operating systems, just prepend the blocked os with a '!':\n```json\n{\n  \"os\": [\"!win32\"]\n}\n```\nThe host operating system is determined by `process.platform`\nIt is allowed to both block and allow an item, although there isn't any good reason to do this."
+        },
+        "cpu": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "If your code only runs on certain cpu architectures, you can specify which ones. ```json {   \"cpu\": [\"x64\", \"ia32\"] } ``` Like the `os` option, you can also block architectures: ```json {   \"cpu\": [\"!arm\", \"!mips\"] } ``` The host architecture is determined by `process.arch`",
+          "markdownDescription": "If your code only runs on certain cpu architectures, you can specify which ones.\n```json\n{\n  \"cpu\": [\"x64\", \"ia32\"]\n}\n```\nLike the `os` option, you can also block architectures:\n```json\n{\n  \"cpu\": [\"!arm\", \"!mips\"]\n}\n```\nThe host architecture is determined by `process.arch`"
+        },
+        "publishConfig": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "bin": {
+              "$ref": "#/definitions/interface-596183407-4833-15573-596183407-0-24786"
+            },
+            "main": {
+              "$ref": "#/definitions/interface-596183407-4833-15573-596183407-0-24786"
+            },
+            "exports": {
+              "$ref": "#/definitions/interface-596183407-4833-15573-596183407-0-24786"
+            },
+            "types": {
+              "$ref": "#/definitions/interface-596183407-4833-15573-596183407-0-24786"
+            },
+            "typings": {
+              "$ref": "#/definitions/interface-596183407-4833-15573-596183407-0-24786"
+            },
+            "module": {
+              "$ref": "#/definitions/interface-596183407-4833-15573-596183407-0-24786"
+            },
+            "browser": {
+              "$ref": "#/definitions/interface-596183407-4833-15573-596183407-0-24786"
+            },
+            "unpkg": {
+              "$ref": "#/definitions/interface-596183407-4833-15573-596183407-0-24786"
+            },
+            "typesVersions": {
+              "$ref": "#/definitions/interface-596183407-4833-15573-596183407-0-24786"
+            },
+            "os": {
+              "$ref": "#/definitions/interface-596183407-4833-15573-596183407-0-24786"
+            },
+            "cpu": {
+              "$ref": "#/definitions/interface-596183407-4833-15573-596183407-0-24786"
+            },
+            "registry": {
+              "type": "string",
+              "description": "The registry that will be used if the package is published.",
+              "markdownDescription": "The registry that will be used if the package is published."
+            },
+            "tag": {
+              "type": "string",
+              "description": "The tag that will be used if the package is published.",
+              "markdownDescription": "The tag that will be used if the package is published."
+            },
+            "access": {
+              "type": "string",
+              "enum": ["public", "restricted"],
+              "description": "The access level that will be used if the package is published.",
+              "markdownDescription": "The access level that will be used if the package is published."
+            },
+            "executableFiles": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "**pnpm-only**\n\nBy default, for portability reasons, no files except those listed in the bin field will be marked as executable in the resulting package archive. The executableFiles field lets you declare additional fields that must have the executable flag (+x) set even if they aren't directly accessible through the bin field.",
+              "markdownDescription": "**pnpm-only**\n\nBy default, for portability reasons, no files except those listed in\nthe bin field will be marked as executable in the resulting package\narchive. The executableFiles field lets you declare additional fields\nthat must have the executable flag (+x) set even if\nthey aren't directly accessible through the bin field."
+            },
+            "directory": {
+              "type": "string",
+              "description": "**pnpm-only**\n\nYou also can use the field `publishConfig.directory` to customize the published subdirectory relative to the current `package.json`.\n\nIt is expected to have a modified version of the current package in the specified directory (usually using third party build tools).",
+              "markdownDescription": "**pnpm-only**\n\nYou also can use the field `publishConfig.directory` to customize\nthe published subdirectory relative to the current `package.json`.\n\nIt is expected to have a modified version of the current package in\nthe specified directory (usually using third party build tools)."
+            },
+            "linkDirectory": {
+              "type": "boolean",
+              "description": "**pnpm-only**\n\nWhen set to `true`, the project will be symlinked from the `publishConfig.directory` location during local development.",
+              "markdownDescription": "**pnpm-only**\n\nWhen set to `true`, the project will be symlinked from the\n`publishConfig.directory` location during local development.",
+              "default": true
+            }
+          },
+          "required": [
+            "bin",
+            "browser",
+            "cpu",
+            "exports",
+            "main",
+            "module",
+            "os",
+            "types",
+            "typesVersions",
+            "typings",
+            "unpkg"
+          ],
+          "description": "This is a set of config values that will be used at publish-time.",
+          "markdownDescription": "This is a set of config values that will be used at publish-time."
+        },
+        "packageManager": {
+          "type": "string",
+          "description": "See: https://nodejs.org/api/packages.html#packagemanager This field defines which package manager is expected to be used when working on the current project. Should be of the format: `<name>@<version>[#hash]`",
+          "markdownDescription": "See: https://nodejs.org/api/packages.html#packagemanager\nThis field defines which package manager is expected to be used when working on the current project.\nShould be of the format: `<name>@<version>[#hash]`"
+        },
+        "packageJsonPath": {
+          "type": "string",
+          "description": "Absolute path to the `package.json` file on disk.",
+          "markdownDescription": "Absolute path to the `package.json` file on disk."
+        }
+      },
       "required": ["packageJsonPath"],
+      "description": "A `package.json` object augmented with the absolute path to the file it was read from.",
+      "markdownDescription": "A `package.json` object augmented with the absolute path to the file\nit was read from.",
       "allOf": [
         { "$ref": "https://www.schemastore.org/package.json" },
-        { "properties": { "packageJsonPath": { "type": "string" } } }
+        {
+          "properties": {
+            "packageJsonPath": {
+              "type": "string",
+              "description": "Absolute path to the `package.json` file on disk.",
+              "markdownDescription": "Absolute path to the `package.json` file on disk."
+            }
+          }
+        }
       ]
+    },
+    "alias-596183407-16950-17094-596183407-0-24786": {
+      "type": "object",
+      "properties": {
+        ".": {
+          "anyOf": [
+            { "type": "string" },
+            {
+              "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+            },
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  { "type": "string" },
+                  {
+                    "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "import": {
+          "anyOf": [
+            { "type": "string" },
+            {
+              "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+            },
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  { "type": "string" },
+                  {
+                    "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "require": {
+          "anyOf": [
+            { "type": "string" },
+            {
+              "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+            },
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  { "type": "string" },
+                  {
+                    "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "types": {
+          "anyOf": [
+            { "type": "string" },
+            {
+              "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+            },
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  { "type": "string" },
+                  {
+                    "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "node": {
+          "anyOf": [
+            { "type": "string" },
+            {
+              "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+            },
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  { "type": "string" },
+                  {
+                    "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "browser": {
+          "anyOf": [
+            { "type": "string" },
+            {
+              "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+            },
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  { "type": "string" },
+                  {
+                    "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "default": {
+          "anyOf": [
+            { "type": "string" },
+            {
+              "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+            },
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  { "type": "string" },
+                  {
+                    "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "additionalProperties": {
+        "anyOf": [
+          { "type": "string" },
+          {
+            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+          },
+          {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                { "type": "string" },
+                {
+                  "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "interface-596183407-4833-15573-596183407-0-24786": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name is what your thing is called. Some rules:\n- The name must be less than or equal to 214 characters. This includes the scope for scoped packages.\n- The name can’t start with a dot or an underscore.\n- New packages must not have uppercase letters in the name.\n- The name ends up being part of a URL, an argument on the command line, and a folder name. Therefore, the name can’t contain any non-URL-safe characters.",
+          "markdownDescription": "The name is what your thing is called.\nSome rules:\n- The name must be less than or equal to 214 characters. This includes the scope for scoped packages.\n- The name can’t start with a dot or an underscore.\n- New packages must not have uppercase letters in the name.\n- The name ends up being part of a URL, an argument on the command line, and a folder name. Therefore, the name can’t contain any non-URL-safe characters."
+        },
+        "version": {
+          "type": "string",
+          "description": "Version must be parseable by `node-semver`, which is bundled with npm as a dependency. (`npm install semver` to use it yourself.)",
+          "markdownDescription": "Version must be parseable by `node-semver`, which is bundled with npm as a dependency. (`npm install semver` to use it yourself.)"
+        },
+        "description": {
+          "type": "string",
+          "description": "Put a description in it. It’s a string. This helps people discover your package, as it’s listed in `npm search`.",
+          "markdownDescription": "Put a description in it. It’s a string. This helps people discover your package, as it’s listed in `npm search`."
+        },
+        "keywords": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Put keywords in it. It’s an array of strings. This helps people discover your package as it’s listed in `npm search`.",
+          "markdownDescription": "Put keywords in it. It’s an array of strings. This helps people discover your package as it’s listed in `npm search`."
+        },
+        "homepage": {
+          "type": "string",
+          "description": "The url to the project homepage.",
+          "markdownDescription": "The url to the project homepage."
+        },
+        "bugs": {
+          "anyOf": [
+            { "type": "string" },
+            {
+              "type": "object",
+              "properties": {
+                "url": { "type": "string" },
+                "email": { "type": "string" }
+              },
+              "additionalProperties": false
+            }
+          ],
+          "description": "The url to your project’s issue tracker and / or the email address to which issues should be reported. These are helpful for people who encounter issues with your package.",
+          "markdownDescription": "The url to your project’s issue tracker and / or the email address to which issues should be reported. These are helpful for people who encounter issues with your package."
+        },
+        "license": {
+          "type": "string",
+          "description": "You should specify a license for your package so that people know how they are permitted to use it, and any restrictions you’re placing on it.",
+          "markdownDescription": "You should specify a license for your package so that people know how they are permitted to use it, and any restrictions you’re placing on it."
+        },
+        "repository": {
+          "anyOf": [
+            { "type": "string" },
+            {
+              "type": "object",
+              "properties": {
+                "type": { "type": "string" },
+                "url": { "type": "string" },
+                "directory": {
+                  "type": "string",
+                  "description": "If the `package.json` for your package is not in the root directory (for example if it is part of a monorepo), you can specify the directory in which it lives:",
+                  "markdownDescription": "If the `package.json` for your package is not in the root directory (for example if it is part of a monorepo), you can specify the directory in which it lives:"
+                }
+              },
+              "required": ["type", "url"],
+              "additionalProperties": false
+            }
+          ],
+          "description": "Specify the place where your code lives. This is helpful for people who want to contribute. If the git repo is on GitHub, then the `npm docs` command will be able to find you. For GitHub, GitHub gist, Bitbucket, or GitLab repositories you can use the same shortcut syntax you use for npm install:",
+          "markdownDescription": "Specify the place where your code lives. This is helpful for people who want to contribute. If the git repo is on GitHub, then the `npm docs` command will be able to find you.\nFor GitHub, GitHub gist, Bitbucket, or GitLab repositories you can use the same shortcut syntax you use for npm install:"
+        },
+        "scripts": {
+          "type": "object",
+          "properties": {
+            "build": { "type": "string" },
+            "coverage": { "type": "string" },
+            "deploy": { "type": "string" },
+            "dev": { "type": "string" },
+            "format": { "type": "string" },
+            "lint": { "type": "string" },
+            "preview": { "type": "string" },
+            "release": { "type": "string" },
+            "typecheck": { "type": "string" },
+            "watch": { "type": "string" },
+            "dependencies": { "type": "string" },
+            "prepublishOnly": { "type": "string" },
+            "install": { "type": "string" },
+            "pack": { "type": "string" },
+            "prepare": { "type": "string" },
+            "publish": { "type": "string" },
+            "restart": { "type": "string" },
+            "start": { "type": "string" },
+            "stop": { "type": "string" },
+            "test": { "type": "string" },
+            "version": { "type": "string" },
+            "preinstall": { "type": "string" },
+            "prepack": { "type": "string" },
+            "preprepare": { "type": "string" },
+            "prepublish": { "type": "string" },
+            "prerestart": { "type": "string" },
+            "prestart": { "type": "string" },
+            "prestop": { "type": "string" },
+            "pretest": { "type": "string" },
+            "preversion": { "type": "string" },
+            "postinstall": { "type": "string" },
+            "postpack": { "type": "string" },
+            "postprepare": { "type": "string" },
+            "postpublish": { "type": "string" },
+            "postrestart": { "type": "string" },
+            "poststart": { "type": "string" },
+            "poststop": { "type": "string" },
+            "posttest": { "type": "string" },
+            "postversion": { "type": "string" },
+            "pnpm:devPreinstall": { "type": "string" }
+          },
+          "additionalProperties": { "type": "string" },
+          "description": "The `scripts` field is a dictionary containing script commands that are run at various times in the lifecycle of your package.",
+          "markdownDescription": "The `scripts` field is a dictionary containing script commands that are run at various times in the lifecycle of your package."
+        },
+        "private": {
+          "type": "boolean",
+          "description": "If you set `\"private\": true` in your package.json, then npm will refuse to publish it.",
+          "markdownDescription": "If you set `\"private\": true` in your package.json, then npm will refuse to publish it."
+        },
+        "author": {
+          "anyOf": [
+            { "type": "string" },
+            {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "email": { "type": "string" },
+                "url": { "type": "string" }
+              },
+              "required": ["name"],
+              "additionalProperties": false
+            }
+          ],
+          "description": "The “author” is one person.",
+          "markdownDescription": "The “author” is one person."
+        },
+        "contributors": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              { "type": "string" },
+              {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "email": { "type": "string" },
+                  "url": { "type": "string" }
+                },
+                "required": ["name"],
+                "additionalProperties": false
+              }
+            ],
+            "description": "A “person” is an object with a “name” field and optionally “url” and “email”. Or you can shorten that all into a single string, and npm will parse it for you.",
+            "markdownDescription": "A “person” is an object with a “name” field and optionally “url” and “email”. Or you can shorten that all into a single string, and npm will parse it for you."
+          },
+          "description": "“contributors” is an array of people.",
+          "markdownDescription": "“contributors” is an array of people."
+        },
+        "funding": {
+          "anyOf": [
+            { "type": "string" },
+            {
+              "type": "object",
+              "properties": {
+                "url": { "type": "string" },
+                "type": { "type": "string" }
+              },
+              "required": ["url"],
+              "additionalProperties": false
+            },
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  { "type": "string" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "url": { "type": "string" },
+                      "type": { "type": "string" }
+                    },
+                    "required": ["url"],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          ],
+          "description": "An object containing a URL that provides up-to-date information about ways to help fund development of your package, a string URL, or an array of objects and string URLs",
+          "markdownDescription": "An object containing a URL that provides up-to-date information\nabout ways to help fund development of your package,\na string URL, or an array of objects and string URLs"
+        },
+        "files": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "The optional `files` field is an array of file patterns that describes the entries to be included when your package is installed as a dependency. File patterns follow a similar syntax to `.gitignore`, but reversed: including a file, directory, or glob pattern (`*`, `**\\/*`, and such) will make it so that file is included in the tarball when it’s packed. Omitting the field will make it default to `[\"*\"]`, which means it will include all files.",
+          "markdownDescription": "The optional `files` field is an array of file patterns that describes the entries to be included when your package is installed as a dependency. File patterns follow a similar syntax to `.gitignore`, but reversed: including a file, directory, or glob pattern (`*`, `**\\/*`, and such) will make it so that file is included in the tarball when it’s packed. Omitting the field will make it default to `[\"*\"]`, which means it will include all files."
+        },
+        "main": {
+          "type": "string",
+          "description": "The main field is a module ID that is the primary entry point to your program. That is, if your package is named `foo`, and a user installs it, and then does `require(\"foo\")`, then your main module’s exports object will be returned. This should be a module ID relative to the root of your package folder. For most modules, it makes the most sense to have a main script and often not much else.",
+          "markdownDescription": "The main field is a module ID that is the primary entry point to your program. That is, if your package is named `foo`, and a user installs it, and then does `require(\"foo\")`, then your main module’s exports object will be returned.\nThis should be a module ID relative to the root of your package folder.\nFor most modules, it makes the most sense to have a main script and often not much else."
+        },
+        "browser": {
+          "anyOf": [
+            { "type": "string" },
+            {
+              "type": "object",
+              "additionalProperties": {
+                "anyOf": [
+                  { "type": "string" },
+                  { "type": "boolean", "const": false }
+                ]
+              }
+            }
+          ],
+          "description": "If your module is meant to be used client-side the browser field should be used instead of the main field. This is helpful to hint users that it might rely on primitives that aren’t available in Node.js modules. (e.g. window)",
+          "markdownDescription": "If your module is meant to be used client-side the browser field should be used instead of the main field. This is helpful to hint users that it might rely on primitives that aren’t available in Node.js modules. (e.g. window)"
+        },
+        "unpkg": {
+          "type": "string",
+          "description": "The `unpkg` field is used to specify the URL to a UMD module for your package. This is used by default in the unpkg.com CDN service.",
+          "markdownDescription": "The `unpkg` field is used to specify the URL to a UMD module for your package. This is used by default in the unpkg.com CDN service."
+        },
+        "bin": {
+          "anyOf": [
+            { "type": "string" },
+            { "type": "object", "additionalProperties": { "type": "string" } }
+          ],
+          "description": "A map of command name to local file name. On install, npm will symlink that file into `prefix/bin` for global installs, or `./node_modules/.bin/` for local installs.",
+          "markdownDescription": "A map of command name to local file name. On install, npm will symlink that file into `prefix/bin` for global installs, or `./node_modules/.bin/` for local installs."
+        },
+        "man": {
+          "anyOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ],
+          "description": "Specify either a single file or an array of filenames to put in place for the `man` program to find.",
+          "markdownDescription": "Specify either a single file or an array of filenames to put in place for the `man` program to find."
+        },
+        "dependencies": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Dependencies are specified in a simple object that maps a package name to a version range. The version range is a string which has one or more space-separated descriptors. Dependencies can also be identified with a tarball or git URL.",
+          "markdownDescription": "Dependencies are specified in a simple object that maps a package name to a version range. The version range is a string which has one or more space-separated descriptors. Dependencies can also be identified with a tarball or git URL."
+        },
+        "devDependencies": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "If someone is planning on downloading and using your module in their program, then they probably don’t want or need to download and build the external test or documentation framework that you use. In this case, it’s best to map these additional items in a `devDependencies` object.",
+          "markdownDescription": "If someone is planning on downloading and using your module in their program, then they probably don’t want or need to download and build the external test or documentation framework that you use.\nIn this case, it’s best to map these additional items in a `devDependencies` object."
+        },
+        "optionalDependencies": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "If a dependency can be used, but you would like npm to proceed if it cannot be found or fails to install, then you may put it in the `optionalDependencies` object. This is a map of package name to version or url, just like the `dependencies` object. The difference is that build failures do not cause installation to fail.",
+          "markdownDescription": "If a dependency can be used, but you would like npm to proceed if it cannot be found or fails to install, then you may put it in the `optionalDependencies` object. This is a map of package name to version or url, just like the `dependencies` object. The difference is that build failures do not cause installation to fail."
+        },
+        "peerDependencies": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "In some cases, you want to express the compatibility of your package with a host tool or library, while not necessarily doing a `require` of this host. This is usually referred to as a plugin. Notably, your module may be exposing a specific interface, expected and specified by the host documentation.",
+          "markdownDescription": "In some cases, you want to express the compatibility of your package with a host tool or library, while not necessarily doing a `require` of this host. This is usually referred to as a plugin. Notably, your module may be exposing a specific interface, expected and specified by the host documentation."
+        },
+        "types": {
+          "type": "string",
+          "description": "TypeScript typings, typically ending by `.d.ts`.",
+          "markdownDescription": "TypeScript typings, typically ending by `.d.ts`."
+        },
+        "typings": {
+          "type": "string",
+          "description": "This field is synonymous with `types`.",
+          "markdownDescription": "This field is synonymous with `types`."
+        },
+        "module": {
+          "type": "string",
+          "description": "Non-Standard Node.js alternate entry-point to main. An initial implementation for supporting CJS packages (from main), and use module for ESM modules.",
+          "markdownDescription": "Non-Standard Node.js alternate entry-point to main.\nAn initial implementation for supporting CJS packages (from main), and use module for ESM modules."
+        },
+        "type": {
+          "type": "string",
+          "enum": ["module", "commonjs"],
+          "description": "Make main entry-point be loaded as an ESM module, support \"export\" syntax instead of \"require\"\n\nDocs:\n- https://nodejs.org/docs/latest-v14.x/api/esm.html#esm_package_json_type_field",
+          "markdownDescription": "Make main entry-point be loaded as an ESM module, support \"export\" syntax instead of \"require\"\n\nDocs:\n- https://nodejs.org/docs/latest-v14.x/api/esm.html#esm_package_json_type_field",
+          "default": "commonjs"
+        },
+        "exports": {
+          "anyOf": [
+            { "type": "string" },
+            {
+              "type": "object",
+              "properties": {
+                ".": {
+                  "anyOf": [
+                    { "type": "string" },
+                    {
+                      "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "import": {
+                  "anyOf": [
+                    { "type": "string" },
+                    {
+                      "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "require": {
+                  "anyOf": [
+                    { "type": "string" },
+                    {
+                      "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "types": {
+                  "anyOf": [
+                    { "type": "string" },
+                    {
+                      "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "node": {
+                  "anyOf": [
+                    { "type": "string" },
+                    {
+                      "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "browser": {
+                  "anyOf": [
+                    { "type": "string" },
+                    {
+                      "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "default": {
+                  "anyOf": [
+                    { "type": "string" },
+                    {
+                      "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  { "type": "string" },
+                  {
+                    "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "anyOf": [
+                        { "type": "string" },
+                        {
+                          "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  { "type": "string" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      ".": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "anyOf": [
+                                { "type": "string" },
+                                {
+                                  "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      "import": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "anyOf": [
+                                { "type": "string" },
+                                {
+                                  "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      "require": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "anyOf": [
+                                { "type": "string" },
+                                {
+                                  "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      "types": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "anyOf": [
+                                { "type": "string" },
+                                {
+                                  "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      "node": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "anyOf": [
+                                { "type": "string" },
+                                {
+                                  "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      "browser": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "anyOf": [
+                                { "type": "string" },
+                                {
+                                  "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      "default": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "anyOf": [
+                                { "type": "string" },
+                                {
+                                  "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "additionalProperties": {
+                      "anyOf": [
+                        { "type": "string" },
+                        {
+                          "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "anyOf": [
+                              { "type": "string" },
+                              {
+                                "$ref": "#/definitions/alias-596183407-16950-17094-596183407-0-24786"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "description": "Alternate and extensible alternative to \"main\" entry point.\n\nWhen using `{type: \"module\"}`, any ESM module file MUST end with `.mjs` extension.\n\nDocs:\n- https://nodejs.org/docs/latest-v14.x/api/esm.html#esm_exports_sugar",
+          "markdownDescription": "Alternate and extensible alternative to \"main\" entry point.\n\nWhen using `{type: \"module\"}`, any ESM module file MUST end with `.mjs` extension.\n\nDocs:\n- https://nodejs.org/docs/latest-v14.x/api/esm.html#esm_exports_sugar"
+        },
+        "imports": {
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              { "type": "string" },
+              { "type": "object", "additionalProperties": { "type": "string" } }
+            ]
+          },
+          "description": "Docs:\n- https://nodejs.org/api/packages.html#imports",
+          "markdownDescription": "Docs:\n- https://nodejs.org/api/packages.html#imports"
+        },
+        "workspaces": {
+          "anyOf": [
+            { "type": "array", "items": { "type": "string" } },
+            {
+              "type": "object",
+              "properties": {
+                "packages": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Workspace package paths. Glob patterns are supported.",
+                  "markdownDescription": "Workspace package paths. Glob patterns are supported."
+                },
+                "nohoist": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Packages to block from hoisting to the workspace root. Uses glob patterns to match module paths in the dependency tree.\n\nDocs:\n- https://classic.yarnpkg.com/blog/2018/02/15/nohoist/",
+                  "markdownDescription": "Packages to block from hoisting to the workspace root.\nUses glob patterns to match module paths in the dependency tree.\n\nDocs:\n- https://classic.yarnpkg.com/blog/2018/02/15/nohoist/"
+                }
+              },
+              "additionalProperties": false
+            }
+          ],
+          "description": "The field is used to define a set of sub-packages (or workspaces) within a monorepo.\n\nThis field is an array of glob patterns or an object with specific configurations for managing multiple packages in a single repository.",
+          "markdownDescription": "The field is used to define a set of sub-packages (or workspaces) within a monorepo.\n\nThis field is an array of glob patterns or an object with specific configurations for managing\nmultiple packages in a single repository."
+        },
+        "typesVersions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          },
+          "description": "The field is used to specify different TypeScript declaration files for different versions of TypeScript, allowing for version-specific type definitions.",
+          "markdownDescription": "The field is used to specify different TypeScript declaration files for\ndifferent versions of TypeScript, allowing for version-specific type definitions."
+        },
+        "os": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "You can specify which operating systems your module will run on: ```json {   \"os\": [\"darwin\", \"linux\"] } ``` You can also block instead of allowing operating systems, just prepend the blocked os with a '!': ```json {   \"os\": [\"!win32\"] } ``` The host operating system is determined by `process.platform` It is allowed to both block and allow an item, although there isn't any good reason to do this.",
+          "markdownDescription": "You can specify which operating systems your module will run on:\n```json\n{\n  \"os\": [\"darwin\", \"linux\"]\n}\n```\nYou can also block instead of allowing operating systems, just prepend the blocked os with a '!':\n```json\n{\n  \"os\": [\"!win32\"]\n}\n```\nThe host operating system is determined by `process.platform`\nIt is allowed to both block and allow an item, although there isn't any good reason to do this."
+        },
+        "cpu": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "If your code only runs on certain cpu architectures, you can specify which ones. ```json {   \"cpu\": [\"x64\", \"ia32\"] } ``` Like the `os` option, you can also block architectures: ```json {   \"cpu\": [\"!arm\", \"!mips\"] } ``` The host architecture is determined by `process.arch`",
+          "markdownDescription": "If your code only runs on certain cpu architectures, you can specify which ones.\n```json\n{\n  \"cpu\": [\"x64\", \"ia32\"]\n}\n```\nLike the `os` option, you can also block architectures:\n```json\n{\n  \"cpu\": [\"!arm\", \"!mips\"]\n}\n```\nThe host architecture is determined by `process.arch`"
+        },
+        "publishConfig": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "bin": {
+              "$ref": "#/definitions/interface-596183407-4833-15573-596183407-0-24786"
+            },
+            "main": {
+              "$ref": "#/definitions/interface-596183407-4833-15573-596183407-0-24786"
+            },
+            "exports": {
+              "$ref": "#/definitions/interface-596183407-4833-15573-596183407-0-24786"
+            },
+            "types": {
+              "$ref": "#/definitions/interface-596183407-4833-15573-596183407-0-24786"
+            },
+            "typings": {
+              "$ref": "#/definitions/interface-596183407-4833-15573-596183407-0-24786"
+            },
+            "module": {
+              "$ref": "#/definitions/interface-596183407-4833-15573-596183407-0-24786"
+            },
+            "browser": {
+              "$ref": "#/definitions/interface-596183407-4833-15573-596183407-0-24786"
+            },
+            "unpkg": {
+              "$ref": "#/definitions/interface-596183407-4833-15573-596183407-0-24786"
+            },
+            "typesVersions": {
+              "$ref": "#/definitions/interface-596183407-4833-15573-596183407-0-24786"
+            },
+            "os": {
+              "$ref": "#/definitions/interface-596183407-4833-15573-596183407-0-24786"
+            },
+            "cpu": {
+              "$ref": "#/definitions/interface-596183407-4833-15573-596183407-0-24786"
+            },
+            "registry": {
+              "type": "string",
+              "description": "The registry that will be used if the package is published.",
+              "markdownDescription": "The registry that will be used if the package is published."
+            },
+            "tag": {
+              "type": "string",
+              "description": "The tag that will be used if the package is published.",
+              "markdownDescription": "The tag that will be used if the package is published."
+            },
+            "access": {
+              "type": "string",
+              "enum": ["public", "restricted"],
+              "description": "The access level that will be used if the package is published.",
+              "markdownDescription": "The access level that will be used if the package is published."
+            },
+            "executableFiles": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "**pnpm-only**\n\nBy default, for portability reasons, no files except those listed in the bin field will be marked as executable in the resulting package archive. The executableFiles field lets you declare additional fields that must have the executable flag (+x) set even if they aren't directly accessible through the bin field.",
+              "markdownDescription": "**pnpm-only**\n\nBy default, for portability reasons, no files except those listed in\nthe bin field will be marked as executable in the resulting package\narchive. The executableFiles field lets you declare additional fields\nthat must have the executable flag (+x) set even if\nthey aren't directly accessible through the bin field."
+            },
+            "directory": {
+              "type": "string",
+              "description": "**pnpm-only**\n\nYou also can use the field `publishConfig.directory` to customize the published subdirectory relative to the current `package.json`.\n\nIt is expected to have a modified version of the current package in the specified directory (usually using third party build tools).",
+              "markdownDescription": "**pnpm-only**\n\nYou also can use the field `publishConfig.directory` to customize\nthe published subdirectory relative to the current `package.json`.\n\nIt is expected to have a modified version of the current package in\nthe specified directory (usually using third party build tools)."
+            },
+            "linkDirectory": {
+              "type": "boolean",
+              "description": "**pnpm-only**\n\nWhen set to `true`, the project will be symlinked from the `publishConfig.directory` location during local development.",
+              "markdownDescription": "**pnpm-only**\n\nWhen set to `true`, the project will be symlinked from the\n`publishConfig.directory` location during local development.",
+              "default": true
+            }
+          },
+          "required": [
+            "bin",
+            "browser",
+            "cpu",
+            "exports",
+            "main",
+            "module",
+            "os",
+            "types",
+            "typesVersions",
+            "typings",
+            "unpkg"
+          ],
+          "description": "This is a set of config values that will be used at publish-time.",
+          "markdownDescription": "This is a set of config values that will be used at publish-time."
+        },
+        "packageManager": {
+          "type": "string",
+          "description": "See: https://nodejs.org/api/packages.html#packagemanager This field defines which package manager is expected to be used when working on the current project. Should be of the format: `<name>@<version>[#hash]`",
+          "markdownDescription": "See: https://nodejs.org/api/packages.html#packagemanager\nThis field defines which package manager is expected to be used when working on the current project.\nShould be of the format: `<name>@<version>[#hash]`"
+        }
+      }
+    },
+    "Logger": {
+      "type": "object",
+      "properties": {
+        "level": {
+          "$ref": "#/definitions/LogLevel",
+          "description": "The current log level. Messages with a severity below this level will not be logged. The levels are ordered as follows: `silent` (0), `error` (1), `warn` (2), and `info` (3). For example, if the log level is set to `warn`, only messages logged with `warn` or `error` will be output, while `info` messages will be ignored.",
+          "markdownDescription": "The current log level. Messages with a severity below this level will not\nbe logged. The levels are ordered as follows: `silent` (0), `error` (1),\n`warn` (2), and `info` (3). For example, if the log level is set to\n`warn`, only messages logged with `warn` or `error` will be output, while\n`info` messages will be ignored."
+        },
+        "options": {
+          "$ref": "#/definitions/LoggerOptions",
+          "description": "Optional logger options that may be used by custom loggers or for internal reference.",
+          "markdownDescription": "Optional logger options that may be used by custom loggers or for internal\nreference."
+        }
+      },
+      "required": ["level"],
+      "additionalProperties": false
+    },
+    "LogLevel": {
+      "anyOf": [
+        { "$ref": "#/definitions/LogType" },
+        { "type": "string", "const": "silent" }
+      ]
+    },
+    "LogType": { "type": "string", "enum": ["error", "warn", "info"] },
+    "LoggerOptions": {
+      "type": "object",
+      "properties": {
+        "allowClearScreen": {
+          "type": "boolean",
+          "description": "Whether to allow clearing the console screen. By default, tsdown clears the console screen between builds to provide a cleaner output. Setting this to `false` will disable this behavior, allowing the console output to accumulate across builds. This can be useful for debugging or when you want to keep a complete log of all build outputs without clearing previous messages.",
+          "markdownDescription": "Whether to allow clearing the console screen. By default, tsdown clears\nthe console screen between builds to provide a cleaner output. Setting\nthis to `false` will disable this behavior, allowing the console output to\naccumulate across builds. This can be useful for debugging or when you\nwant to keep a complete log of all build outputs without clearing previous\nmessages.",
+          "default": true
+        },
+        "customLogger": {
+          "$ref": "#/definitions/Logger",
+          "description": "A custom logger object that implements the same interface as the default logger. If provided, this logger will be used instead of the default logger. This allows you to integrate tsdown's logging with your own logging system or to customize the log output format. The custom logger should have the following methods: `info`, `warn`, `warnOnce`, `error`, `success`, and `clearScreen`. Each method should accept the same arguments as the default logger methods.",
+          "markdownDescription": "A custom logger object that implements the same interface as the default\nlogger. If provided, this logger will be used instead of the default\nlogger. This allows you to integrate tsdown's logging with your own\nlogging system or to customize the log output format. The custom logger\nshould have the following methods: `info`, `warn`, `warnOnce`, `error`,\n`success`, and `clearScreen`. Each method should accept the same arguments\nas the default logger methods."
+        },
+        "console": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "The console object to use for logging. By default, tsdown uses the global console object. This allows you to redirect log output to a different console implementation if needed.",
+          "markdownDescription": "The console object to use for logging. By default, tsdown uses the global\nconsole object. This allows you to redirect log output to a different\nconsole implementation if needed.",
+          "default": "globalThis.console"
+        },
+        "failOnWarn": {
+          "type": "boolean",
+          "description": "Whether to treat warnings as errors. If set to `true`, any call to the `warn` or `warnOnce` methods will instead call the `error` method, causing the process to exit with a non-zero code. This can be useful in CI environments where you want to fail the build if any warnings are present.",
+          "markdownDescription": "Whether to treat warnings as errors. If set to `true`, any call to the\n`warn` or `warnOnce` methods will instead call the `error` method, causing\nthe process to exit with a non-zero code. This can be useful in CI\nenvironments where you want to fail the build if any warnings are present.",
+          "default": false
+        }
+      },
+      "additionalProperties": false
     },
     "ResolvedDepsConfig": {
       "type": "object",
@@ -2365,7 +4188,14 @@
                 ]
               }
             }
-          ]
+          ],
+          "description": "Mark dependencies as external (not bundled). Accepts strings, regular expressions, or Rolldown's  {@linkcode  ExternalOption } .",
+          "markdownDescription": "Mark dependencies as external (not bundled).\nAccepts strings, regular expressions, or Rolldown's\n {@linkcode  ExternalOption } ."
+        },
+        "alwaysBundle": {
+          "$ref": "#/definitions/Arrayable%3C(string%7Cstring479082557)%3E",
+          "description": "Force dependencies to be bundled, even if they are in `dependencies`, `peerDependencies`, or `optionalDependencies`.",
+          "markdownDescription": "Force dependencies to be bundled, even if they are in `dependencies`,\n`peerDependencies`, or `optionalDependencies`."
         },
         "onlyBundle": {
           "anyOf": [
@@ -2379,9 +4209,24 @@
               }
             },
             { "type": "boolean", "const": false }
-          ]
+          ],
+          "description": "Whitelist of dependencies allowed to be bundled from `node_modules`. Throws an error if any unlisted dependency is bundled.\n\n- `undefined` (default): Show warnings for bundled dependencies.\n- `false`: Suppress all warnings about bundled dependencies.\n\nNote: Be sure to include all required sub-dependencies as well.",
+          "markdownDescription": "Whitelist of dependencies allowed to be bundled from `node_modules`.\nThrows an error if any unlisted dependency is bundled.\n\n- `undefined` (default): Show warnings for bundled dependencies.\n- `false`: Suppress all warnings about bundled dependencies.\n\nNote: Be sure to include all required sub-dependencies as well."
         },
-        "skipNodeModulesBundle": { "type": "boolean" }
+        "onlyAllowBundle": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Arrayable%3C(string%7Cstring479082557)%3E"
+            },
+            { "type": "boolean", "const": false }
+          ],
+          "deprecated": "Use {@linkcode DepsConfig.onlyBundle onlyBundle} instead."
+        },
+        "skipNodeModulesBundle": {
+          "type": "boolean",
+          "description": "Skip bundling all `node_modules` dependencies.\n\n**Note:** This option cannot be used together with  {@linkcode  DepsConfig.alwaysBundle alwaysBundle } .",
+          "markdownDescription": "Skip bundling all `node_modules` dependencies.\n\n**Note:** This option cannot be used together with\n {@linkcode  DepsConfig.alwaysBundle alwaysBundle } ."
+        }
       },
       "required": ["skipNodeModulesBundle"],
       "additionalProperties": false
@@ -2623,7 +4468,9 @@
           "default": 1000000
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "description": "Options for bundle size reporting. After each build, tsdown prints the output file names and their raw, gzip, and brotli sizes to the console.",
+      "markdownDescription": "Options for bundle size reporting. After each build, tsdown prints the\noutput file names and their raw, gzip, and brotli sizes to the console."
     },
     "ExportsOptions": {
       "type": "object",
@@ -2852,18 +4699,29 @@
             },
             "useSnapshot": { "type": "boolean", "default": false },
             "useCodeCache": { "type": "boolean", "default": false },
-            "execArgv": { "type": "array", "items": { "type": "string" } },
+            "execArgv": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Extra Node.js CLI arguments injected into the executable.",
+              "markdownDescription": "Extra Node.js CLI arguments injected into the executable."
+            },
             "execArgvExtension": {
               "type": "string",
               "enum": ["none", "env", "cli"],
+              "description": "Controls how `execArgv` is extended at runtime.\n\n- `'none'`: No extension; the embedded `execArgv` is used as-is.\n- `'env'`: Extend with the `NODE_OPTIONS` environment variable.\n- `'cli'`: Extend with command-line arguments passed to the executable.",
+              "markdownDescription": "Controls how `execArgv` is extended at runtime.\n\n- `'none'`: No extension; the embedded `execArgv` is used as-is.\n- `'env'`: Extend with the `NODE_OPTIONS` environment variable.\n- `'cli'`: Extend with command-line arguments passed to the executable.",
               "default": "env"
             },
             "assets": {
               "type": "object",
-              "additionalProperties": { "type": "string" }
+              "additionalProperties": { "type": "string" },
+              "description": "Assets to embed into the executable, as a map of asset name to file path.",
+              "markdownDescription": "Assets to embed into the executable, as a map of asset name to file path."
             }
           },
-          "additionalProperties": false
+          "additionalProperties": false,
+          "description": "Options passed directly to Node.js SEA configuration.",
+          "markdownDescription": "Options passed directly to Node.js SEA configuration."
         },
         "fileName": {
           "type": "string",
@@ -2877,13 +4735,17 @@
           "default": "build"
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "description": "Options for bundling as a Node.js Single Executable Application (SEA).",
+      "markdownDescription": "Options for bundling as a Node.js Single Executable Application (SEA)."
     },
     "ChunkAddon": {
       "anyOf": [
         { "$ref": "#/definitions/ChunkAddonObject" },
         { "type": "string" }
-      ]
+      ],
+      "description": "Code to inject at the top (`banner`) or bottom (`footer`) of every output chunk. Can be a plain string, a per-file-type object, or a function.",
+      "markdownDescription": "Code to inject at the top (`banner`) or bottom (`footer`) of every output\nchunk. Can be a plain string, a per-file-type object, or a function."
     },
     "ChunkAddonObject": {
       "type": "object",
@@ -2892,16 +4754,16 @@
         "css": { "type": "string" },
         "dts": { "type": "string" }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "description": "Per-file-type code snippets for  {@linkcode  ChunkAddon } .\n- `js`: Appended/prepended to JavaScript output files.\n- `css`: Appended/prepended to CSS output files.\n- `dts`: Appended/prepended to TypeScript declaration files.",
+      "markdownDescription": "Per-file-type code snippets for  {@linkcode  ChunkAddon } .\n- `js`: Appended/prepended to JavaScript output files.\n- `css`: Appended/prepended to CSS output files.\n- `dts`: Appended/prepended to TypeScript declaration files."
     },
-    "LogLevel": {
-      "anyOf": [
-        { "$ref": "#/definitions/LogType" },
-        { "type": "string", "const": "silent" }
-      ]
+    "CIOption": {
+      "type": "string",
+      "enum": ["ci-only", "local-only"],
+      "description": "A CI-conditional flag. Detected via the  {@linkcode  https://www.npmjs.com/package/is-in-ci is-in-ci }  package, which covers all major CI providers (GitHub Actions, GitLab CI, etc.).\n\n- `'ci-only'`: Enable the feature only when running in CI.\n- `'local-only'`: Enable the feature only when running locally.",
+      "markdownDescription": "A CI-conditional flag. Detected via the\n {@linkcode  https://www.npmjs.com/package/is-in-ci is-in-ci }  package,\nwhich covers all major CI providers (GitHub Actions, GitLab CI, etc.).\n\n- `'ci-only'`: Enable the feature only when running in CI.\n- `'local-only'`: Enable the feature only when running locally."
     },
-    "LogType": { "type": "string", "enum": ["error", "warn", "info"] },
-    "CIOption": { "type": "string", "enum": ["ci-only", "local-only"] },
     "WithEnabled<DevtoolsOptions>": {
       "anyOf": [
         { "type": "boolean" },
@@ -2942,7 +4804,9 @@
             }
           }
         }
-      ]
+      ],
+      "description": "A toggleable option that can be a plain `boolean`, a  {@linkcode  CIOption }  string, or a configuration object for the feature that also accepts an `enabled` field.\n\n| Value          | Behavior                              | | -------------- | -------------------------------------- | | `true`         | Always enabled                         | | `false`        | Always disabled                        | | `'ci-only'`    | Enabled in CI, disabled locally        | | `'local-only'` | Enabled locally, disabled in CI        | | `{ enabled?, ...options }` | Object form with per-feature config |",
+      "markdownDescription": "A toggleable option that can be a plain `boolean`, a\n {@linkcode  CIOption }  string, or a configuration object for the feature\nthat also accepts an `enabled` field.\n\n| Value          | Behavior                              |\n| -------------- | -------------------------------------- |\n| `true`         | Always enabled                         |\n| `false`        | Always disabled                        |\n| `'ci-only'`    | Enabled in CI, disabled locally        |\n| `'local-only'` | Enabled locally, disabled in CI        |\n| `{ enabled?, ...options }` | Object form with per-feature config |"
     },
     "WithEnabled<DtsOptions>": {
       "anyOf": [
@@ -3158,7 +5022,9 @@
             }
           }
         }
-      ]
+      ],
+      "description": "A toggleable option that can be a plain `boolean`, a  {@linkcode  CIOption }  string, or a configuration object for the feature that also accepts an `enabled` field.\n\n| Value          | Behavior                              | | -------------- | -------------------------------------- | | `true`         | Always enabled                         | | `false`        | Always disabled                        | | `'ci-only'`    | Enabled in CI, disabled locally        | | `'local-only'` | Enabled locally, disabled in CI        | | `{ enabled?, ...options }` | Object form with per-feature config |",
+      "markdownDescription": "A toggleable option that can be a plain `boolean`, a\n {@linkcode  CIOption }  string, or a configuration object for the feature\nthat also accepts an `enabled` field.\n\n| Value          | Behavior                              |\n| -------------- | -------------------------------------- |\n| `true`         | Always enabled                         |\n| `false`        | Always disabled                        |\n| `'ci-only'`    | Enabled in CI, disabled locally        |\n| `'local-only'` | Enabled locally, disabled in CI        |\n| `{ enabled?, ...options }` | Object form with per-feature config |"
     },
     "WithEnabled<interface-715603908-146-604-715603908-0-884>": {
       "anyOf": [
@@ -3250,7 +5116,9 @@
             }
           }
         }
-      ]
+      ],
+      "description": "A toggleable option that can be a plain `boolean`, a  {@linkcode  CIOption }  string, or a configuration object for the feature that also accepts an `enabled` field.\n\n| Value          | Behavior                              | | -------------- | -------------------------------------- | | `true`         | Always enabled                         | | `false`        | Always disabled                        | | `'ci-only'`    | Enabled in CI, disabled locally        | | `'local-only'` | Enabled locally, disabled in CI        | | `{ enabled?, ...options }` | Object form with per-feature config |",
+      "markdownDescription": "A toggleable option that can be a plain `boolean`, a\n {@linkcode  CIOption }  string, or a configuration object for the feature\nthat also accepts an `enabled` field.\n\n| Value          | Behavior                              |\n| -------------- | -------------------------------------- |\n| `true`         | Always enabled                         |\n| `false`        | Always disabled                        |\n| `'ci-only'`    | Enabled in CI, disabled locally        |\n| `'local-only'` | Enabled locally, disabled in CI        |\n| `{ enabled?, ...options }` | Object form with per-feature config |"
     },
     "WithEnabled<PublintOptions>": {
       "anyOf": [
@@ -3280,7 +5148,9 @@
             }
           }
         }
-      ]
+      ],
+      "description": "A toggleable option that can be a plain `boolean`, a  {@linkcode  CIOption }  string, or a configuration object for the feature that also accepts an `enabled` field.\n\n| Value          | Behavior                              | | -------------- | -------------------------------------- | | `true`         | Always enabled                         | | `false`        | Always disabled                        | | `'ci-only'`    | Enabled in CI, disabled locally        | | `'local-only'` | Enabled locally, disabled in CI        | | `{ enabled?, ...options }` | Object form with per-feature config |",
+      "markdownDescription": "A toggleable option that can be a plain `boolean`, a\n {@linkcode  CIOption }  string, or a configuration object for the feature\nthat also accepts an `enabled` field.\n\n| Value          | Behavior                              |\n| -------------- | -------------------------------------- |\n| `true`         | Always enabled                         |\n| `false`        | Always disabled                        |\n| `'ci-only'`    | Enabled in CI, disabled locally        |\n| `'local-only'` | Enabled locally, disabled in CI        |\n| `{ enabled?, ...options }` | Object form with per-feature config |"
     },
     "WithEnabled<AttwOptions>": {
       "anyOf": [
@@ -3370,7 +5240,9 @@
             }
           }
         }
-      ]
+      ],
+      "description": "A toggleable option that can be a plain `boolean`, a  {@linkcode  CIOption }  string, or a configuration object for the feature that also accepts an `enabled` field.\n\n| Value          | Behavior                              | | -------------- | -------------------------------------- | | `true`         | Always enabled                         | | `false`        | Always disabled                        | | `'ci-only'`    | Enabled in CI, disabled locally        | | `'local-only'` | Enabled locally, disabled in CI        | | `{ enabled?, ...options }` | Object form with per-feature config |",
+      "markdownDescription": "A toggleable option that can be a plain `boolean`, a\n {@linkcode  CIOption }  string, or a configuration object for the feature\nthat also accepts an `enabled` field.\n\n| Value          | Behavior                              |\n| -------------- | -------------------------------------- |\n| `true`         | Always enabled                         |\n| `false`        | Always disabled                        |\n| `'ci-only'`    | Enabled in CI, disabled locally        |\n| `'local-only'` | Enabled locally, disabled in CI        |\n| `{ enabled?, ...options }` | Object form with per-feature config |"
     },
     "WithEnabled<ReportOptions>": {
       "anyOf": [
@@ -3407,7 +5279,9 @@
             }
           }
         }
-      ]
+      ],
+      "description": "A toggleable option that can be a plain `boolean`, a  {@linkcode  CIOption }  string, or a configuration object for the feature that also accepts an `enabled` field.\n\n| Value          | Behavior                              | | -------------- | -------------------------------------- | | `true`         | Always enabled                         | | `false`        | Always disabled                        | | `'ci-only'`    | Enabled in CI, disabled locally        | | `'local-only'` | Enabled locally, disabled in CI        | | `{ enabled?, ...options }` | Object form with per-feature config |",
+      "markdownDescription": "A toggleable option that can be a plain `boolean`, a\n {@linkcode  CIOption }  string, or a configuration object for the feature\nthat also accepts an `enabled` field.\n\n| Value          | Behavior                              |\n| -------------- | -------------------------------------- |\n| `true`         | Always enabled                         |\n| `false`        | Always disabled                        |\n| `'ci-only'`    | Enabled in CI, disabled locally        |\n| `'local-only'` | Enabled locally, disabled in CI        |\n| `{ enabled?, ...options }` | Object form with per-feature config |"
     },
     "WithEnabled<ExportsOptions>": {
       "anyOf": [
@@ -3488,10 +5362,14 @@
             }
           }
         }
-      ]
+      ],
+      "description": "A toggleable option that can be a plain `boolean`, a  {@linkcode  CIOption }  string, or a configuration object for the feature that also accepts an `enabled` field.\n\n| Value          | Behavior                              | | -------------- | -------------------------------------- | | `true`         | Always enabled                         | | `false`        | Always disabled                        | | `'ci-only'`    | Enabled in CI, disabled locally        | | `'local-only'` | Enabled locally, disabled in CI        | | `{ enabled?, ...options }` | Object form with per-feature config |",
+      "markdownDescription": "A toggleable option that can be a plain `boolean`, a\n {@linkcode  CIOption }  string, or a configuration object for the feature\nthat also accepts an `enabled` field.\n\n| Value          | Behavior                              |\n| -------------- | -------------------------------------- |\n| `true`         | Always enabled                         |\n| `false`        | Always disabled                        |\n| `'ci-only'`    | Enabled in CI, disabled locally        |\n| `'local-only'` | Enabled locally, disabled in CI        |\n| `{ enabled?, ...options }` | Object form with per-feature config |"
     },
     "CopyOptions": {
-      "$ref": "#/definitions/Arrayable%3C(string%7CCopyEntry)%3E"
+      "$ref": "#/definitions/Arrayable%3C(string%7CCopyEntry)%3E",
+      "description": "Files or directories to copy to the output directory. Accepts a single string path, a  {@linkcode  CopyEntry }  object, or an array of either.",
+      "markdownDescription": "Files or directories to copy to the output directory. Accepts a single\nstring path, a  {@linkcode  CopyEntry }  object, or an array of either."
     },
     "Arrayable<(string|CopyEntry)>": {
       "anyOf": [
@@ -3506,7 +5384,9 @@
             ]
           }
         }
-      ]
+      ],
+      "description": "A single item of type  {@linkcode  T }  or an array of  {@linkcode  T } . Useful for config options that accept either a single value or a list.",
+      "markdownDescription": "A single item of type  {@linkcode  T }  or an array of  {@linkcode  T } . Useful for\nconfig options that accept either a single value or a list."
     },
     "CopyEntry": {
       "type": "object",
@@ -3525,7 +5405,7 @@
         "flatten": {
           "type": "boolean",
           "description": "Whether to flatten the copied files (not preserving directory structure).",
-          "markdownDescription": "Whether to flatten the copied files (not preserving directory structure).",
+          "markdownDescription": "Whether to flatten the copied files (not preserving directory\nstructure).",
           "default": true
         },
         "verbose": {
@@ -3594,18 +5474,29 @@
                 },
                 "useSnapshot": { "type": "boolean", "default": false },
                 "useCodeCache": { "type": "boolean", "default": false },
-                "execArgv": { "type": "array", "items": { "type": "string" } },
+                "execArgv": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Extra Node.js CLI arguments injected into the executable.",
+                  "markdownDescription": "Extra Node.js CLI arguments injected into the executable."
+                },
                 "execArgvExtension": {
                   "type": "string",
                   "enum": ["none", "env", "cli"],
+                  "description": "Controls how `execArgv` is extended at runtime.\n\n- `'none'`: No extension; the embedded `execArgv` is used as-is.\n- `'env'`: Extend with the `NODE_OPTIONS` environment variable.\n- `'cli'`: Extend with command-line arguments passed to the executable.",
+                  "markdownDescription": "Controls how `execArgv` is extended at runtime.\n\n- `'none'`: No extension; the embedded `execArgv` is used as-is.\n- `'env'`: Extend with the `NODE_OPTIONS` environment variable.\n- `'cli'`: Extend with command-line arguments passed to the executable.",
                   "default": "env"
                 },
                 "assets": {
                   "type": "object",
-                  "additionalProperties": { "type": "string" }
+                  "additionalProperties": { "type": "string" },
+                  "description": "Assets to embed into the executable, as a map of asset name to file path.",
+                  "markdownDescription": "Assets to embed into the executable, as a map of asset name to file path."
                 }
               },
-              "additionalProperties": false
+              "additionalProperties": false,
+              "description": "Options passed directly to Node.js SEA configuration.",
+              "markdownDescription": "Options passed directly to Node.js SEA configuration."
             },
             "fileName": {
               "type": "string",
@@ -3620,7 +5511,9 @@
             }
           }
         }
-      ]
+      ],
+      "description": "A toggleable option that can be a plain `boolean`, a  {@linkcode  CIOption }  string, or a configuration object for the feature that also accepts an `enabled` field.\n\n| Value          | Behavior                              | | -------------- | -------------------------------------- | | `true`         | Always enabled                         | | `false`        | Always disabled                        | | `'ci-only'`    | Enabled in CI, disabled locally        | | `'local-only'` | Enabled locally, disabled in CI        | | `{ enabled?, ...options }` | Object form with per-feature config |",
+      "markdownDescription": "A toggleable option that can be a plain `boolean`, a\n {@linkcode  CIOption }  string, or a configuration object for the feature\nthat also accepts an `enabled` field.\n\n| Value          | Behavior                              |\n| -------------- | -------------------------------------- |\n| `true`         | Always enabled                         |\n| `false`        | Always disabled                        |\n| `'ci-only'`    | Enabled in CI, disabled locally        |\n| `'local-only'` | Enabled locally, disabled in CI        |\n| `{ enabled?, ...options }` | Object form with per-feature config |"
     },
     "Workspace": {
       "type": "object",
@@ -3631,14 +5524,14 @@
             { "type": "string" },
             { "type": "array", "items": { "type": "string" } }
           ],
-          "description": "Workspace directories. Glob patterns are supported.\n- `auto`: Automatically detect `package.json` files in the workspace.",
-          "markdownDescription": "Workspace directories. Glob patterns are supported.\n- `auto`: Automatically detect `package.json` files in the workspace.",
+          "description": "Workspace directories. Glob patterns are supported.\n- `'auto'`: Automatically detect `package.json` files in the workspace.",
+          "markdownDescription": "Workspace directories. Glob patterns are supported.\n- `'auto'`: Automatically detect `package.json` files in the workspace.",
           "default": "auto"
         },
         "exclude": {
           "$ref": "#/definitions/Arrayable%3Cstring%3E",
           "description": "Exclude directories from workspace. Defaults to all `node_modules`, `dist`, `test`, `tests`, `temp`, and `tmp` directories.",
-          "markdownDescription": "Exclude directories from workspace.\nDefaults to all `node_modules`, `dist`, `test`, `tests`, `temp`, and `tmp` directories.",
+          "markdownDescription": "Exclude directories from workspace. Defaults to all `node_modules`,\n`dist`, `test`, `tests`, `temp`, and `tmp` directories.",
           "default": [
             "**/node_modules/**",
             "**/dist/**",
@@ -3648,8 +5541,8 @@
         },
         "config": {
           "type": ["boolean", "string"],
-          "description": "Path to the workspace configuration file.",
-          "markdownDescription": "Path to the workspace configuration file."
+          "description": "Path to the workspace configuration file.\n- `true`: Auto-detect the config file.\n- `false`: Disable config file loading for the workspace.\n- `string`: Explicit path to the config file.",
+          "markdownDescription": "Path to the workspace configuration file.\n- `true`: Auto-detect the config file.\n- `false`: Disable config file loading for the workspace.\n- `string`: Explicit path to the config file."
         }
       },
       "additionalProperties": false

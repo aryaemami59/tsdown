@@ -16,6 +16,23 @@ const DEFAULT_EXCLUDE_WORKSPACE = [
   '**/t?(e)mp/**',
 ]
 
+/**
+ * Expand a root {@linkcode UserConfig} that has the `workspace` option set
+ * into an array of per-package configs.
+ *
+ * When `workspace` is `true` or `{ include: 'auto' }`, every
+ * `package.json` found beneath the root (excluding
+ * `node_modules`, `dist`, `test(s)`, and `t(e)mp` directories) is treated as
+ * a workspace package. Each package loads its own config file (inheriting the
+ * root config as defaults) and contributes one or more entries to the
+ * returned array.
+ *
+ * @param config - Root user config (may or may not have `workspace` set).
+ * @param inlineConfig - Inline overrides (CLI flags) merged into every package config.
+ * @param rootDeps - File dependencies collected while loading the root config; workspace package deps are merged into this set.
+ * @returns Per-package user configs and the cumulative set of watched files.
+ * @throws An {@linkcode Error} When no workspace packages are found after glob expansion.
+ */
 export async function resolveWorkspace(
   config: UserConfig,
   inlineConfig: InlineConfig,

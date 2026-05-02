@@ -7,6 +7,16 @@ import type { Plugin } from 'rolldown'
 
 const RE_SHEBANG = /^#!.*/
 
+/**
+ * Rolldown plugin that detects shebang lines (`#!/usr/bin/env node`) in entry
+ * chunks and grants execute permission (`chmod 755`) to the output file.
+ *
+ * @param logger - Logger instance used to report the chmod operation.
+ * @param cwd - Working directory; used to compute relative paths in log messages.
+ * @param nameLabel - Optional build name label prepended to log lines.
+ * @param isDualFormat - Whether the build produces multiple output formats; when `true`, the format name is included in log messages.
+ * @returns A Rolldown plugin that `chmod 755`s shebang entry files after writing.
+ */
 export function ShebangPlugin(
   logger: Logger,
   cwd: string,

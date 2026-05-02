@@ -19,6 +19,15 @@ import type {
 
 const debug = createDebug('tsdown:config:file')
 
+/**
+ * Load a Vite or Vitest config file from {@linkcode cwd} using the given
+ * file-name `prefix` (e.g. `'vite'` or `'vitest'`).
+ *
+ * @param prefix - Config file name prefix to search for (e.g. `'vite'` or `'vitest'`).
+ * @param cwd - Directory to search in.
+ * @param configLoader - Loader strategy (`'auto'`, `'native'`, or `'unrun'`).
+ * @returns The parsed Vite config and its file dependencies, or `undefined` if no matching file is found.
+ */
 export async function loadViteConfig(
   prefix: string,
   cwd: string,
@@ -63,6 +72,22 @@ export async function loadViteConfig(
 
 const configPrefix = 'tsdown.config'
 
+/**
+ * Locate and load the tsdown config file for the given
+ * {@linkcode inlineConfig}. Searches the working directory
+ * (and parent directories) for one of the supported file names:
+ * `tsdown.config.{ts,mts,cts,js,mjs,cjs,json}` or the `tsdown` field in
+ * `package.json`. The search stops at the directory containing `workspace`
+ * when building a workspace package. Passing `inlineConfig.config = false`
+ * skips all file loading and returns a single empty config. Passing a string
+ * path resolves that file directly.
+ *
+ * @param inlineConfig - The inline config supplied by the caller (CLI flags or programmatic options). `inlineConfig.config` controls file selection.
+ * @param workspace - Absolute path to the workspace root directory. When set, the upward file search stops at this directory's parent.
+ * @param rootConfig - Parent workspace config merged as defaults into each loaded package config.
+ * @returns The loaded user configs and the set of files they depend on.
+ * @throws An {@linkcode Error} When a function config is nested within a multi-config array export instead of at the top level.
+ */
 export async function loadConfigFile(
   inlineConfig: InlineConfig,
   workspace?: string,
@@ -199,9 +224,9 @@ function createParser(loader: Parser) {
   }
 }
 
-async function nativeImport(
+async function nativeImport<ModuleType = unknown>(
   id: string,
-): Promise<[module: unknown, deps: Set<string>]> {
+): Promise<[module: ModuleType, deps: Set<string>]> {
   const deps = new Set<string>([id])
 
   const url = pathToFileURL(id)
@@ -253,20 +278,20 @@ async function nativeImport(
   return [config, deps]
 }
 
-async function tsxImport(
+async function tsxImport<ModuleType = unknown>(
   id: string,
-): Promise<[module: unknown, deps: Set<string>]> {
+): Promise<[module: ModuleType, deps: Set<string>]> {
   const { tsImport } =
     await importWithError<typeof import('tsx/esm/api')>('tsx/esm/api')
   const module = await tsImport(pathToFileURL(id).href, import.meta.url)
   return [module?.default || module, new Set([id])]
 }
 
-async function unrunImport(
+async function unrunImport<ModuleType = unknown>(
   id: string,
-): Promise<[module: unknown, deps: Set<string>]> {
+): Promise<[module: ModuleType, deps: Set<string>]> {
   const { unrun } = await importWithError<typeof import('unrun')>('unrun')
-  const { module, dependencies } = await unrun({
+  const { module, dependencies } = await unrun<ModuleType>({
     path: pathToFileURL(id).href,
   })
 

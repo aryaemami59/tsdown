@@ -17,16 +17,28 @@ const gzipAsync = promisify(gzip)
 
 interface SizeInfo {
   filename: string
+
   dts: boolean
+
   isEntry: boolean
+
   raw: number
+
   gzip: number
+
   brotli: number
+
   rawText: string
+
   gzipText?: string
+
   brotliText?: string
 }
 
+/**
+ * Options for bundle size reporting. After each build, tsdown prints the
+ * output file names and their raw, gzip, and brotli sizes to the console.
+ */
 export interface ReportOptions {
   /**
    * Enable/disable gzip-compressed size reporting.
@@ -59,6 +71,16 @@ const defaultOptions = {
   maxCompressSize: 1_000_000,
 } as const satisfies Required<ReportOptions>
 
+/**
+ * Rolldown plugin that prints bundle size information to the console after
+ * each build according to the {@linkcode ResolvedConfig.report | report}
+ * options (raw, gzip, and brotli sizes per output file).
+ *
+ * @param config - Resolved tsdown config; provides report options, logger, and working directory.
+ * @param [cjsDts] - When `true`, this is the CJS-only declaration pass; the format label shown in output is `'cjs'` rather than the main format.
+ * @param [isDualFormat] - Whether the build produces multiple output formats; when `true`, the format name is included in each log line.
+ * @returns A Rolldown plugin that reports file sizes in the `writeBundle` hook.
+ */
 export function ReportPlugin(
   config: ResolvedConfig,
   cjsDts?: boolean,
@@ -82,6 +104,17 @@ export function ReportPlugin(
   }
 }
 
+/**
+ * Calculate and print size information for a set of output chunks. Extracted
+ * from {@linkcode ReportPlugin} so it can be called independently (e.g. for
+ * testing or custom integrations).
+ *
+ * @param config - Resolved config; provides report options and logger.
+ * @param chunks - The output chunks to measure.
+ * @param outDir - Absolute path to the output directory, used to display relative paths in the report.
+ * @param [cjsDts] - When `true`, the format label shown is `'cjs'` rather than the main format.
+ * @param [isDualFormat] - Whether the build produces multiple output formats; when `true`, the format name is included in each log line.
+ */
 export async function outputReport(
   config: ResolvedConfig,
   chunks: Array<OutputAsset | OutputChunk>,

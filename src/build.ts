@@ -38,7 +38,29 @@ const asyncDispose: typeof Symbol.asyncDispose =
   Symbol.asyncDispose || Symbol.for('Symbol.asyncDispose')
 
 /**
- * Build with tsdown.
+ * Build a TypeScript/JavaScript library with tsdown.
+ *
+ * The programmatic API accepts the same options as the config file and the
+ * CLI. This is useful for custom build scripts, integrations, or advanced
+ * automation.
+ *
+ * @example
+ * <caption>Basic usage</caption>
+ *
+ * ```ts
+ * import { build } from 'tsdown'
+ *
+ * await build({
+ *   entry: ['src/index.ts'],
+ *   format: ['esm', 'cjs'],
+ *   dts: true,
+ * })
+ * ```
+ *
+ * @param [inlineConfig] - Options to pass inline, equivalent to a config file. Defaults to `{}` when omitted.
+ * @returns An array of {@linkcode TsdownBundle} objects — one per resolved config (i.e. one per output format × workspace package).
+ *
+ * @see {@link https://tsdown.dev/advanced/programmatic-usage | Programmatic Usage documentation}
  */
 export async function build(
   inlineConfig: InlineConfig = {},
@@ -50,10 +72,13 @@ export async function build(
 }
 
 /**
- * Build with `ResolvedConfigs`.
+ * Build with pre-resolved configs. For internal use by {@linkcode build}
+ * and the CLI; prefer {@linkcode build} for programmatic usage.
  *
- * **Internal API, not for public use**
- * @private
+ * @param configs - Array of fully-resolved per-format configs.
+ * @param configDeps - Set of config-file paths that trigger a full restart when changed in watch mode.
+ * @param _restart - Callback invoked to restart the entire build (used in watch mode when a config file changes).
+ * @returns An array of {@linkcode TsdownBundle} objects, one per config.
  */
 export async function buildWithConfigs(
   configs: ResolvedConfig[],
@@ -121,8 +146,17 @@ export async function buildWithConfigs(
 }
 
 /**
- * Build a single configuration, without watch and shortcuts features.
- * @param config Resolved options
+ * Run a single resolved config through the full build pipeline (or
+ * start a watcher for it). Does not manage shortcuts or multi-config
+ * coordination. That is the responsibility of {@linkcode buildWithConfigs}.
+ *
+ * @param config - The resolved per-format configuration to build.
+ * @param configDeps - Set of config-file paths watched for hot restart.
+ * @param isDualFormat - Whether this config is part of a multi-format (ESM + CJS) build for the same package.
+ * @param clean - Deduped clean callback shared across all formats.
+ * @param restart - Full restart callback invoked on config-file changes.
+ * @param done - Callback invoked when all formats for a package finish.
+ * @returns A {@linkcode TsdownBundle} that owns the watcher lifecycle.
  */
 async function buildSingle(
   config: ResolvedConfig,

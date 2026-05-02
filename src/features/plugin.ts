@@ -16,7 +16,7 @@ import type { Plugin, RolldownPlugin, RolldownPluginOption } from 'rolldown'
 export interface TsdownPlugin<A = any> extends Plugin<A> {
   /**
    * Modify tsdown's user config before it is resolved. Analogous to Vite's
-   * {@link https://vite.dev/guide/api-plugin.html#config | `config`} hook.
+   * {@linkcode https://vite.dev/guide/api-plugin.html#config | config} hook.
    *
    * The hook may mutate {@linkcode config} in place, or return a partial
    * {@linkcode UserConfig} that will be deep-merged into the current config.
@@ -38,10 +38,11 @@ export interface TsdownPlugin<A = any> extends Plugin<A> {
     config: UserConfig,
     inlineConfig: InlineConfig,
   ) => Awaitable<UserConfig | void | null>
+
   /**
-   * Called after tsdown has fully resolved the user config. Analogous to
+   * Called after `tsdown` has fully resolved the user config. Analogous to
    * Vite's
-   * {@link https://vite.dev/guide/api-plugin.html#configresolved | `configResolved`}
+   * {@linkcode https://vite.dev/guide/api-plugin.html#configresolved | configResolved}
    * hook.
    *
    * This hook fires once per produced {@linkcode ResolvedConfig} — i.e. once
@@ -71,6 +72,14 @@ export type TsdownPluginOption<A = any> = Awaitable<
   | TsdownPluginOption<A>[]
 >
 
+/**
+ * Recursively await and flatten a {@linkcode TsdownPluginOption} (which may
+ * be a promise, an array, or deeply nested) into a flat array of
+ * {@linkcode TsdownPlugin} objects.
+ *
+ * @param plugins - The raw plugin option value to resolve.
+ * @returns A flat, fully-awaited array of tsdown plugins.
+ */
 export async function flattenPlugins(
   plugins: TsdownPluginOption,
 ): Promise<TsdownPlugin[]> {

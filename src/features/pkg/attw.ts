@@ -46,6 +46,7 @@ export interface AttwOptions extends CheckPackageOptions {
    * @default 'strict'
    */
   profile?: 'strict' | 'node16' | 'esm-only'
+
   /**
    * The level of the check.
    *
@@ -75,8 +76,10 @@ export interface AttwOptions extends CheckPackageOptions {
    * - `'internal-resolution-error'`
    *
    * @example
+   * <caption>Ignore common false-positive rules</caption>
+   *
    * ```ts
-   * ignoreRules: ['no-resolution', 'false-cjs']
+   * ignoreRules: ['no-resolution', 'false-cjs'],
    * ```
    *
    * @default []
@@ -112,6 +115,14 @@ const profiles: Record<Required<AttwOptions>['profile'], string[]> = {
   'esm-only': ['node10', 'node16-cjs'],
 }
 
+/**
+ * Run the "Are the Types Wrong?" (`attw`) check against the packed tarball
+ * and report any type resolution problems via the build logger. Skips
+ * silently when `options.attw` is falsy.
+ *
+ * @param options - Resolved config; `attw` settings and logger are read from here.
+ * @param tarball - Pre-packed tarball buffer produced by the build pipeline.
+ */
 export async function attw(
   options: ResolvedConfig,
   tarball: Buffer<ArrayBuffer>,

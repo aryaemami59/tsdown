@@ -5,6 +5,12 @@ import satisfies from 'semver/functions/satisfies.js'
 import type { ResolvedConfig } from '../config/index.ts'
 import type { Plugin } from 'rolldown'
 
+/**
+ * Emit a one-time warning when the build targets a Node.js version that
+ * natively supports `require(ESM)`, recommending ESM over CJS.
+ *
+ * @param config - Resolved config; the warning fires only when `format` includes `'cjs'` and the resolved target satisfies `^20.19.0 || >=22.12.0`.
+ */
 export function warnLegacyCJS(config: ResolvedConfig): void {
   if (
     config.exe ||
@@ -30,6 +36,13 @@ export function warnLegacyCJS(config: ResolvedConfig): void {
   }
 }
 
+/**
+ * Rolldown plugin that generates a `.d.ts` re-export shim for CJS entry
+ * chunks, forwarding all types from the corresponding `.d.mts` declaration
+ * file so that CJS consumers still get accurate type information.
+ *
+ * @returns A Rolldown plugin that emits the re-export shim in `generateBundle`.
+ */
 export function CjsDtsReexportPlugin(): Plugin {
   return {
     name: 'tsdown:cjs-dts-reexport',

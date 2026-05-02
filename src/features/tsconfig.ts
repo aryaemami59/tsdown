@@ -12,6 +12,17 @@ function findTsconfig(
   return findUp(name, { cwd }) || false
 }
 
+/**
+ * Resolve the `tsconfig` option to an absolute file path by searching upward
+ * from `cwd`, or return `false` when TypeScript config should be disabled.
+ *
+ * @param logger - Logger used to report the resolved path or warn when not found.
+ * @param tsconfig - Raw tsconfig option from the user config.
+ * @param cwd - Working directory for the upward search.
+ * @param color - Ansis color function used to highlight the path in logs.
+ * @param nameLabel - Optional build name label prepended to log lines.
+ * @returns The absolute path to the resolved `tsconfig.json`, or `false` when `tsconfig: false` is set or no file can be found.
+ */
 export async function resolveTsconfig(
   logger: Logger,
   tsconfig: UserConfig['tsconfig'],

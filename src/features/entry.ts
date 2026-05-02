@@ -8,6 +8,20 @@ import type { Logger } from '../utils/logger.ts'
 import type { Arrayable } from '../utils/types.ts'
 import type { Ansis } from 'ansis'
 
+/**
+ * Resolve the raw entry option into a normalized `{ name → absolutePath }`
+ * map, applying glob expansion and negation patterns. Falls back to
+ * `src/index.ts` when no entry is specified.
+ *
+ * @param logger - Logger used to print the resolved entry list.
+ * @param entry - Raw entry option from the user config.
+ * @param cwd - Working directory for resolving relative paths.
+ * @param color - Ansis color function used to highlight entry paths in logs.
+ * @param [nameLabel] - Optional build name label prepended to log lines.
+ * @param [root] - Optional explicit root directory; overrides the auto-computed lowest common ancestor of the entry files.
+ * @returns A tuple of the entry map and the resolved root directory.
+ * @throws An {@linkcode Error} When no entry files are specified and `src/index.ts` does not exist, or when the resolved entry set is empty.
+ */
 export async function resolveEntry(
   logger: Logger,
   entry: UserConfig['entry'],
@@ -40,6 +54,15 @@ export async function resolveEntry(
   return [entryMap, computedRoot]
 }
 
+/**
+ * Normalize any supported entry form (string, array, or object) into a
+ * `{ name → absolutePath }` map.
+ *
+ * @param entry - Raw entry value from the user config.
+ * @param cwd - Working directory for resolving relative paths.
+ * @param [root] - Optional explicit root directory override.
+ * @returns A tuple of the entry map and the resolved root directory.
+ */
 export function toObjectEntry(
   entry: TsdownInputOption,
   cwd: string,
@@ -55,6 +78,12 @@ export function toObjectEntry(
   return resolveArrayEntry(entry, cwd, root)
 }
 
+/**
+ * Return `true` when any part of the entry option contains a glob pattern.
+ *
+ * @param entry - Raw entry value to inspect.
+ * @returns `true` if the entry contains at least one dynamic (glob) pattern.
+ */
 export function isGlobEntry(entry: TsdownInputOption | undefined): boolean {
   if (!entry) return false
   if (typeof entry === 'string') return isDynamicPattern(entry)

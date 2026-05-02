@@ -8,6 +8,7 @@ import type { BuildOptions } from 'rolldown'
 
 export interface BuildContext {
   options: ResolvedConfig
+
   /**
    * @hidden
    */
@@ -27,12 +28,14 @@ export interface TsdownHooks {
    * Use this hook to perform setup or preparation tasks.
    */
   'build:prepare': (ctx: BuildContext) => Awaitable<void>
+
   /**
    * Invoked before each Rolldown build.
    * For dual-format builds, this hook is called for each format.
    * Useful for configuring or modifying the build context before bundling.
    */
   'build:before': (ctx: BuildContext & RolldownContext) => Awaitable<void>
+
   /**
    * Invoked after each tsdown build completes.
    * Use this hook for cleanup or post-processing tasks.
@@ -42,6 +45,14 @@ export interface TsdownHooks {
   ) => Awaitable<void>
 }
 
+/**
+ * Create a {@linkcode Hookable} instance pre-populated with any hooks defined
+ * in {@linkcode ResolvedConfig.hooks | options.hooks}, together with the
+ * initial {@linkcode BuildContext}.
+ *
+ * @param options - The resolved config for this build.
+ * @returns The hooks instance and the initial build context.
+ */
 export async function createHooks(options: ResolvedConfig): Promise<{
   hooks: Hookable<TsdownHooks>
   context: BuildContext
@@ -59,6 +70,15 @@ export async function createHooks(options: ResolvedConfig): Promise<{
   return { hooks, context }
 }
 
+/**
+ * Spawn the {@linkcode ResolvedConfig.onSuccess | onSuccess} command or
+ * callback defined in {@linkcode config}, if any. The returned
+ * {@linkcode AbortController} can be used to terminate the spawned process
+ * when a new build cycle begins.
+ *
+ * @param config - The resolved config whose {@linkcode onSuccess} field is executed.
+ * @returns An {@linkcode AbortController} whose signal is wired to kill the process, or `undefined` when {@linkcode onSuccess} is not set.
+ */
 export function executeOnSuccess(
   config: ResolvedConfig,
 ): AbortController | undefined {

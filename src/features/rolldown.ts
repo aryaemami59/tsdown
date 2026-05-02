@@ -33,6 +33,19 @@ import type {
 
 const debug = createDebug('tsdown:rolldown')
 
+/**
+ * Construct the full Rolldown {@linkcode BuildOptions} for a single build
+ * pass, merging resolved input options, output options, and any user
+ * `inputOptions` / `outputOptions` overrides.
+ *
+ * @param config - Resolved tsdown config for this build.
+ * @param format - The normalized output format (`'es'`, `'cjs'`, etc.).
+ * @param configDeps - Set of config-file paths registered as watch dependencies.
+ * @param bundle - Shared bundle object for this build.
+ * @param cjsDts - When `true`, this is the CJS-only declaration pass (`emitDtsOnly`).
+ * @param isDualFormat - Whether the overall build produces multiple formats.
+ * @returns The fully composed Rolldown build options.
+ */
 export async function getBuildOptions(
   config: ResolvedConfig,
   format: NormalizedFormat,
@@ -188,13 +201,14 @@ async function resolveInputOptions(
 
   const define = {
     ...config.define,
-    ...Object.keys(env).reduce((acc, key) => {
+    ...Object.keys(env).reduce((acc: Record<string, string>, key) => {
       const value = JSON.stringify(env[key])
       acc[`process.env.${key}`] = value
       acc[`import.meta.env.${key}`] = value
       return acc
     }, Object.create(null)),
-  }
+  } satisfies NonNullable<ResolvedConfig['define']>
+
   const inject = shims && !cjsDts ? getShimsInject(format, platform) : undefined
 
   const inputOptions = await mergeUserOptions(
@@ -277,12 +291,28 @@ async function resolveOutputOptions(
   return outputOptions
 }
 
+/**
+ * Create a temporary directory for writing debug Rolldown config files when
+ * the `tsdown:rolldown` debug namespace is enabled.
+ *
+ * @returns Absolute path to the newly created temp directory, or `undefined` when debug logging is disabled.
+ */
 export async function getDebugRolldownDir(): Promise<string | undefined> {
   if (debug.enabled) {
     return await mkdtemp(path.join(tmpdir(), 'tsdown-config-'))
   }
 }
 
+/**
+ * Serialize {@linkcode BuildOptions | buildOptions} to a human-readable JS
+ * file inside {@linkcode dir} for debugging. Only called when the
+ * `tsdown:rolldown` debug namespace is active.
+ *
+ * @param dir - Destination directory (created by {@linkcode getDebugRolldownDir}).
+ * @param name - Package or build name used in the output file comment.
+ * @param format - The normalized output {@linkcode ResolvedConfig.format | format}, used in the file name.
+ * @param buildOptions - The {@linkcode BuildOptions | buildOptions} to serialize.
+ */
 export async function debugBuildOptions(
   dir: string,
   name: string | undefined,
@@ -334,7 +364,7 @@ function handlePluginInspect(plugins: RolldownPluginOption) {
     ) {
       if ('_options' in plugins) {
         return inspect(
-          { name: plugins.name, options: (plugins as any)._options },
+          { name: plugins.name, options: plugins._options },
           options,
         )
       } else {
@@ -344,6 +374,15 @@ function handlePluginInspect(plugins: RolldownPluginOption) {
   }
 }
 
+/**
+ * Rolldown plugin that throws a build error when a CSS file is transformed
+ * but the
+ * {@linkcode https://github.com/rolldown/tsdown/tree/HEAD/packages/css | @tsdown/css}
+ * integration is not installed, providing a clear actionable message instead
+ * of a cryptic Rolldown error.
+ *
+ * @returns A Rolldown {@linkcode Plugin | plugin} that guards against missing CSS support.
+ */
 export function CssGuardPlugin(): Plugin {
   return {
     name: 'tsdown:css-guard',

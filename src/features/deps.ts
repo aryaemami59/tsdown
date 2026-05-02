@@ -34,10 +34,13 @@ export interface DepsConfig {
    * {@linkcode ExternalOption}.
    */
   neverBundle?: ExternalOption
+
   /**
-   * Force dependencies to be bundled, even if they are in `dependencies`, `peerDependencies`, or `optionalDependencies`.
+   * Force dependencies to be bundled, even if they are in `dependencies`,
+   * `peerDependencies`, or `optionalDependencies`.
    */
   alwaysBundle?: Arrayable<string | RegExp> | NoExternalFn
+
   /**
    * Whitelist of dependencies allowed to be bundled from `node_modules`.
    * Throws an error if any unlisted dependency is bundled.
@@ -48,10 +51,12 @@ export interface DepsConfig {
    * Note: Be sure to include all required sub-dependencies as well.
    */
   onlyBundle?: Arrayable<string | RegExp> | false
+
   /**
    * @deprecated Use {@linkcode DepsConfig.onlyBundle | onlyBundle} instead.
    */
   onlyAllowBundle?: Arrayable<string | RegExp> | false
+
   /**
    * Skip bundling all `node_modules` dependencies.
    *
@@ -63,13 +68,24 @@ export interface DepsConfig {
   skipNodeModulesBundle?: boolean
 }
 
-export interface ResolvedDepsConfig {
-  neverBundle?: ExternalOption
+export interface ResolvedDepsConfig extends DepsConfig {
   alwaysBundle?: NoExternalFn
+
   onlyBundle?: Array<string | RegExp> | false
+
   skipNodeModulesBundle: boolean
 }
 
+/**
+ * Normalize the {@linkcode UserConfig.deps | config.deps} fields into a
+ * {@linkcode ResolvedDepsConfig | ResolvedDepsConfig} object.
+ *
+ * @param config - User config whose {@linkcode UserConfig.deps | deps} fields are read.
+ * @param [logger] - Optional {@linkcode Logger | logger} used to emit deprecation warnings.
+ * @returns The {@link ResolvedDepsConfig | resolved dependency configuration} with deprecated shims applied.
+ * @throws A {@linkcode TypeError} When a deprecated option is combined with its replacement (e.g. `external` with `deps.neverBundle`, `noExternal` with `deps.alwaysBundle`, `deps.onlyAllowBundle` with `deps.onlyBundle`, `inlineOnly` with `deps.onlyBundle`, or `skipNodeModulesBundle` with `deps.skipNodeModulesBundle`).
+ * @throws A {@linkcode TypeError} When {@linkcode ResolvedDepsConfig.skipNodeModulesBundle} and {@linkcode ResolvedDepsConfig.alwaysBundle} are both set.
+ */
 export function resolveDepsConfig(
   config: UserConfig,
   logger?: Logger,
@@ -159,15 +175,32 @@ export function resolveDepsConfig(
   }
 }
 
+/**
+ * Rolldown plugin that manages dependency bundling behavior according to the
+ * {@linkcode UserConfig.deps | deps} option. It decides, for every resolved
+ * import, whether the module should be bundled or externalized based on the
+ * {@linkcode ResolvedDepsConfig.alwaysBundle | alwaysBundle},
+ * {@linkcode ResolvedDepsConfig.onlyBundle | onlyBundle},
+ * {@linkcode ResolvedDepsConfig.neverBundle | neverBundle}, and
+ * {@linkcode ResolvedDepsConfig.skipNodeModulesBundle | skipNodeModulesBundle}
+ * sub-options, and validates that bundled packages are listed as `dependencies`
+ * in `package.json`.
+ *
+ * @param resolvedConfig - The resolved config for the current build, used to access the dependency configuration and package information.
+ * @param tsdownBundle - The current {@linkcode TsdownBundle}, used to track inlined dependencies for validation.
+ * @returns A Rolldown {@linkcode Plugin | plugin} that enforces the configured bundling strategy.
+ */
 export function DepsPlugin(
-  {
+  resolvedConfig: ResolvedConfig,
+  tsdownBundle: TsdownBundle,
+): Plugin {
+  const {
     pkg,
     deps: { alwaysBundle, onlyBundle, skipNodeModulesBundle },
     logger,
     nameLabel,
-  }: ResolvedConfig,
-  tsdownBundle: TsdownBundle,
-): Plugin {
+  } = resolvedConfig
+
   const deps = pkg && Array.from(getProductionDeps(pkg))
 
   return {
@@ -246,8 +279,10 @@ export function DepsPlugin(
 
         debug('found deps in bundle: %o', deps)
 
+        const depsArray = Array.from(deps)
+
         if (onlyBundle) {
-          const errors = Array.from(deps)
+          const errors = depsArray
             .filter((dep) => !matchPattern(dep, onlyBundle))
             .map(
               (dep) =>
@@ -262,8 +297,7 @@ export function DepsPlugin(
           }
 
           const unusedPatterns = onlyBundle.filter(
-            (pattern) =>
-              !Array.from(deps).some((dep) => matchPattern(dep, [pattern])),
+            (pattern) => !depsArray.some((dep) => matchPattern(dep, [pattern])),
           )
           if (unusedPatterns.length) {
             logger.info(
@@ -280,7 +314,7 @@ export function DepsPlugin(
             nameLabel,
             `Hint: consider adding ${blue`deps.onlyBundle`} option to avoid unintended bundling of dependencies, or set ${blue`deps.onlyBundle: false`} to disable this hint.\n` +
               `See more at ${underline`https://tsdown.dev/options/dependencies#deps-onlybundle`}\n` +
-              `Detected dependencies in bundle:\n${Array.from(deps)
+              `Detected dependencies in bundle:\n${depsArray
                 .map((dep) => `- ${blue(dep)}`)
                 .join('\n')}`,
           )
@@ -412,8 +446,15 @@ async function resolveDepSubpath(id: string, resolved: ResolvedId | null) {
   return result
 }
 
-/*
- * Production deps should be excluded from the bundle
+/**
+ * Production deps should be excluded from the bundle. This includes
+ * `dependencies`, `peerDependencies`, and `optionalDependencies` from
+ * `package.json`. This function extracts those dependencies into a set for
+ * easy lookup when determining whether an import should be bundled or
+ * externalized.
+ *
+ * @param pkg - The `package.json` object to extract dependencies from.
+ * @returns A set of dependency names that should be treated as external.
  */
 function getProductionDeps(pkg: PackageJson): Set<string> {
   return new Set([

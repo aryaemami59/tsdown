@@ -17,6 +17,23 @@ const debug = createDebug('tsdown:config')
 
 // resolved configs count = 1 (inline config) * root config count * workspace count * sub config count
 
+/**
+ * Resolve an {@linkcode InlineConfig} (e.g. CLI flags) into the full set of
+ * {@linkcode ResolvedConfig} objects that drive Rolldown builds.
+ *
+ * Resolution pipeline:
+ * 1. {@linkcode loadConfigFile} — locate and parse the config file.
+ * 2. {@linkcode resolveWorkspace} — expand workspace packages.
+ * 3. {@linkcode resolveUserConfig} — merge, validate, and normalize every
+ *    user config into one {@linkcode ResolvedConfig} per output format.
+ *
+ * Also returns the set of file paths the config depends on so the caller can
+ * watch them for changes.
+ *
+ * @param inlineConfig - CLI flags or programmatic overrides.
+ * @returns The fully resolved configs (one per format × workspace package) and the complete set of file paths the configuration depends on.
+ * @throws An {@linkcode Error} When no valid configuration is found after resolving all workspace packages and formats.
+ */
 export async function resolveConfig(inlineConfig: InlineConfig): Promise<{
   configs: ResolvedConfig[]
   deps: Set<string>

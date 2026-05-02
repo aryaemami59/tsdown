@@ -41,6 +41,11 @@ const parseEnv = process.getBuiltinModule('node:util').parseEnv
  *
  * **Internal API, not for public use**
  * @private
+ *
+ * @param userConfig - Raw user config object (from file, workspace, or inline).
+ * @param inlineConfig - CLI/programmatic overrides applied after file config.
+ * @param configDeps - Accumulated set of watched file paths; this function may add more entries.
+ * @returns One {@linkcode ResolvedConfig} per output format.
  */
 export async function resolveUserConfig(
   userConfig: UserConfig,
@@ -380,7 +385,13 @@ export async function resolveUserConfig(
   return resolvedConfigs
 }
 
-/** filter env variables by prefixes */
+/**
+ * Filter env variables by prefixes.
+ *
+ * @param envDict - Source env dictionary (e.g. {@linkcode process.env}).
+ * @param envPrefixes - Only keys with one of these prefixes are kept.
+ * @returns A new object containing only the matching key-value pairs.
+ */
 function filterEnv(
   envDict: Record<string, string | undefined>,
   envPrefixes: string[],
@@ -401,6 +412,15 @@ const defu = createDefu((obj, key, value) => {
   }
 })
 
+/**
+ * Deep-merge one or more {@linkcode UserConfig} / {@linkcode InlineConfig}
+ * objects. Arrays are replaced (not concatenated) so that overrides can
+ * clear a list set by defaults.
+ *
+ * @param defaults - Base config used as the fallback for every key.
+ * @param overrides - One or more configs applied in order from left to right on top of {@linkcode defaults}.
+ * @returns A new merged config object.
+ */
 export function mergeConfig(
   defaults: UserConfig,
   ...overrides: UserConfig[]
@@ -420,6 +440,19 @@ export function mergeConfig(
   )
 }
 
+/**
+ * Merge a user-supplied option value (object or function form) with a set of
+ * defaults. Mirrors the pattern used by `inputOptions` and `outputOptions`
+ * in {@linkcode UserConfig}.
+ *
+ * @template T - The options object type.
+ * @template A - The arguments array type.
+ *
+ * @param defaults - Base options object used as fallback.
+ * @param user - User-supplied override: an object or a function that receives {@linkcode defaults} (plus extra {@linkcode args}) and returns a partial override.
+ * @param args - Extra arguments forwarded to {@linkcode user} when it is a function.
+ * @returns The merged options with user values taking priority over {@linkcode defaults}.
+ */
 export async function mergeUserOptions<T extends object, A extends unknown[]>(
   defaults: T,
   user:
@@ -435,6 +468,18 @@ export async function mergeUserOptions<T extends object, A extends unknown[]>(
   return defu(userOutputOptions, defaults)
 }
 
+/**
+ * Normalize a {@linkcode WithEnabled} option value into either `false`
+ * (disabled) or an resolved options object of type {@linkcode T}. Handles
+ * `boolean`, {@linkcode CIOption}, `string`, and object forms, including the
+ * optional `enabled` flag on the object form.
+ *
+ * @template T - The options object type that the feature uses when enabled.
+ *
+ * @param value - The raw user-supplied value for the feature option.
+ * @param defaults - Options object to return when the feature is enabled and no explicit object was provided.
+ * @returns The resolved options object {@linkcode T} when the feature is active, or `false` when it is disabled.
+ */
 export function resolveFeatureOption<T>(
   value: Exclude<WithEnabled<T>, undefined>,
   defaults: T,
@@ -451,6 +496,15 @@ function resolveCIOption(value: boolean | CIOption): boolean {
   return value
 }
 
+/**
+ * Determine whether a config should be included based on the
+ * {@linkcode InlineConfig.filter | filter} option.
+ *
+ * @param filter - The filter value from the {@linkcode InlineConfig}.
+ * @param configCwd - Working directory of the config being tested.
+ * @param [name] - Optional config name to match against.
+ * @returns `true` if the config passes the {@linkcode filter}.
+ */
 function filterConfig(
   filter: InlineConfig['filter'],
   configCwd: string,

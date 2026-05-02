@@ -93,8 +93,7 @@ export interface ReportOptions {
   brotli?: boolean;
   maxCompressSize?: number;
 }
-export interface ResolvedDepsConfig {
-  neverBundle?: ExternalOption;
+export interface ResolvedDepsConfig extends DepsConfig {
   alwaysBundle?: NoExternalFn;
   onlyBundle?: Array<string | RegExp> | false;
   skipNodeModulesBundle: boolean;

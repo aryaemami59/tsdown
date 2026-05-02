@@ -24,36 +24,40 @@ export interface ExportsOptions {
   /**
    * Generate `exports` for `package.json` file.
    *
+   * @default true
+   *
    * @example
+   * <caption>Generated `exports` field written to `package.json`</caption>
+   *
    * ```json
    * {
    *   "exports": {
-   *      ".": {
-   *         "types": "./dist/index.d.mts",
-   *         "import": "./dist/index.mjs"
-   *      },
+   *     ".": {
+   *       "types": "./dist/index.d.mts",
+   *       "import": "./dist/index.mjs"
+   *     },
    *     "./package.json": "./package.json"
    *   }
    * }
    * ```
-   *
-   * @default true
    */
   packageJson?: boolean
 
   /**
    * Generate `exports` for all files.
    *
+   * @default false
+   *
    * @example
+   * <caption>Generated wildcard catch-all export when `all: true`</caption>
+   *
    * ```json
    * {
    *   "exports": {
-   *    "./*": "./*"
+   *     "./*": "./*"
    *   }
    * }
    * ```
-   *
-   * @default false
    */
   all?: boolean
 
@@ -67,8 +71,10 @@ export interface ExportsOptions {
    * the `dist` directory.
    *
    * @example
+   * <caption>Exclude CLI and test files from exports</caption>
+   *
    * ```ts
-   * exclude: ['cli', '**\/*.test', /internal/]
+   * exclude: ['cli', '**\/*.test', /internal/],
    * ```
    */
   exclude?: (RegExp | string)[]
@@ -91,6 +97,8 @@ export interface ExportsOptions {
    * exported package, such as workers or assets.
    *
    * @example
+   * <caption>Add a custom export via the function form</caption>
+   *
    * ```ts
    * customExports(exports) {
    *   exports['./worker.js'] = './dist/worker.js';
@@ -99,6 +107,8 @@ export interface ExportsOptions {
    * ```
    *
    * @example
+   * <caption>Add a custom export via the config-file object form</caption>
+   *
    * ```jsonc
    * {
    *   "customExports": {
@@ -206,6 +216,15 @@ export interface ExportsOptions {
   bin?: boolean | string | Record<string, string>
 }
 
+/**
+ * Generate the `exports` (and optionally `main`/`module`) fields for
+ * `package.json` based on the output chunks and write the updated file to
+ * disk.
+ *
+ * @param options - Resolved config; the `exports` option controls generation behavior.
+ * @param chunks - Output chunks grouped by format, used to derive export paths.
+ * @param inlinedDeps - Map of inlined dependency names to their bundled versions, written to `package.json` for tooling consumers.
+ */
 export async function writeExports(
   options: ResolvedConfig,
   chunks: ChunksByFormat,
@@ -247,6 +266,15 @@ function shouldExclude(
   return matchPattern(fileName, exclude)
 }
 
+/**
+ * Compute the exports map and legacy fields from the given chunks without
+ * writing anything to disk — useful for testing and for callers that need to
+ * inspect the result before writing.
+ *
+ * @param pkg - Parsed `package.json` used as the base for the update.
+ * @param chunks - Output chunks grouped by format.
+ * @param options - Subset of resolved config fields that influence export generation.
+ */
 export async function generateExports(
   pkg: PackageJson,
   chunks: ChunksByFormat,
@@ -501,6 +529,13 @@ function exportCss(
   }
 }
 
+/**
+ * Recursively check whether a `package.json` `exports` value contains any
+ * `"types"` condition.
+ *
+ * @param value - The `exports` field value to inspect (any shape).
+ * @returns `true` if a `"types"` condition is found anywhere in the tree.
+ */
 export function hasExportsTypes(value: unknown): boolean {
   if (value == null || typeof value !== 'object') return false
   if (Array.isArray(value)) return value.some(hasExportsTypes)

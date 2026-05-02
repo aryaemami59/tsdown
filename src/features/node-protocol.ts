@@ -2,8 +2,17 @@ import { builtinModules } from 'node:module'
 import type { Plugin } from 'rolldown'
 
 /**
+ * Rolldown plugin that rewrites Node.js built-in module specifiers according
+ * to the {@linkcode UserConfig.nodeProtocol | nodeProtocol} option.
+ *
+ * - `true`: Add the `node:` prefix (e.g. `fs` → `node:fs`).
+ * - `'strip'`: Remove the `node:` prefix (e.g. `node:fs` → `fs`).
+ *
  * The `node:` protocol was added in Node.js v14.18.0.
- * @see https://nodejs.org/api/esm.html#node-imports
+ *
+ * @see {@link https://nodejs.org/api/esm.html#node-imports | Node.js ESM imports documentation}
+ * @param nodeProtocolOption - `true` to add the `node:` prefix; `'strip'` to remove it.
+ * @returns A Rolldown plugin that rewrites matching import specifiers.
  */
 export function NodeProtocolPlugin(nodeProtocolOption: 'strip' | true): Plugin {
   const modulesWithoutProtocol = builtinModules.filter(

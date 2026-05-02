@@ -24,6 +24,13 @@ export interface DevtoolsOptions extends NonNullable<InputOptions['devtools']> {
   clean?: boolean
 }
 
+/**
+ * Start the
+ * {@linkcode https://github.com/vitejs/devtools | `@vitejs/devtools`} UI
+ * server using the provided options.
+ *
+ * @param config - Devtools options controlling the UI host, open-browser behaviour, and other start parameters.
+ */
 export async function startDevtoolsUI(config: DevtoolsOptions): Promise<void> {
   const { start } = await importWithError<
     typeof import('@vitejs/devtools/cli-commands')

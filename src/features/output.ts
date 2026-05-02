@@ -12,18 +12,45 @@ import type {
   RenderedChunk,
 } from 'rolldown'
 
+/**
+ * Context object passed to {@linkcode OutExtensionFactory} when resolving
+ * custom output file extensions.
+ */
 export interface OutExtensionContext {
   options: InputOptions
+
   format: NormalizedFormat
+
   /**
    * `"type"` field in project's `package.json`.
    */
   pkgType?: PackageType
 }
+
+/**
+ * Custom file extensions for output files.
+ * - `js`: Extension for JavaScript output files (e.g. `'.mjs'`).
+ * - `dts`: Extension for TypeScript declaration files (e.g. `'.d.mts'`).
+ */
 export interface OutExtensionObject {
   js?: string
+
   dts?: string
 }
+
+/**
+ * A factory function that returns custom output file extensions based on the
+ * current build context. Overrides {@linkcode UserConfig.fixedExtension}.
+ *
+ * @example
+ * <caption>Return format-based output file extensions</caption>
+ *
+ * ```ts
+ * outExtensions({ format }) {
+ *   return { js: format === 'esm' ? '.mjs' : '.cjs' };
+ * }
+ * ```
+ */
 export type OutExtensionFactory = (
   context: OutExtensionContext,
 ) => OutExtensionObject | undefined
@@ -43,6 +70,13 @@ function resolveJsOutputExtension(
   }
 }
 
+/**
+ * Compute the entry-chunk and non-entry-chunk filename templates for a given
+ * output format, taking `outExtensions`, `fixedExtension`, and `hash` into
+ * account.
+ *
+ * @returns A tuple of `[entryFilename, chunkFilename]` templates (either a static string or a function of the pre-rendered chunk).
+ */
 export function resolveChunkFilename(
   { outExtensions, fixedExtension, pkg, hash }: ResolvedConfig,
   inputOptions: InputOptions,
@@ -89,17 +123,43 @@ function createChunkFilename(
   }
 }
 
+/**
+ * Per-file-type code snippets for {@linkcode ChunkAddon}.
+ * - `js`: Appended/prepended to JavaScript output files.
+ * - `css`: Appended/prepended to CSS output files.
+ * - `dts`: Appended/prepended to TypeScript declaration files.
+ */
 export interface ChunkAddonObject {
   js?: string
+
   css?: string
+
   dts?: string
 }
+
+/**
+ * A function that returns a {@linkcode ChunkAddonObject} or a raw string for
+ * a given output chunk. Receives the output `format` and `fileName`.
+ */
 export type ChunkAddonFunction = (ctx: {
   format: Format
   fileName: string
 }) => ChunkAddonObject | string | undefined
+
+/**
+ * Code to inject at the top (`banner`) or bottom (`footer`) of every output
+ * chunk. Can be a plain string, a per-file-type object, or a function.
+ */
 export type ChunkAddon = ChunkAddonObject | ChunkAddonFunction | string
 
+/**
+ * Convert a {@linkcode ChunkAddon} value (string, object, or function) into
+ * a Rolldown `AddonFunction` suitable for `banner` / `footer`.
+ *
+ * @param chunkAddon - The raw addon value from the user config.
+ * @param format - The normalized output format; passed to function-form addons.
+ * @returns A Rolldown addon function, or `undefined` when `chunkAddon` is falsy.
+ */
 export function resolveChunkAddon(
   chunkAddon: ChunkAddon | undefined,
   format: NormalizedFormat,

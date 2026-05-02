@@ -6,12 +6,24 @@ import type { Awaitable } from '../utils/types.ts'
 
 // Copied from https://github.com/vitejs/vite/blob/main/packages/vite/src/node/shortcuts.ts - MIT License
 
+/**
+ * A single keyboard shortcut registered in watch mode.
+ */
 export interface Shortcut {
   key: string
+
   description: string
+
   action: () => Awaitable<void>
 }
 
+/**
+ * Register stdin keyboard shortcuts for watch mode (`r` to rebuild, `c` to
+ * clear, `q` to quit, `h` to list all shortcuts).
+ *
+ * @param restart - Callback invoked when the user presses `r`.
+ * @returns A cleanup function that closes the readline interface.
+ */
 export function shortcuts(restart: () => void): () => void {
   let actionRunning = false
   async function onInput(input: string) {

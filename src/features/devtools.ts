@@ -5,11 +5,9 @@ import type { InputOptions } from 'rolldown'
 export interface DevtoolsOptions extends NonNullable<InputOptions['devtools']> {
   /**
    * Enable devtools integration.
-   * {@link https://github.com/vitejs/devtools | `@vitejs/devtools`} must be
-   * installed as a dependency.
-   *
-   * Defaults to `true`, if
-   * {@link https://github.com/vitejs/devtools | `@vitejs/devtools`} is
+   * {@linkcode https://github.com/vitejs/devtools | @vitejs/devtools} must be
+   * installed as a dependency. Defaults to `true`, if
+   * {@linkcode https://github.com/vitejs/devtools | @vitejs/devtools} is
    * installed.
    *
    * @experimental
@@ -24,6 +22,12 @@ export interface DevtoolsOptions extends NonNullable<InputOptions['devtools']> {
   clean?: boolean
 }
 
+/**
+ * Start the {@linkcode https://github.com/vitejs/devtools | @vitejs/devtools}
+ * UI server using the provided {@linkcode DevtoolsOptions | options}.
+ *
+ * @param config - Devtools options controlling the UI host, open-browser behaviour, and other start parameters.
+ */
 export async function startDevtoolsUI(config: DevtoolsOptions): Promise<void> {
   const { start } = await importWithError<
     typeof import('@vitejs/devtools/cli-commands')

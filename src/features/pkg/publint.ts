@@ -18,6 +18,13 @@ export interface PublintOptions extends Omit<Options, 'pack' | 'pkgDir'> {
   ]
 }
 
+/**
+ * Run `publint` against the packed tarball and report any issues via the
+ * build logger. Skips silently when `options.publint` is falsy.
+ *
+ * @param options - Resolved config; `publint` settings and logger are read from here.
+ * @param tarball - Pre-packed tarball buffer produced by the build pipeline.
+ */
 export async function publint(
   options: ResolvedConfig,
   tarball: Buffer<ArrayBuffer>,

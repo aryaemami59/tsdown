@@ -1,6 +1,14 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { isDeepStrictEqual } from 'node:util'
 
+/**
+ * Write {@linkcode content} as JSON to {@linkcode filePath}, preserving the
+ * indentation style and line endings of any existing file. The file is left
+ * untouched when its current contents are deeply equal to {@linkcode content}.
+ *
+ * @param filePath - Destination path for the JSON file.
+ * @param content - Value to serialize and write.
+ */
 export function writeJsonFile(filePath: string, content: unknown): void {
   let originalText: string | undefined
   let originalJson: unknown = undefined
@@ -43,6 +51,13 @@ export function writeJsonFile(filePath: string, content: unknown): void {
   writeFileSync(filePath, jsonString, 'utf8')
 }
 
+/**
+ * Detect the indentation style used in a JSON string by inspecting the
+ * first indented line.
+ *
+ * @param jsonText - Raw JSON text to analyze.
+ * @returns A tab character (`'\t'`), the number of spaces used, or `2` as a fallback when no indented line is found.
+ */
 export function detectIndentation(jsonText: string): string | number {
   const lines = jsonText.split(/\r?\n/)
 

@@ -41,6 +41,11 @@ const parseEnv = process.getBuiltinModule('node:util').parseEnv
  *
  * **Internal API, not for public use**
  * @private
+ *
+ * @param userConfig - Raw {@linkcode UserConfig | user config object} (from file, workspace, or inline).
+ * @param inlineConfig - Additional config provided inline (e.g. via CLI) that may affect resolution (e.g. filtering).
+ * @param configDeps - Set to collect config file dependencies for `watch` mode.
+ * @returns An array of one or more {@linkcode ResolvedConfig | resolved configs} ready for the build process. Multiple configs are returned when the user config specifies multiple output {@linkcode ResolvedConfig.format | formats}.
  */
 export async function resolveUserConfig(
   userConfig: UserConfig,
@@ -395,7 +400,13 @@ export async function resolveUserConfig(
   return resolvedConfigs
 }
 
-/** filter env variables by prefixes */
+/**
+ * Filter environment variables by prefixes.
+ *
+ * @param envDict - Source env dictionary (e.g. {@linkcode process.env}).
+ * @param envPrefixes - Only keys with one of these prefixes are kept.
+ * @returns A new object containing only the matching key-value pairs.
+ */
 function filterEnv(
   envDict: Record<string, string | undefined>,
   envPrefixes: string[],
@@ -416,14 +427,45 @@ const defu = createDefu((obj, key, value) => {
   }
 })
 
+/**
+ * Deep-merge one or more {@linkcode UserConfig | user config} or
+ * {@linkcode InlineConfig | inline config} objects. Arrays are replaced
+ * (not concatenated) so that {@linkcode overrides} can clear a list set by
+ * {@linkcode defaults}.
+ *
+ * @param defaults - Base {@linkcode UserConfig | user config} used as the fallback for every key.
+ * @param overrides - One or more {@linkcode UserConfig | user configs} applied in order from left to right on top of {@linkcode defaults}.
+ * @returns A new merged {@linkcode UserConfig | user config} object.
+ */
 export function mergeConfig(
   defaults: UserConfig,
   ...overrides: UserConfig[]
 ): UserConfig
+
+/**
+ * Deep-merge one or more {@linkcode InlineConfig | inline config} objects.
+ * Arrays are replaced (not concatenated) so that {@linkcode overrides} can
+ * clear a list set by {@linkcode defaults}.
+ *
+ * @param defaults - Base {@linkcode InlineConfig | inline config} used as the fallback for every key.
+ * @param overrides - One or more {@linkcode InlineConfig | inline configs} applied in order from left to right on top of {@linkcode defaults}.
+ * @returns A new merged {@linkcode InlineConfig | inline config} object.
+ */
 export function mergeConfig(
   defaults: InlineConfig,
   ...overrides: InlineConfig[]
 ): InlineConfig
+
+/**
+ * Deep-merge one or more {@linkcode UserConfig | user config} or
+ * {@linkcode InlineConfig | inline config} objects. Arrays are replaced
+ * (not concatenated) so that {@linkcode overrides} can clear a list set by
+ * {@linkcode defaults}.
+ *
+ * @param defaults - Base {@linkcode InlineConfig | inline config} used as the fallback for every key.
+ * @param overrides - One or more {@linkcode InlineConfig | inline configs} applied in order from left to right on top of {@linkcode defaults}.
+ * @returns A new merged {@linkcode InlineConfig | inline config} object.
+ */
 export function mergeConfig(
   defaults: InlineConfig,
   ...overrides: InlineConfig[]
@@ -435,6 +477,21 @@ export function mergeConfig(
   )
 }
 
+/**
+ * Merge a {@linkcode user | user-supplied option value}
+ * (object or function form) with a set of {@linkcode defaults}. Mirrors the
+ * pattern used by {@linkcode UserConfig.inputOptions | inputOptions} and
+ * {@linkcode UserConfig.outputOptions | outputOptions} in
+ * {@linkcode UserConfig | user config}.
+ *
+ * @template T - The options object type.
+ * @template A - The arguments array type.
+ *
+ * @param defaults - The default options object to merge with the user-supplied value.
+ * @param user - User-supplied override: an object or a function that receives {@linkcode defaults} (plus extra {@linkcode args}) and returns a partial override.
+ * @param args - Extra arguments forwarded to {@linkcode user} when it is a function.
+ * @returns The merged options with user values taking priority over {@linkcode defaults}.
+ */
 export async function mergeUserOptions<T extends object, A extends unknown[]>(
   defaults: T,
   user:
@@ -450,6 +507,18 @@ export async function mergeUserOptions<T extends object, A extends unknown[]>(
   return defu(userOutputOptions, defaults)
 }
 
+/**
+ * Normalize a {@linkcode WithEnabled} option value into either `false`
+ * (disabled) or an resolved options object of type {@linkcode T}. Handles
+ * `boolean`, {@linkcode CIOption}, `string`, and object forms, including the
+ * optional `enabled` flag on the object form.
+ *
+ * @template T - The options object type that the feature uses when enabled.
+ *
+ * @param value - The raw user-supplied value for the feature option.
+ * @param defaults - Options object to return when the feature is enabled and no explicit object was provided.
+ * @returns The resolved options object {@linkcode T} when the feature is active, or `false` when it is disabled.
+ */
 export function resolveFeatureOption<T>(
   value: Exclude<WithEnabled<T>, undefined>,
   defaults: T,
@@ -466,6 +535,15 @@ function resolveCIOption(value: boolean | CIOption): boolean {
   return value
 }
 
+/**
+ * Determine whether a config should be included based on the
+ * {@linkcode InlineConfig.filter | filter} option.
+ *
+ * @param filter - The {@linkcode InlineConfig.filter | filter} value from the {@linkcode InlineConfig | inline config}.
+ * @param configCwd - Working directory of the config being tested.
+ * @param [name] - Optional config name to match against.
+ * @returns `true` if the config passes the {@linkcode filter}.
+ */
 function filterConfig(
   filter: InlineConfig['filter'],
   configCwd: string,

@@ -16,7 +16,7 @@ import type { Plugin, RolldownPlugin, RolldownPluginOption } from 'rolldown'
 export interface TsdownPlugin<A = any> extends Plugin<A> {
   /**
    * Modify tsdown's user config before it is resolved. Analogous to Vite's
-   * [`config`](https://vite.dev/guide/api-plugin.html#config) hook.
+   * {@link https://vite.dev/guide/api-plugin.html#config | `config`} hook.
    *
    * The hook may mutate {@linkcode config} in place, or return a partial
    * {@linkcode UserConfig} that will be deep-merged into the current config.
@@ -29,9 +29,10 @@ export interface TsdownPlugin<A = any> extends Plugin<A> {
    *
    * Plugins injected via {@linkcode UserConfig.fromVite | fromVite} do not
    * receive this hook, because they are loaded after the
-   * {@linkcode tsdownConfig} phase. Likewise, new plugins added by another
-   * plugin's {@linkcode tsdownConfig} do not themselves receive this hook
-   * (plugins are snapshotted before dispatch).
+   * {@linkcode TsdownPlugin.tsdownConfig | tsdownConfig} phase. Likewise, new
+   * plugins added by another plugin's
+   * {@linkcode TsdownPlugin.tsdownConfig | tsdownConfig} do not themselves
+   * receive this hook (plugins are snapshotted before dispatch).
    */
   tsdownConfig?: (
     config: UserConfig,
@@ -39,7 +40,8 @@ export interface TsdownPlugin<A = any> extends Plugin<A> {
   ) => Awaitable<UserConfig | void | null>
   /**
    * Called after tsdown has fully resolved the user config. Analogous to
-   * Vite's [`configResolved`](https://vite.dev/guide/api-plugin.html#configresolved)
+   * Vite's
+   * {@link https://vite.dev/guide/api-plugin.html#configresolved | `configResolved`}
    * hook.
    *
    * This hook fires once per produced {@linkcode ResolvedConfig} — i.e. once

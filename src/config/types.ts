@@ -78,11 +78,19 @@ export type NormalizedFormat = InternalModuleFormat
  * - An array of glob patterns, including negation patterns (prefixed with `!`)
  *
  * @example
+ * <caption>Single pattern</caption>
+ *
  * ```ts
  * entry: {
- *   // Single pattern
  *   "utils/*": "./src/utils/*.ts",
- *   // Array with negation pattern to exclude files
+ * }
+ * ```
+ *
+ * @example
+ * <caption>Array with negation pattern to exclude files</caption>
+ *
+ * ```ts
+ * entry: {
  *   "hooks/*": ["./src/hooks/*.ts", "!./src/hooks/index.ts"],
  * }
  * ```
@@ -165,8 +173,9 @@ export interface UserConfig {
   /**
    * Defaults to `'src/index.ts'` if it exists.
    *
-   * Supports glob patterns with negation to exclude files:
    * @example
+   * <caption>Supports glob patterns with negation to exclude files</caption>
+   *
    * ```ts
    * entry: {
    *   "hooks/*": ["./src/hooks/*.ts", "!./src/hooks/index.ts"],
@@ -216,7 +225,7 @@ export interface UserConfig {
    * - `browser`: Web browsers.
    *
    * @default 'node'
-   * @see https://tsdown.dev/options/platform
+   * @see {@link https://tsdown.dev/options/platform}
    */
   platform?: 'node' | 'neutral' | 'browser'
 
@@ -232,27 +241,32 @@ export interface UserConfig {
    * @see {@link https://tsdown.dev/options/target#supported-targets} for a list of valid targets and more details.
    *
    * @example
+   * <caption>Target a single environment</caption>
+   *
    * ```jsonc
-   * // Target a single environment
    * { "target": "node18" }
    * ```
    *
    * @example
+   * <caption>Target multiple environments</caption>
+   *
    * ```jsonc
-   * // Target multiple environments
    * { "target": ["node18", "es2020"] }
    * ```
    *
    * @example
+   * <caption>Disable all syntax transformations</caption>
+   *
    * ```jsonc
-   * // Disable all syntax transformations
    * { "target": false }
    * ```
    */
   target?: Arrayable<string> | false
 
   /**
-   * Compile-time env variables, which can be accessed via `import.meta.env` or `process.env`.
+   * Compile-time env variables, which can be accessed via `import.meta.env` or
+   * {@linkcode process.env}.
+   *
    * @example
    * ```json
    * {
@@ -266,12 +280,24 @@ export interface UserConfig {
   env?: Record<string, any>
   /**
    * Path to env file providing compile-time env variables.
+   *
    * @example
-   * `.env`, `.env.production`, etc.
+   *
+   * ```ts
+   * '.env'
+   * ```
+   *
+   * @example
+   *
+   * ```ts
+   * '.env.production'
+   * ```
    */
   envFile?: string
   /**
-   * When loading env variables from `envFile`, only include variables with these prefixes.
+   * When loading env variables from {@linkcode UserConfig.envFile | envFile},
+   * only include variables with these prefixes.
+   *
    * @default 'TSDOWN_'
    */
   envPrefix?: Arrayable<string>
@@ -292,7 +318,8 @@ export interface UserConfig {
   /**
    * Sets how input files are processed.
    * For example, use 'js' to treat files as JavaScript or 'base64' for images.
-   * Lets you import or require files like images or fonts.
+   * Lets you `import` or `require` files like images or fonts.
+   *
    * @example
    * ```json
    * { ".jpg": "asset", ".png": "base64" }
@@ -305,7 +332,7 @@ export interface UserConfig {
    * When enabled, rewrites import sources like `node:fs` to `fs`.
    *
    * @default false
-   * @deprecated Use {@linkcode nodeProtocol | nodeProtocol: 'strip'} instead.
+   * @deprecated Use {@linkcode UserConfig.nodeProtocol | nodeProtocol: 'strip'} instead.
    *
    * @example
    * <caption>`removeNodeProtocol: true` — remove the `node:` prefix</caption>
@@ -365,7 +392,8 @@ export interface UserConfig {
   nodeProtocol?: 'strip' | boolean
 
   /**
-   * Controls which warnings are emitted during the build process. Each option can be set to `true` (emit warning) or `false` (suppress warning).
+   * Controls which warnings are emitted during the build process. Each option
+   * can be set to `true` (emit warning) or `false` (suppress warning).
    */
   checks?: ChecksOptions & {
     /**
@@ -419,9 +447,8 @@ export interface UserConfig {
    */
   write?: BuildOptions['write']
   /**
-   * Whether to generate source map files.
-   *
-   * Note that this option will always be `true` if you have
+   * Whether to generate source map files. Note that this option will always be
+   * `true` if you have
    * {@link https://www.typescriptlang.org/tsconfig/#declarationMap | `declarationMap`}
    * option enabled in your `tsconfig.json`.
    *
@@ -450,17 +477,18 @@ export interface UserConfig {
   unbundle?: boolean
 
   /**
-   * Specifies the root directory of input files, similar to TypeScript's `rootDir`.
+   * Specifies the root directory of input files, similar to TypeScript's
+   * {@link https://www.typescriptlang.org/tsconfig/#rootDir | `rootDir`}.
    * This determines the output directory structure.
    *
    * By default, the root is computed as the common base directory of all entry files.
    *
-   * @see https://www.typescriptlang.org/tsconfig/#rootDir
+   * @see {@link https://www.typescriptlang.org/tsconfig/#rootDir | `rootDir`}
    */
   root?: string
 
   /**
-   * @deprecated Use {@linkcode unbundle} instead.
+   * @deprecated Use {@linkcode UserConfig.unbundle | unbundle} instead.
    * @default true
    */
   bundle?: boolean
@@ -470,8 +498,8 @@ export interface UserConfig {
    * The extension will always be `.cjs` or `.mjs`.
    * Otherwise, it will depend on the package type.
    *
-   * Defaults to `true` if {@linkcode platform} is set to `node`,
-   * `false` otherwise.
+   * Defaults to `true` if {@linkcode UserConfig.platform | platform} is set to
+   * `node`, `false` otherwise.
    *
    * @default platform === 'node'
    */
@@ -479,7 +507,8 @@ export interface UserConfig {
 
   /**
    * Custom extensions for output files.
-   * {@linkcode fixedExtension} will be overridden by this option.
+   * {@linkcode UserConfig.fixedExtension | fixedExtension} will be overridden
+   * by this option.
    */
   outExtensions?: OutExtensionFactory
 
@@ -496,6 +525,7 @@ export interface UserConfig {
 
   /**
    * Use with caution; ensure you understand the implications.
+   *
    * @hidden
    */
   outputOptions?:
@@ -511,7 +541,7 @@ export interface UserConfig {
   /**
    * The working directory of the config file.
    * - Defaults to {@linkcode process.cwd | process.cwd()} for root config.
-   * - Defaults to the package directory for {@linkcode workspace} config.
+   * - Defaults to the package directory for {@linkcode UserConfig.workspace | workspace} config.
    *
    * @default process.cwd()
    */
@@ -519,7 +549,7 @@ export interface UserConfig {
 
   /**
    * The name to show in CLI output. This is useful for monorepos or workspaces.
-   * When using workspace mode, this option defaults to the package name from package.json.
+   * When using workspace mode, this option defaults to the package name from `package.json`.
    * In non-workspace mode, this option must be set explicitly for the name to show in the CLI output.
    */
   name?: string
@@ -540,8 +570,10 @@ export interface UserConfig {
   customLogger?: Logger
 
   /**
-   * Reuse config from Vite or Vitest (experimental)
+   * Reuse config from Vite or Vitest.
+   *
    * @default false
+   * @experimental
    */
   fromVite?: boolean | 'vitest'
 
@@ -555,20 +587,22 @@ export interface UserConfig {
   ignoreWatch?: Arrayable<string | RegExp>
 
   /**
-   * **[experimental]** Enable devtools.
+   * Enable devtools.
    *
    * DevTools is still under development, and this is for early testers only.
    *
    * This may slow down the build process significantly.
    *
    * @default false
+   * @experimental
    */
   devtools?: WithEnabled<DevtoolsOptions>
 
   //#region Addons
 
   /**
-   * You can specify command to be executed after a successful build, specially useful for Watch mode
+   * You can specify command to be executed after a successful build, specially
+   * useful for Watch mode.
    */
   onSuccess?:
     | string
@@ -578,32 +612,41 @@ export interface UserConfig {
    * Enables generation of TypeScript declaration files (`.d.ts`).
    *
    * By default, this option is auto-detected based on your project's `package.json`:
-   * - If {@linkcode exe} is enabled, declaration file generation is disabled by default.
-   * - If the `types` field is present, or if the main `exports` contains a `types` entry, declaration file generation is enabled by default.
+   * - If {@linkcode UserConfig.exe | exe} is enabled, declaration file generation is disabled by default.
+   * - If the {@linkcode PackageJsonWithPath.types | types} field is present, or if the main {@linkcode PackageJsonWithPath.exports | exports} contains a `types` entry, declaration file generation is enabled by default.
+   * - If the {@link https://www.typescriptlang.org/tsconfig/#declaration | `declaration`} option is set in `tsconfig.json`, declaration file generation is enabled by default.
    * - Otherwise, declaration file generation is disabled by default.
    */
   dts?: WithEnabled<DtsOptions>
 
   /**
-   * Enable unused dependencies check with `unplugin-unused`
-   * Requires `unplugin-unused` to be installed.
+   * Enable unused dependencies check with
+   * {@link https://github.com/unplugin/unplugin-unused | `unplugin-unused`}.
+   * Requires
+   * {@link https://github.com/unplugin/unplugin-unused | `unplugin-unused`} to
+   * be installed.
+   *
    * @default false
    */
   unused?: WithEnabled<UnusedOptions>
 
   /**
-   * Run `publint` after bundling.
-   * Requires `publint` to be installed.
+   * Run {@linkcode https://publint.dev/docs | `publint`} after bundling.
+   * Requires {@linkcode https://publint.dev/docs | `publint`} to be installed.
+   *
    * @default false
    */
   publint?: WithEnabled<PublintOptions>
 
   /**
-   * Run `arethetypeswrong` after bundling.
-   * Requires `@arethetypeswrong/core` to be installed.
+   * Run
+   * {@link https://github.com/arethetypeswrong/arethetypeswrong.github.io | `arethetypeswrong`}
+   * after bundling. Requires
+   * {@link https://github.com/arethetypeswrong/arethetypeswrong.github.io/tree/HEAD/packages/core | `@arethetypeswrong/core`}
+   * to be installed.
    *
    * @default false
-   * @see https://github.com/arethetypeswrong/arethetypeswrong.github.io
+   * @see {@link https://github.com/arethetypeswrong/arethetypeswrong.github.io}
    */
   attw?: WithEnabled<AttwOptions>
 
@@ -615,15 +658,17 @@ export interface UserConfig {
 
   /**
    * `import.meta.glob` support.
-   * @see https://vite.dev/guide/features.html#glob-import
+   * @see {@link https://vite.dev/guide/features.html#glob-import}
    * @default true
    */
   globImport?: boolean
 
   /**
-   * Generate package exports for `package.json`.
-   *
-   * This will set the `main`, `module`, `types`, `exports` fields in `package.json`
+   * Generate package exports for `package.json`. This will set the
+   * {@linkcode PackageJsonWithPath.main | main},
+   * {@linkcode PackageJsonWithPath.module | module},
+   * {@linkcode PackageJsonWithPath.types | types},
+   * {@linkcode PackageJsonWithPath.exports | exports} fields in `package.json`
    * to point to the generated files.
    *
    * @default false
@@ -631,9 +676,11 @@ export interface UserConfig {
   exports?: WithEnabled<ExportsOptions>
 
   /**
-   * **[experimental]** CSS options.
-   * Requires `@tsdown/css` to be installed.
+   * CSS options. Requires
+   * {@link https://github.com/rolldown/tsdown/tree/HEAD/packages/css | `@tsdown/css`}
+   * to be installed.
    *
+   * @experimental
    * @hidden
    */
   css?: CssOptions
@@ -645,7 +692,7 @@ export interface UserConfig {
 
   /**
    * @alias copy
-   * @deprecated Alias for {@linkcode copy}, will be removed in the future.
+   * @deprecated Alias for {@linkcode UserConfig.copy | copy}, will be removed in the future.
    */
   publicDir?: CopyOptions | CopyOptionsFn
 
@@ -672,18 +719,21 @@ export interface UserConfig {
     | ((hooks: Hookable<TsdownHooks>) => Awaitable<void>)
 
   /**
-   * **[experimental]** Bundle as executable using Node.js SEA (Single Executable Applications).
+   * Bundle as executable using Node.js SEA (Single Executable Applications).
    *
    * This will bundle the output into a single executable file using Node.js SEA.
    * Note that this is only supported on Node.js 25.7.0 and later, and is not supported in Bun or Deno.
    *
    * @default false
+   * @experimental
    */
   exe?: WithEnabled<ExeOptions>
 
   /**
-   * **[experimental]** Enable workspace mode.
+   * Enable workspace mode.
    * This allows you to build multiple packages in a monorepo.
+   *
+   * @experimental
    */
   workspace?: Workspace | Arrayable<string> | true
 }

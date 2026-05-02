@@ -7,8 +7,8 @@
       "properties": {
         "entry": {
           "$ref": "#/definitions/TsdownInputOption",
-          "description": "Defaults to `'src/index.ts'` if it exists.\n\nSupports glob patterns with negation to exclude files:",
-          "markdownDescription": "Defaults to `'src/index.ts'` if it exists.\n\nSupports glob patterns with negation to exclude files:",
+          "description": "Defaults to `'src/index.ts'` if it exists.",
+          "markdownDescription": "Defaults to `'src/index.ts'` if it exists.",
           "default": { "index": "src/index.ts" }
         },
         "deps": {
@@ -72,8 +72,8 @@
         },
         "env": {
           "type": "object",
-          "description": "Compile-time env variables, which can be accessed via `import.meta.env` or `process.env`.",
-          "markdownDescription": "Compile-time env variables, which can be accessed via `import.meta.env` or `process.env`.",
+          "description": "Compile-time env variables, which can be accessed via `import.meta.env` or  {@linkcode  process.env } .",
+          "markdownDescription": "Compile-time env variables, which can be accessed via `import.meta.env` or\n {@linkcode  process.env } .",
           "default": {}
         },
         "envFile": {
@@ -83,8 +83,8 @@
         },
         "envPrefix": {
           "$ref": "#/definitions/Arrayable%3Cstring%3E",
-          "description": "When loading env variables from `envFile`, only include variables with these prefixes.",
-          "markdownDescription": "When loading env variables from `envFile`, only include variables with these prefixes.",
+          "description": "When loading env variables from  {@linkcode  UserConfig.envFile envFile } , only include variables with these prefixes.",
+          "markdownDescription": "When loading env variables from  {@linkcode  UserConfig.envFile envFile } ,\nonly include variables with these prefixes.",
           "default": "TSDOWN_"
         },
         "define": {
@@ -198,15 +198,15 @@
               "copy"
             ]
           },
-          "description": "Sets how input files are processed. For example, use 'js' to treat files as JavaScript or 'base64' for images. Lets you import or require files like images or fonts.",
-          "markdownDescription": "Sets how input files are processed.\nFor example, use 'js' to treat files as JavaScript or 'base64' for images.\nLets you import or require files like images or fonts."
+          "description": "Sets how input files are processed. For example, use 'js' to treat files as JavaScript or 'base64' for images. Lets you `import` or `require` files like images or fonts.",
+          "markdownDescription": "Sets how input files are processed.\nFor example, use 'js' to treat files as JavaScript or 'base64' for images.\nLets you `import` or `require` files like images or fonts."
         },
         "removeNodeProtocol": {
           "type": "boolean",
           "description": "Remove the `node:` prefix from built-in Node.js module imports. When enabled, rewrites import sources like `node:fs` to `fs`.",
           "markdownDescription": "Remove the `node:` prefix from built-in Node.js module imports.\nWhen enabled, rewrites import sources like `node:fs` to `fs`.",
           "default": false,
-          "deprecated": "Use {@linkcode nodeProtocol nodeProtocol: 'strip'} instead."
+          "deprecated": "Use {@linkcode UserConfig.nodeProtocol nodeProtocol: 'strip'} instead."
         },
         "nodeProtocol": {
           "anyOf": [
@@ -349,7 +349,7 @@
             }
           },
           "description": "Controls which warnings are emitted during the build process. Each option can be set to `true` (emit warning) or `false` (suppress warning).",
-          "markdownDescription": "Controls which warnings are emitted during the build process. Each option can be set to `true` (emit warning) or `false` (suppress warning)."
+          "markdownDescription": "Controls which warnings are emitted during the build process. Each option\ncan be set to `true` (emit warning) or `false` (suppress warning)."
         },
         "format": {
           "anyOf": [
@@ -1832,8 +1832,8 @@
             { "type": "string", "const": "inline" },
             { "type": "string", "const": "hidden" }
           ],
-          "description": "Whether to generate source map files.\n\nNote that this option will always be `true` if you have  {@link  https://www.typescriptlang.org/tsconfig/#declarationMap `declarationMap` }  option enabled in your `tsconfig.json`.",
-          "markdownDescription": "Whether to generate source map files.\n\nNote that this option will always be `true` if you have\n {@link  https://www.typescriptlang.org/tsconfig/#declarationMap `declarationMap` } \noption enabled in your `tsconfig.json`.",
+          "description": "Whether to generate source map files. Note that this option will always be `true` if you have  {@link  https://www.typescriptlang.org/tsconfig/#declarationMap `declarationMap` }  option enabled in your `tsconfig.json`.",
+          "markdownDescription": "Whether to generate source map files. Note that this option will always be\n`true` if you have\n {@link  https://www.typescriptlang.org/tsconfig/#declarationMap `declarationMap` } \noption enabled in your `tsconfig.json`.",
           "default": false
         },
         "clean": {
@@ -2067,18 +2067,18 @@
         },
         "root": {
           "type": "string",
-          "description": "Specifies the root directory of input files, similar to TypeScript's `rootDir`. This determines the output directory structure.\n\nBy default, the root is computed as the common base directory of all entry files.",
-          "markdownDescription": "Specifies the root directory of input files, similar to TypeScript's `rootDir`.\nThis determines the output directory structure.\n\nBy default, the root is computed as the common base directory of all entry files."
+          "description": "Specifies the root directory of input files, similar to TypeScript's  {@link  https://www.typescriptlang.org/tsconfig/#rootDir `rootDir` } . This determines the output directory structure.\n\nBy default, the root is computed as the common base directory of all entry files.",
+          "markdownDescription": "Specifies the root directory of input files, similar to TypeScript's\n {@link  https://www.typescriptlang.org/tsconfig/#rootDir `rootDir` } .\nThis determines the output directory structure.\n\nBy default, the root is computed as the common base directory of all entry files."
         },
         "bundle": {
           "type": "boolean",
-          "deprecated": "Use {@linkcode unbundle } instead.",
+          "deprecated": "Use {@linkcode UserConfig.unbundle unbundle} instead.",
           "default": true
         },
         "fixedExtension": {
           "type": "boolean",
-          "description": "Use a fixed extension for output files. The extension will always be `.cjs` or `.mjs`. Otherwise, it will depend on the package type.\n\nDefaults to `true` if  {@linkcode  platform }  is set to `node`, `false` otherwise.",
-          "markdownDescription": "Use a fixed extension for output files.\nThe extension will always be `.cjs` or `.mjs`.\nOtherwise, it will depend on the package type.\n\nDefaults to `true` if  {@linkcode  platform }  is set to `node`,\n`false` otherwise.",
+          "description": "Use a fixed extension for output files. The extension will always be `.cjs` or `.mjs`. Otherwise, it will depend on the package type.\n\nDefaults to `true` if  {@linkcode  UserConfig.platform platform }  is set to `node`, `false` otherwise.",
+          "markdownDescription": "Use a fixed extension for output files.\nThe extension will always be `.cjs` or `.mjs`.\nOtherwise, it will depend on the package type.\n\nDefaults to `true` if  {@linkcode  UserConfig.platform platform }  is set to\n`node`, `false` otherwise.",
           "default": "platform === 'node'"
         },
         "hash": {
@@ -2090,14 +2090,14 @@
         "cjsDefault": { "type": "boolean", "default": true },
         "cwd": {
           "type": "string",
-          "description": "The working directory of the config file.\n- Defaults to  {@linkcode  process.cwd process.cwd() }  for root config.\n- Defaults to the package directory for  {@linkcode  workspace }  config.",
-          "markdownDescription": "The working directory of the config file.\n- Defaults to  {@linkcode  process.cwd process.cwd() }  for root config.\n- Defaults to the package directory for  {@linkcode  workspace }  config.",
+          "description": "The working directory of the config file.\n- Defaults to  {@linkcode  process.cwd process.cwd() }  for root config.\n- Defaults to the package directory for  {@linkcode  UserConfig.workspace workspace }  config.",
+          "markdownDescription": "The working directory of the config file.\n- Defaults to  {@linkcode  process.cwd process.cwd() }  for root config.\n- Defaults to the package directory for  {@linkcode  UserConfig.workspace workspace }  config.",
           "default": "process.cwd()"
         },
         "name": {
           "type": "string",
-          "description": "The name to show in CLI output. This is useful for monorepos or workspaces. When using workspace mode, this option defaults to the package name from package.json. In non-workspace mode, this option must be set explicitly for the name to show in the CLI output.",
-          "markdownDescription": "The name to show in CLI output. This is useful for monorepos or workspaces.\nWhen using workspace mode, this option defaults to the package name from package.json.\nIn non-workspace mode, this option must be set explicitly for the name to show in the CLI output."
+          "description": "The name to show in CLI output. This is useful for monorepos or workspaces. When using workspace mode, this option defaults to the package name from `package.json`. In non-workspace mode, this option must be set explicitly for the name to show in the CLI output.",
+          "markdownDescription": "The name to show in CLI output. This is useful for monorepos or workspaces.\nWhen using workspace mode, this option defaults to the package name from `package.json`.\nIn non-workspace mode, this option must be set explicitly for the name to show in the CLI output."
         },
         "logLevel": {
           "$ref": "#/definitions/LogLevel",
@@ -2119,8 +2119,8 @@
             { "type": "boolean" },
             { "type": "string", "const": "vitest" }
           ],
-          "description": "Reuse config from Vite or Vitest (experimental)",
-          "markdownDescription": "Reuse config from Vite or Vitest (experimental)",
+          "description": "Reuse config from Vite or Vitest.",
+          "markdownDescription": "Reuse config from Vite or Vitest.",
           "default": false
         },
         "watch": {
@@ -2137,36 +2137,36 @@
         },
         "devtools": {
           "$ref": "#/definitions/WithEnabled%3CDevtoolsOptions%3E",
-          "description": "**[experimental]** Enable devtools.\n\nDevTools is still under development, and this is for early testers only.\n\nThis may slow down the build process significantly.",
-          "markdownDescription": "**[experimental]** Enable devtools.\n\nDevTools is still under development, and this is for early testers only.\n\nThis may slow down the build process significantly.",
+          "description": "Enable devtools.\n\nDevTools is still under development, and this is for early testers only.\n\nThis may slow down the build process significantly.",
+          "markdownDescription": "Enable devtools.\n\nDevTools is still under development, and this is for early testers only.\n\nThis may slow down the build process significantly.",
           "default": false
         },
         "onSuccess": {
           "type": "string",
-          "description": "You can specify command to be executed after a successful build, specially useful for Watch mode",
-          "markdownDescription": "You can specify command to be executed after a successful build, specially useful for Watch mode"
+          "description": "You can specify command to be executed after a successful build, specially useful for Watch mode.",
+          "markdownDescription": "You can specify command to be executed after a successful build, specially\nuseful for Watch mode."
         },
         "dts": {
           "$ref": "#/definitions/WithEnabled%3CDtsOptions%3E",
-          "description": "Enables generation of TypeScript declaration files (`.d.ts`).\n\nBy default, this option is auto-detected based on your project's `package.json`:\n- If  {@linkcode  exe }  is enabled, declaration file generation is disabled by default.\n- If the `types` field is present, or if the main `exports` contains a `types` entry, declaration file generation is enabled by default.\n- Otherwise, declaration file generation is disabled by default.",
-          "markdownDescription": "Enables generation of TypeScript declaration files (`.d.ts`).\n\nBy default, this option is auto-detected based on your project's `package.json`:\n- If  {@linkcode  exe }  is enabled, declaration file generation is disabled by default.\n- If the `types` field is present, or if the main `exports` contains a `types` entry, declaration file generation is enabled by default.\n- Otherwise, declaration file generation is disabled by default."
+          "description": "Enables generation of TypeScript declaration files (`.d.ts`).\n\nBy default, this option is auto-detected based on your project's `package.json`:\n- If  {@linkcode  UserConfig.exe exe }  is enabled, declaration file generation is disabled by default.\n- If the  {@linkcode  PackageJsonWithPath.types types }  field is present, or if the main  {@linkcode  PackageJsonWithPath.exports exports }  contains a `types` entry, declaration file generation is enabled by default.\n- If the  {@link  https://www.typescriptlang.org/tsconfig/#declaration `declaration` }  option is set in `tsconfig.json`, declaration file generation is enabled by default.\n- Otherwise, declaration file generation is disabled by default.",
+          "markdownDescription": "Enables generation of TypeScript declaration files (`.d.ts`).\n\nBy default, this option is auto-detected based on your project's `package.json`:\n- If  {@linkcode  UserConfig.exe exe }  is enabled, declaration file generation is disabled by default.\n- If the  {@linkcode  PackageJsonWithPath.types types }  field is present, or if the main  {@linkcode  PackageJsonWithPath.exports exports }  contains a `types` entry, declaration file generation is enabled by default.\n- If the  {@link  https://www.typescriptlang.org/tsconfig/#declaration `declaration` }  option is set in `tsconfig.json`, declaration file generation is enabled by default.\n- Otherwise, declaration file generation is disabled by default."
         },
         "unused": {
           "$ref": "#/definitions/WithEnabled%3Cinterface-715603908-146-604-715603908-0-884%3E",
-          "description": "Enable unused dependencies check with `unplugin-unused` Requires `unplugin-unused` to be installed.",
-          "markdownDescription": "Enable unused dependencies check with `unplugin-unused`\nRequires `unplugin-unused` to be installed.",
+          "description": "Enable unused dependencies check with  {@link  https://github.com/unplugin/unplugin-unused `unplugin-unused` } . Requires  {@link  https://github.com/unplugin/unplugin-unused `unplugin-unused` }  to be installed.",
+          "markdownDescription": "Enable unused dependencies check with\n {@link  https://github.com/unplugin/unplugin-unused `unplugin-unused` } .\nRequires\n {@link  https://github.com/unplugin/unplugin-unused `unplugin-unused` }  to\nbe installed.",
           "default": false
         },
         "publint": {
           "$ref": "#/definitions/WithEnabled%3CPublintOptions%3E",
-          "description": "Run `publint` after bundling. Requires `publint` to be installed.",
-          "markdownDescription": "Run `publint` after bundling.\nRequires `publint` to be installed.",
+          "description": "Run  {@linkcode  https://publint.dev/docs `publint` }  after bundling. Requires  {@linkcode  https://publint.dev/docs `publint` }  to be installed.",
+          "markdownDescription": "Run  {@linkcode  https://publint.dev/docs `publint` }  after bundling.\nRequires  {@linkcode  https://publint.dev/docs `publint` }  to be installed.",
           "default": false
         },
         "attw": {
           "$ref": "#/definitions/WithEnabled%3CAttwOptions%3E",
-          "description": "Run `arethetypeswrong` after bundling. Requires `@arethetypeswrong/core` to be installed.",
-          "markdownDescription": "Run `arethetypeswrong` after bundling.\nRequires `@arethetypeswrong/core` to be installed.",
+          "description": "Run  {@link  https://github.com/arethetypeswrong/arethetypeswrong.github.io `arethetypeswrong` }  after bundling. Requires  {@link  https://github.com/arethetypeswrong/arethetypeswrong.github.io/tree/HEAD/packages/core `@arethetypeswrong/core` }  to be installed.",
+          "markdownDescription": "Run\n {@link  https://github.com/arethetypeswrong/arethetypeswrong.github.io `arethetypeswrong` } \nafter bundling. Requires\n {@link  https://github.com/arethetypeswrong/arethetypeswrong.github.io/tree/HEAD/packages/core `@arethetypeswrong/core` } \nto be installed.",
           "default": false
         },
         "report": {
@@ -2183,8 +2183,8 @@
         },
         "exports": {
           "$ref": "#/definitions/WithEnabled%3CExportsOptions%3E",
-          "description": "Generate package exports for `package.json`.\n\nThis will set the `main`, `module`, `types`, `exports` fields in `package.json` to point to the generated files.",
-          "markdownDescription": "Generate package exports for `package.json`.\n\nThis will set the `main`, `module`, `types`, `exports` fields in `package.json`\nto point to the generated files.",
+          "description": "Generate package exports for `package.json`. This will set the  {@linkcode  PackageJsonWithPath.main main } ,  {@linkcode  PackageJsonWithPath.module module } ,  {@linkcode  PackageJsonWithPath.types types } ,  {@linkcode  PackageJsonWithPath.exports exports }  fields in `package.json` to point to the generated files.",
+          "markdownDescription": "Generate package exports for `package.json`. This will set the\n {@linkcode  PackageJsonWithPath.main main } ,\n {@linkcode  PackageJsonWithPath.module module } ,\n {@linkcode  PackageJsonWithPath.types types } ,\n {@linkcode  PackageJsonWithPath.exports exports }  fields in `package.json`\nto point to the generated files.",
           "default": false
         },
         "injectStyle": {
@@ -2193,7 +2193,7 @@
         },
         "publicDir": {
           "$ref": "#/definitions/CopyOptions",
-          "deprecated": "Alias for {@linkcode copy }, will be removed in the future."
+          "deprecated": "Alias for {@linkcode UserConfig.copy copy}, will be removed in the future."
         },
         "copy": {
           "$ref": "#/definitions/CopyOptions",
@@ -2202,8 +2202,8 @@
         },
         "exe": {
           "$ref": "#/definitions/WithEnabled%3CExeOptions%3E",
-          "description": "**[experimental]** Bundle as executable using Node.js SEA (Single Executable Applications).\n\nThis will bundle the output into a single executable file using Node.js SEA. Note that this is only supported on Node.js 25.7.0 and later, and is not supported in Bun or Deno.",
-          "markdownDescription": "**[experimental]** Bundle as executable using Node.js SEA (Single Executable Applications).\n\nThis will bundle the output into a single executable file using Node.js SEA.\nNote that this is only supported on Node.js 25.7.0 and later, and is not supported in Bun or Deno.",
+          "description": "Bundle as executable using Node.js SEA (Single Executable Applications).\n\nThis will bundle the output into a single executable file using Node.js SEA. Note that this is only supported on Node.js 25.7.0 and later, and is not supported in Bun or Deno.",
+          "markdownDescription": "Bundle as executable using Node.js SEA (Single Executable Applications).\n\nThis will bundle the output into a single executable file using Node.js SEA.\nNote that this is only supported on Node.js 25.7.0 and later, and is not supported in Bun or Deno.",
           "default": false
         },
         "workspace": {
@@ -2212,8 +2212,8 @@
             { "$ref": "#/definitions/Arrayable%3Cstring%3E" },
             { "type": "boolean", "const": true }
           ],
-          "description": "**[experimental]** Enable workspace mode. This allows you to build multiple packages in a monorepo.",
-          "markdownDescription": "**[experimental]** Enable workspace mode.\nThis allows you to build multiple packages in a monorepo."
+          "description": "Enable workspace mode. This allows you to build multiple packages in a monorepo.",
+          "markdownDescription": "Enable workspace mode.\nThis allows you to build multiple packages in a monorepo."
         }
       },
       "additionalProperties": false,
@@ -2298,12 +2298,12 @@
             },
             { "type": "boolean", "const": false }
           ],
-          "deprecated": "Use {@linkcode onlyBundle } instead."
+          "deprecated": "Use {@linkcode DepsConfig.onlyBundle onlyBundle} instead."
         },
         "skipNodeModulesBundle": {
           "type": "boolean",
-          "description": "Skip bundling all `node_modules` dependencies.\n\n**Note:** This option cannot be used together with  {@linkcode  alwaysBundle } .",
-          "markdownDescription": "Skip bundling all `node_modules` dependencies.\n\n**Note:** This option cannot be used together with  {@linkcode  alwaysBundle } .",
+          "description": "Skip bundling all `node_modules` dependencies.\n\n**Note:** This option cannot be used together with  {@linkcode  DepsConfig.alwaysBundle alwaysBundle } .",
+          "markdownDescription": "Skip bundling all `node_modules` dependencies.\n\n**Note:** This option cannot be used together with\n {@linkcode  DepsConfig.alwaysBundle alwaysBundle } .",
           "default": false
         }
       },
@@ -2630,8 +2630,8 @@
       "properties": {
         "devExports": {
           "type": ["boolean", "string"],
-          "description": "Generate exports that link to source code during development.\n- `string`: add as a custom condition.\n- `true`: all conditions point to source files, and add `dist` exports to `publishConfig`.",
-          "markdownDescription": "Generate exports that link to source code during development.\n- `string`: add as a custom condition.\n- `true`: all conditions point to source files, and add `dist` exports to `publishConfig`."
+          "description": "Generate exports that link to source code during development.\n- `string`: add as a custom condition.\n- `true`: all conditions point to source files, and add `dist` exports to  {@linkcode  PackageJson.publishConfig publishConfig } .",
+          "markdownDescription": "Generate exports that link to source code during development.\n- `string`: add as a custom condition.\n- `true`: all conditions point to source files, and add `dist` exports to  {@linkcode  PackageJson.publishConfig publishConfig } ."
         },
         "packageJson": {
           "type": "boolean",
@@ -2653,23 +2653,23 @@
               { "type": "string" }
             ]
           },
-          "description": "Specifies file patterns (as glob patterns or regular expressions) to exclude from package exports. Use this to prevent certain files from being included in the exported package, such as test files, binaries, or internal utilities.\n\n**Note:** Do not include file extensions, and paths should be relative to the dist directory.",
-          "markdownDescription": "Specifies file patterns (as glob patterns or regular expressions) to exclude from package exports.\nUse this to prevent certain files from being included in the exported package, such as test files, binaries, or internal utilities.\n\n**Note:** Do not include file extensions, and paths should be relative to the dist directory."
+          "description": "Specifies file patterns (as glob patterns or regular expressions) to exclude from package exports. Use this to prevent certain files from being included in the exported package, such as test files, binaries, or internal utilities.\n\n**Note:** Do not include file extensions, and paths should be relative to the `dist` directory.",
+          "markdownDescription": "Specifies file patterns (as glob patterns or regular expressions) to\nexclude from package exports. Use this to prevent certain files from being\nincluded in the exported package, such as test files, binaries, or\ninternal utilities.\n\n**Note:** Do not include file extensions, and paths should be relative to\nthe `dist` directory."
         },
         "legacy": {
           "type": "boolean",
-          "description": "Generate legacy fields (`main` and `module`) for older Node.js and bundlers that do not support package `exports` field.\n\nDefaults to false, if only ESM builds are included, true otherwise.",
-          "markdownDescription": "Generate legacy fields (`main` and `module`) for older Node.js and bundlers\nthat do not support package `exports` field.\n\nDefaults to false, if only ESM builds are included, true otherwise."
+          "description": "Generate legacy fields ( {@linkcode  PackageJson.main main }  and  {@linkcode  PackageJson.module module } ) for older Node.js and bundlers that do not support package  {@linkcode  PackageJson.exports exports }  field.\n\nDefaults to `false`, if only ESM builds are included, `true` otherwise.",
+          "markdownDescription": "Generate legacy fields ( {@linkcode  PackageJson.main main }  and\n {@linkcode  PackageJson.module module } ) for older Node.js and bundlers\nthat do not support package  {@linkcode  PackageJson.exports exports } \nfield.\n\nDefaults to `false`, if only ESM builds are included, `true` otherwise."
         },
         "customExports": {
           "type": "object",
           "description": "Specifies custom exports to add to the package exports in addition to the ones generated by tsdown. Use this to add additional exports in the exported package, such as workers or assets.",
-          "markdownDescription": "Specifies custom exports to add to the package exports in addition to the ones generated by tsdown.\nUse this to add additional exports in the exported package, such as workers or assets."
+          "markdownDescription": "Specifies custom exports to add to the package exports in addition to the\nones generated by tsdown. Use this to add additional exports in the\nexported package, such as workers or assets."
         },
         "inlinedDependencies": {
           "type": "boolean",
           "description": "Generate `inlinedDependencies` field in `package.json`. Lists dependencies that are physically inlined into the bundle with their exact versions.",
-          "markdownDescription": "Generate `inlinedDependencies` field in `package.json`.\nLists dependencies that are physically inlined into the bundle with their exact versions.",
+          "markdownDescription": "Generate `inlinedDependencies` field in `package.json`. Lists dependencies\nthat are physically inlined into the bundle with their exact versions.",
           "default": true
         },
         "extensions": {
@@ -2684,8 +2684,8 @@
             { "type": "string" },
             { "type": "object", "additionalProperties": { "type": "string" } }
           ],
-          "description": "Generate the `bin` field in `package.json` for CLI executables.\n\nBehavior depends on the value:\n\n- *Unset* (default): Soft auto-detect. Scans entry chunks for shebangs   (e.g. `#!/usr/bin/env node`). If exactly one is found, it is used as   the bin entry. If multiple are found, a warning is shown and no `bin`   field is written. If none are found, nothing happens silently.\n- `true`: Strict auto-detect. Same as the default, but throws if   multiple shebang entries are found, and warns if none are found.   Use this when your package is known to ship a CLI and you want to   fail fast on misconfiguration.\n- `false`: Disable bin generation entirely, even if shebangs are   present.\n- `string`: Use the given source file path (relative to `cwd`) as the   CLI entry. The command name is derived from the package name without   its scope. Warns if the source file does not contain a shebang.\n- `Record<string, string>`: Explicitly map command names to source file   paths (relative to `cwd`). Warns for each source file that does not   contain a shebang.\n\nWhen  {@link  ExportsOptions.devExports }  is enabled, the `bin` field in `package.json` points to source files during local development, while `publishConfig.bin` points to built output paths for publishing.",
-          "markdownDescription": "Generate the `bin` field in `package.json` for CLI executables.\n\nBehavior depends on the value:\n\n- *Unset* (default): Soft auto-detect. Scans entry chunks for shebangs\n  (e.g. `#!/usr/bin/env node`). If exactly one is found, it is used as\n  the bin entry. If multiple are found, a warning is shown and no `bin`\n  field is written. If none are found, nothing happens silently.\n- `true`: Strict auto-detect. Same as the default, but throws if\n  multiple shebang entries are found, and warns if none are found.\n  Use this when your package is known to ship a CLI and you want to\n  fail fast on misconfiguration.\n- `false`: Disable bin generation entirely, even if shebangs are\n  present.\n- `string`: Use the given source file path (relative to `cwd`) as the\n  CLI entry. The command name is derived from the package name without\n  its scope. Warns if the source file does not contain a shebang.\n- `Record<string, string>`: Explicitly map command names to source file\n  paths (relative to `cwd`). Warns for each source file that does not\n  contain a shebang.\n\nWhen  {@link  ExportsOptions.devExports }  is enabled, the `bin` field in\n`package.json` points to source files during local development, while\n`publishConfig.bin` points to built output paths for publishing."
+          "description": "Generate the  {@linkcode  PackageJson.bin bin }  field in `package.json` for CLI executables.\n\nBehavior depends on the value:\n\n- *Unset* (default): Soft auto-detect. Scans entry chunks for shebangs   (e.g. `#!/usr/bin/env node`). If exactly one is found, it is used as   the bin entry. If multiple are found, a warning is shown and no `bin`   field is written. If none are found, nothing happens silently.\n- `true`: Strict auto-detect. Same as the default, but throws if   multiple shebang entries are found, and warns if none are found.   Use this when your package is known to ship a CLI and you want to   fail fast on misconfiguration.\n- `false`: Disable bin generation entirely, even if shebangs are   present.\n- `string`: Use the given source file path (relative to `cwd`) as the   CLI entry. The command name is derived from the package name without   its scope. Warns if the source file does not contain a shebang.\n- `Record<string, string>`: Explicitly map command names to source file   paths (relative to `cwd`). Warns for each source file that does not   contain a shebang.\n\nWhen  {@linkcode  ExportsOptions.devExports .devExports }  is enabled, the  {@linkcode  PackageJson.bin bin }  field in `package.json` points to source files during local development, while `publishConfig.bin` points to built output paths for publishing.",
+          "markdownDescription": "Generate the  {@linkcode  PackageJson.bin bin }  field in `package.json`\nfor CLI executables.\n\nBehavior depends on the value:\n\n- *Unset* (default): Soft auto-detect. Scans entry chunks for shebangs\n  (e.g. `#!/usr/bin/env node`). If exactly one is found, it is used as\n  the bin entry. If multiple are found, a warning is shown and no `bin`\n  field is written. If none are found, nothing happens silently.\n- `true`: Strict auto-detect. Same as the default, but throws if\n  multiple shebang entries are found, and warns if none are found.\n  Use this when your package is known to ship a CLI and you want to\n  fail fast on misconfiguration.\n- `false`: Disable bin generation entirely, even if shebangs are\n  present.\n- `string`: Use the given source file path (relative to `cwd`) as the\n  CLI entry. The command name is derived from the package name without\n  its scope. Warns if the source file does not contain a shebang.\n- `Record<string, string>`: Explicitly map command names to source file\n  paths (relative to `cwd`). Warns for each source file that does not\n  contain a shebang.\n\nWhen  {@linkcode  ExportsOptions.devExports .devExports }  is enabled, the\n {@linkcode  PackageJson.bin bin }  field in `package.json` points to source\nfiles during local development, while `publishConfig.bin` points to built\noutput paths for publishing."
         }
       },
       "additionalProperties": false
@@ -2708,8 +2708,8 @@
               "additionalProperties": false
             }
           ],
-          "description": "**[experimental]** Enable devtools integration. `@vitejs/devtools` must be installed as a dependency.\n\nDefaults to true, if `@vitejs/devtools` is installed.",
-          "markdownDescription": "**[experimental]** Enable devtools integration. `@vitejs/devtools` must be installed as a dependency.\n\nDefaults to true, if `@vitejs/devtools` is installed."
+          "description": "Enable devtools integration.  {@link  https://github.com/vitejs/devtools `@vitejs/devtools` }  must be installed as a dependency.\n\nDefaults to `true`, if  {@link  https://github.com/vitejs/devtools `@vitejs/devtools` }  is installed.",
+          "markdownDescription": "Enable devtools integration.\n {@link  https://github.com/vitejs/devtools `@vitejs/devtools` }  must be\ninstalled as a dependency.\n\nDefaults to `true`, if\n {@link  https://github.com/vitejs/devtools `@vitejs/devtools` }  is\ninstalled."
         },
         "clean": {
           "type": "boolean",
@@ -2770,15 +2770,15 @@
         "profile": {
           "type": "string",
           "enum": ["strict", "node16", "esm-only"],
-          "description": "Profiles select a set of resolution modes to require/ignore. All are evaluated but failures outside of those required are ignored.\n\nThe available profiles are:\n- `strict`: requires all resolutions\n- `node16`: ignores node10 resolution failures\n- `esm-only`: ignores CJS resolution failures",
-          "markdownDescription": "Profiles select a set of resolution modes to require/ignore. All are evaluated but failures outside\nof those required are ignored.\n\nThe available profiles are:\n- `strict`: requires all resolutions\n- `node16`: ignores node10 resolution failures\n- `esm-only`: ignores CJS resolution failures",
+          "description": "Profiles select a set of resolution modes to require/ignore. All are evaluated but failures outside of those required are ignored.\n\nThe available profiles are:\n- `'strict'`: requires all resolutions\n- `'node16'`: ignores node10 resolution failures\n- `'esm-only'`: ignores CJS resolution failures",
+          "markdownDescription": "Profiles select a set of resolution modes to require/ignore. All are\nevaluated but failures outside of those required are ignored.\n\nThe available profiles are:\n- `'strict'`: requires all resolutions\n- `'node16'`: ignores node10 resolution failures\n- `'esm-only'`: ignores CJS resolution failures",
           "default": "strict"
         },
         "level": {
           "type": "string",
           "enum": ["error", "warn"],
-          "description": "The level of the check.\n\nThe available levels are:\n- `error`: fails the build\n- `warn`: warns the build",
-          "markdownDescription": "The level of the check.\n\nThe available levels are:\n- `error`: fails the build\n- `warn`: warns the build",
+          "description": "The level of the check.\n\nThe available levels are:\n- `'error'`: fails the build\n- `'warn'`: warns the build",
+          "markdownDescription": "The level of the check.\n\nThe available levels are:\n- `'error'`: fails the build\n- `'warn'`: warns the build",
           "default": "warn"
         },
         "ignoreRules": {
@@ -2805,8 +2805,8 @@
               }
             ]
           },
-          "description": "List of problem types to ignore by rule name.\n\nThe available values are:\n- `no-resolution`\n- `untyped-resolution`\n- `false-cjs`\n- `false-esm`\n- `cjs-resolves-to-esm`\n- `fallback-condition`\n- `cjs-only-exports-default`\n- `named-exports`\n- `false-export-default`\n- `missing-export-equals`\n- `unexpected-module-syntax`\n- `internal-resolution-error`",
-          "markdownDescription": "List of problem types to ignore by rule name.\n\nThe available values are:\n- `no-resolution`\n- `untyped-resolution`\n- `false-cjs`\n- `false-esm`\n- `cjs-resolves-to-esm`\n- `fallback-condition`\n- `cjs-only-exports-default`\n- `named-exports`\n- `false-export-default`\n- `missing-export-equals`\n- `unexpected-module-syntax`\n- `internal-resolution-error`",
+          "description": "List of problem types to ignore by rule name.\n\nThe available values are:\n- `'no-resolution'`\n- `'untyped-resolution'`\n- `'false-cjs'`\n- `'false-esm'`\n- `'cjs-resolves-to-esm'`\n- `'fallback-condition'`\n- `'cjs-only-exports-default'`\n- `'named-exports'`\n- `'false-export-default'`\n- `'missing-export-equals'`\n- `'unexpected-module-syntax'`\n- `'internal-resolution-error'`",
+          "markdownDescription": "List of problem types to ignore by rule name.\n\nThe available values are:\n- `'no-resolution'`\n- `'untyped-resolution'`\n- `'false-cjs'`\n- `'false-esm'`\n- `'cjs-resolves-to-esm'`\n- `'fallback-condition'`\n- `'cjs-only-exports-default'`\n- `'named-exports'`\n- `'false-export-default'`\n- `'missing-export-equals'`\n- `'unexpected-module-syntax'`\n- `'internal-resolution-error'`",
           "default": [],
           "uniqueItems": true
         }
@@ -2931,8 +2931,8 @@
                   "additionalProperties": false
                 }
               ],
-              "description": "**[experimental]** Enable devtools integration. `@vitejs/devtools` must be installed as a dependency.\n\nDefaults to true, if `@vitejs/devtools` is installed.",
-              "markdownDescription": "**[experimental]** Enable devtools integration. `@vitejs/devtools` must be installed as a dependency.\n\nDefaults to true, if `@vitejs/devtools` is installed."
+              "description": "Enable devtools integration.  {@link  https://github.com/vitejs/devtools `@vitejs/devtools` }  must be installed as a dependency.\n\nDefaults to `true`, if  {@link  https://github.com/vitejs/devtools `@vitejs/devtools` }  is installed.",
+              "markdownDescription": "Enable devtools integration.\n {@link  https://github.com/vitejs/devtools `@vitejs/devtools` }  must be\ninstalled as a dependency.\n\nDefaults to `true`, if\n {@link  https://github.com/vitejs/devtools `@vitejs/devtools` }  is\ninstalled."
             },
             "clean": {
               "type": "boolean",
@@ -3328,15 +3328,15 @@
             "profile": {
               "type": "string",
               "enum": ["strict", "node16", "esm-only"],
-              "description": "Profiles select a set of resolution modes to require/ignore. All are evaluated but failures outside of those required are ignored.\n\nThe available profiles are:\n- `strict`: requires all resolutions\n- `node16`: ignores node10 resolution failures\n- `esm-only`: ignores CJS resolution failures",
-              "markdownDescription": "Profiles select a set of resolution modes to require/ignore. All are evaluated but failures outside\nof those required are ignored.\n\nThe available profiles are:\n- `strict`: requires all resolutions\n- `node16`: ignores node10 resolution failures\n- `esm-only`: ignores CJS resolution failures",
+              "description": "Profiles select a set of resolution modes to require/ignore. All are evaluated but failures outside of those required are ignored.\n\nThe available profiles are:\n- `'strict'`: requires all resolutions\n- `'node16'`: ignores node10 resolution failures\n- `'esm-only'`: ignores CJS resolution failures",
+              "markdownDescription": "Profiles select a set of resolution modes to require/ignore. All are\nevaluated but failures outside of those required are ignored.\n\nThe available profiles are:\n- `'strict'`: requires all resolutions\n- `'node16'`: ignores node10 resolution failures\n- `'esm-only'`: ignores CJS resolution failures",
               "default": "strict"
             },
             "level": {
               "type": "string",
               "enum": ["error", "warn"],
-              "description": "The level of the check.\n\nThe available levels are:\n- `error`: fails the build\n- `warn`: warns the build",
-              "markdownDescription": "The level of the check.\n\nThe available levels are:\n- `error`: fails the build\n- `warn`: warns the build",
+              "description": "The level of the check.\n\nThe available levels are:\n- `'error'`: fails the build\n- `'warn'`: warns the build",
+              "markdownDescription": "The level of the check.\n\nThe available levels are:\n- `'error'`: fails the build\n- `'warn'`: warns the build",
               "default": "warn"
             },
             "ignoreRules": {
@@ -3363,8 +3363,8 @@
                   }
                 ]
               },
-              "description": "List of problem types to ignore by rule name.\n\nThe available values are:\n- `no-resolution`\n- `untyped-resolution`\n- `false-cjs`\n- `false-esm`\n- `cjs-resolves-to-esm`\n- `fallback-condition`\n- `cjs-only-exports-default`\n- `named-exports`\n- `false-export-default`\n- `missing-export-equals`\n- `unexpected-module-syntax`\n- `internal-resolution-error`",
-              "markdownDescription": "List of problem types to ignore by rule name.\n\nThe available values are:\n- `no-resolution`\n- `untyped-resolution`\n- `false-cjs`\n- `false-esm`\n- `cjs-resolves-to-esm`\n- `fallback-condition`\n- `cjs-only-exports-default`\n- `named-exports`\n- `false-export-default`\n- `missing-export-equals`\n- `unexpected-module-syntax`\n- `internal-resolution-error`",
+              "description": "List of problem types to ignore by rule name.\n\nThe available values are:\n- `'no-resolution'`\n- `'untyped-resolution'`\n- `'false-cjs'`\n- `'false-esm'`\n- `'cjs-resolves-to-esm'`\n- `'fallback-condition'`\n- `'cjs-only-exports-default'`\n- `'named-exports'`\n- `'false-export-default'`\n- `'missing-export-equals'`\n- `'unexpected-module-syntax'`\n- `'internal-resolution-error'`",
+              "markdownDescription": "List of problem types to ignore by rule name.\n\nThe available values are:\n- `'no-resolution'`\n- `'untyped-resolution'`\n- `'false-cjs'`\n- `'false-esm'`\n- `'cjs-resolves-to-esm'`\n- `'fallback-condition'`\n- `'cjs-only-exports-default'`\n- `'named-exports'`\n- `'false-export-default'`\n- `'missing-export-equals'`\n- `'unexpected-module-syntax'`\n- `'internal-resolution-error'`",
               "default": [],
               "uniqueItems": true
             }
@@ -3426,8 +3426,8 @@
             },
             "devExports": {
               "type": ["boolean", "string"],
-              "description": "Generate exports that link to source code during development.\n- `string`: add as a custom condition.\n- `true`: all conditions point to source files, and add `dist` exports to `publishConfig`.",
-              "markdownDescription": "Generate exports that link to source code during development.\n- `string`: add as a custom condition.\n- `true`: all conditions point to source files, and add `dist` exports to `publishConfig`."
+              "description": "Generate exports that link to source code during development.\n- `string`: add as a custom condition.\n- `true`: all conditions point to source files, and add `dist` exports to  {@linkcode  PackageJson.publishConfig publishConfig } .",
+              "markdownDescription": "Generate exports that link to source code during development.\n- `string`: add as a custom condition.\n- `true`: all conditions point to source files, and add `dist` exports to  {@linkcode  PackageJson.publishConfig publishConfig } ."
             },
             "packageJson": {
               "type": "boolean",
@@ -3449,23 +3449,23 @@
                   { "type": "string" }
                 ]
               },
-              "description": "Specifies file patterns (as glob patterns or regular expressions) to exclude from package exports. Use this to prevent certain files from being included in the exported package, such as test files, binaries, or internal utilities.\n\n**Note:** Do not include file extensions, and paths should be relative to the dist directory.",
-              "markdownDescription": "Specifies file patterns (as glob patterns or regular expressions) to exclude from package exports.\nUse this to prevent certain files from being included in the exported package, such as test files, binaries, or internal utilities.\n\n**Note:** Do not include file extensions, and paths should be relative to the dist directory."
+              "description": "Specifies file patterns (as glob patterns or regular expressions) to exclude from package exports. Use this to prevent certain files from being included in the exported package, such as test files, binaries, or internal utilities.\n\n**Note:** Do not include file extensions, and paths should be relative to the `dist` directory.",
+              "markdownDescription": "Specifies file patterns (as glob patterns or regular expressions) to\nexclude from package exports. Use this to prevent certain files from being\nincluded in the exported package, such as test files, binaries, or\ninternal utilities.\n\n**Note:** Do not include file extensions, and paths should be relative to\nthe `dist` directory."
             },
             "legacy": {
               "type": "boolean",
-              "description": "Generate legacy fields (`main` and `module`) for older Node.js and bundlers that do not support package `exports` field.\n\nDefaults to false, if only ESM builds are included, true otherwise.",
-              "markdownDescription": "Generate legacy fields (`main` and `module`) for older Node.js and bundlers\nthat do not support package `exports` field.\n\nDefaults to false, if only ESM builds are included, true otherwise."
+              "description": "Generate legacy fields ( {@linkcode  PackageJson.main main }  and  {@linkcode  PackageJson.module module } ) for older Node.js and bundlers that do not support package  {@linkcode  PackageJson.exports exports }  field.\n\nDefaults to `false`, if only ESM builds are included, `true` otherwise.",
+              "markdownDescription": "Generate legacy fields ( {@linkcode  PackageJson.main main }  and\n {@linkcode  PackageJson.module module } ) for older Node.js and bundlers\nthat do not support package  {@linkcode  PackageJson.exports exports } \nfield.\n\nDefaults to `false`, if only ESM builds are included, `true` otherwise."
             },
             "customExports": {
               "type": "object",
               "description": "Specifies custom exports to add to the package exports in addition to the ones generated by tsdown. Use this to add additional exports in the exported package, such as workers or assets.",
-              "markdownDescription": "Specifies custom exports to add to the package exports in addition to the ones generated by tsdown.\nUse this to add additional exports in the exported package, such as workers or assets."
+              "markdownDescription": "Specifies custom exports to add to the package exports in addition to the\nones generated by tsdown. Use this to add additional exports in the\nexported package, such as workers or assets."
             },
             "inlinedDependencies": {
               "type": "boolean",
               "description": "Generate `inlinedDependencies` field in `package.json`. Lists dependencies that are physically inlined into the bundle with their exact versions.",
-              "markdownDescription": "Generate `inlinedDependencies` field in `package.json`.\nLists dependencies that are physically inlined into the bundle with their exact versions.",
+              "markdownDescription": "Generate `inlinedDependencies` field in `package.json`. Lists dependencies\nthat are physically inlined into the bundle with their exact versions.",
               "default": true
             },
             "extensions": {
@@ -3483,8 +3483,8 @@
                   "additionalProperties": { "type": "string" }
                 }
               ],
-              "description": "Generate the `bin` field in `package.json` for CLI executables.\n\nBehavior depends on the value:\n\n- *Unset* (default): Soft auto-detect. Scans entry chunks for shebangs   (e.g. `#!/usr/bin/env node`). If exactly one is found, it is used as   the bin entry. If multiple are found, a warning is shown and no `bin`   field is written. If none are found, nothing happens silently.\n- `true`: Strict auto-detect. Same as the default, but throws if   multiple shebang entries are found, and warns if none are found.   Use this when your package is known to ship a CLI and you want to   fail fast on misconfiguration.\n- `false`: Disable bin generation entirely, even if shebangs are   present.\n- `string`: Use the given source file path (relative to `cwd`) as the   CLI entry. The command name is derived from the package name without   its scope. Warns if the source file does not contain a shebang.\n- `Record<string, string>`: Explicitly map command names to source file   paths (relative to `cwd`). Warns for each source file that does not   contain a shebang.\n\nWhen  {@link  ExportsOptions.devExports }  is enabled, the `bin` field in `package.json` points to source files during local development, while `publishConfig.bin` points to built output paths for publishing.",
-              "markdownDescription": "Generate the `bin` field in `package.json` for CLI executables.\n\nBehavior depends on the value:\n\n- *Unset* (default): Soft auto-detect. Scans entry chunks for shebangs\n  (e.g. `#!/usr/bin/env node`). If exactly one is found, it is used as\n  the bin entry. If multiple are found, a warning is shown and no `bin`\n  field is written. If none are found, nothing happens silently.\n- `true`: Strict auto-detect. Same as the default, but throws if\n  multiple shebang entries are found, and warns if none are found.\n  Use this when your package is known to ship a CLI and you want to\n  fail fast on misconfiguration.\n- `false`: Disable bin generation entirely, even if shebangs are\n  present.\n- `string`: Use the given source file path (relative to `cwd`) as the\n  CLI entry. The command name is derived from the package name without\n  its scope. Warns if the source file does not contain a shebang.\n- `Record<string, string>`: Explicitly map command names to source file\n  paths (relative to `cwd`). Warns for each source file that does not\n  contain a shebang.\n\nWhen  {@link  ExportsOptions.devExports }  is enabled, the `bin` field in\n`package.json` points to source files during local development, while\n`publishConfig.bin` points to built output paths for publishing."
+              "description": "Generate the  {@linkcode  PackageJson.bin bin }  field in `package.json` for CLI executables.\n\nBehavior depends on the value:\n\n- *Unset* (default): Soft auto-detect. Scans entry chunks for shebangs   (e.g. `#!/usr/bin/env node`). If exactly one is found, it is used as   the bin entry. If multiple are found, a warning is shown and no `bin`   field is written. If none are found, nothing happens silently.\n- `true`: Strict auto-detect. Same as the default, but throws if   multiple shebang entries are found, and warns if none are found.   Use this when your package is known to ship a CLI and you want to   fail fast on misconfiguration.\n- `false`: Disable bin generation entirely, even if shebangs are   present.\n- `string`: Use the given source file path (relative to `cwd`) as the   CLI entry. The command name is derived from the package name without   its scope. Warns if the source file does not contain a shebang.\n- `Record<string, string>`: Explicitly map command names to source file   paths (relative to `cwd`). Warns for each source file that does not   contain a shebang.\n\nWhen  {@linkcode  ExportsOptions.devExports .devExports }  is enabled, the  {@linkcode  PackageJson.bin bin }  field in `package.json` points to source files during local development, while `publishConfig.bin` points to built output paths for publishing.",
+              "markdownDescription": "Generate the  {@linkcode  PackageJson.bin bin }  field in `package.json`\nfor CLI executables.\n\nBehavior depends on the value:\n\n- *Unset* (default): Soft auto-detect. Scans entry chunks for shebangs\n  (e.g. `#!/usr/bin/env node`). If exactly one is found, it is used as\n  the bin entry. If multiple are found, a warning is shown and no `bin`\n  field is written. If none are found, nothing happens silently.\n- `true`: Strict auto-detect. Same as the default, but throws if\n  multiple shebang entries are found, and warns if none are found.\n  Use this when your package is known to ship a CLI and you want to\n  fail fast on misconfiguration.\n- `false`: Disable bin generation entirely, even if shebangs are\n  present.\n- `string`: Use the given source file path (relative to `cwd`) as the\n  CLI entry. The command name is derived from the package name without\n  its scope. Warns if the source file does not contain a shebang.\n- `Record<string, string>`: Explicitly map command names to source file\n  paths (relative to `cwd`). Warns for each source file that does not\n  contain a shebang.\n\nWhen  {@linkcode  ExportsOptions.devExports .devExports }  is enabled, the\n {@linkcode  PackageJson.bin bin }  field in `package.json` points to source\nfiles during local development, while `publishConfig.bin` points to built\noutput paths for publishing."
             }
           }
         }
@@ -3519,7 +3519,8 @@
         "to": {
           "type": "string",
           "description": "Destination path. If not specified, defaults to the output directory (\"outDir\").",
-          "markdownDescription": "Destination path.\nIf not specified, defaults to the output directory (\"outDir\")."
+          "markdownDescription": "Destination path.\nIf not specified, defaults to the output directory (\"outDir\").",
+          "default": "tsdownConfig.outDir"
         },
         "flatten": {
           "type": "boolean",

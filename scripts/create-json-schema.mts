@@ -117,7 +117,8 @@ type Entry = {
 type EntryWithSchema = Entry & {
   /**
    * The generated JSON schema for the entry. This will be generated using the
-   * {@linkcode schemaGeneratorConfig} configuration.
+   * {@linkcode EntryWithSchema.schemaGeneratorConfig | schemaGeneratorConfig}
+   * configuration.
    */
   schema: Schema
 

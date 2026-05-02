@@ -4,9 +4,7 @@ import { createDebug } from 'obug'
 import { importWithError, slash } from '../../utils/general.ts'
 import type { ResolvedConfig } from '../../config/index.ts'
 import type {
-  checkPackage as checkPackageFunction,
   CheckPackageOptions,
-  createPackageFromTarballData as createPackageFromTarballDataFunction,
   Problem,
   ProblemKind,
 } from '@arethetypeswrong/core'
@@ -34,19 +32,16 @@ export interface AttwOptions extends CheckPackageOptions {
   /**
    * @hidden
    */
-  module?: {
-    createPackageFromTarballData: typeof createPackageFromTarballDataFunction
-    checkPackage: typeof checkPackageFunction
-  }
+  module?: typeof import('@arethetypeswrong/core')
 
   /**
-   * Profiles select a set of resolution modes to require/ignore. All are evaluated but failures outside
-   * of those required are ignored.
+   * Profiles select a set of resolution modes to require/ignore. All are
+   * evaluated but failures outside of those required are ignored.
    *
    * The available profiles are:
-   * - `strict`: requires all resolutions
-   * - `node16`: ignores node10 resolution failures
-   * - `esm-only`: ignores CJS resolution failures
+   * - `'strict'`: requires all resolutions
+   * - `'node16'`: ignores node10 resolution failures
+   * - `'esm-only'`: ignores CJS resolution failures
    *
    * @default 'strict'
    */
@@ -55,8 +50,8 @@ export interface AttwOptions extends CheckPackageOptions {
    * The level of the check.
    *
    * The available levels are:
-   * - `error`: fails the build
-   * - `warn`: warns the build
+   * - `'error'`: fails the build
+   * - `'warn'`: warns the build
    *
    * @default 'warn'
    */
@@ -66,18 +61,18 @@ export interface AttwOptions extends CheckPackageOptions {
    * List of problem types to ignore by rule name.
    *
    * The available values are:
-   * - `no-resolution`
-   * - `untyped-resolution`
-   * - `false-cjs`
-   * - `false-esm`
-   * - `cjs-resolves-to-esm`
-   * - `fallback-condition`
-   * - `cjs-only-exports-default`
-   * - `named-exports`
-   * - `false-export-default`
-   * - `missing-export-equals`
-   * - `unexpected-module-syntax`
-   * - `internal-resolution-error`
+   * - `'no-resolution'`
+   * - `'untyped-resolution'`
+   * - `'false-cjs'`
+   * - `'false-esm'`
+   * - `'cjs-resolves-to-esm'`
+   * - `'fallback-condition'`
+   * - `'cjs-only-exports-default'`
+   * - `'named-exports'`
+   * - `'false-export-default'`
+   * - `'missing-export-equals'`
+   * - `'unexpected-module-syntax'`
+   * - `'internal-resolution-error'`
    *
    * @example
    * ```ts
@@ -109,7 +104,7 @@ export interface AttwOptions extends CheckPackageOptions {
  * ATTW profiles.
  * Defines the resolution modes to ignore for each profile.
  *
- * @see https://github.com/arethetypeswrong/arethetypeswrong.github.io/blob/main/packages/cli/README.md#profiles
+ * @see {@link https://github.com/arethetypeswrong/arethetypeswrong.github.io/blob/main/packages/cli/README.md#profiles}
  */
 const profiles: Record<Required<AttwOptions>['profile'], string[]> = {
   strict: [],

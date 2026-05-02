@@ -4,9 +4,15 @@ import type { InputOptions } from 'rolldown'
 
 export interface DevtoolsOptions extends NonNullable<InputOptions['devtools']> {
   /**
-   * **[experimental]** Enable devtools integration. `@vitejs/devtools` must be installed as a dependency.
+   * Enable devtools integration.
+   * {@link https://github.com/vitejs/devtools | `@vitejs/devtools`} must be
+   * installed as a dependency.
    *
-   * Defaults to true, if `@vitejs/devtools` is installed.
+   * Defaults to `true`, if
+   * {@link https://github.com/vitejs/devtools | `@vitejs/devtools`} is
+   * installed.
+   *
+   * @experimental
    */
   ui?: boolean | Partial<StartOptions>
 

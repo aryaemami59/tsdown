@@ -1,9 +1,5 @@
 # Getting Started
 
-:::warning 🚧 Beta Software
-[Rolldown](https://rolldown.rs) is currently in beta status. While it can already handle most production use cases, there may still be bugs and rough edges.
-:::
-
 ## Installation
 
 There are several ways to get started with `tsdown`. You can:

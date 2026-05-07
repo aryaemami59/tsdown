@@ -226,6 +226,14 @@ async function nativeImport(
         throw configError
       }
 
+      if (String(error).includes('not supported in strip-only mode')) {
+        const configError = new Error(
+          `Failed to load the config file because it contains TypeScript-specific syntax that Node.js cannot execute directly. Please set the --config-loader CLI flag to \`tsx\` or \`unrun\`.\n\n${error.message}`,
+          { cause: error },
+        )
+        throw configError
+      }
+
       const nodeInternalBug =
         typeof error?.stack === 'string' &&
         error.stack.includes('node:internal/modules/esm/translators')

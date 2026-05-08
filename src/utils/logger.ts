@@ -76,12 +76,16 @@ export function createLogger(
     allowClearScreen && process.stdout.isTTY && !process.env.CI
   const clear = canClearScreen ? clearScreen : () => {}
 
+  // extra space for rendering emoji correctly on Windows Terminal
+  const isWindowsTerminal = !!process.env.WT_SESSION
+  const emojiDivier = ' '.repeat(isWindowsTerminal ? 2 : 1)
+
   const logger: Logger = {
     level,
     options: resolvedOptions,
 
     info(...msgs: any[]): void {
-      output('info', `${blue`ℹ`} ${format(msgs)}`)
+      output('info', `${blue`ℹ`}${emojiDivier}${format(msgs)}`)
     },
 
     warn(...msgs: any[]): void {
@@ -113,7 +117,7 @@ export function createLogger(
     },
 
     success(...msgs: any[]): void {
-      output('info', `${green`✔`} ${format(msgs)}`)
+      output('info', `${green`✔`}${emojiDivier}${format(msgs)}`)
     },
 
     clearScreen(type) {

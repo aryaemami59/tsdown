@@ -5688,5 +5688,7 @@
       },
       "additionalProperties": false
     }
-  }
+  },
+  "allowComments": true,
+  "allowTrailingCommas": true
 }

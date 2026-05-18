@@ -2,10 +2,9 @@ packages:
   - docs
   - packages/*
 
-overrides:
-  '@docsearch/react': '-'
-  rolldown: catalog:prod
-  vite: catalog:docs
+allowBuilds:
+  '@parcel/watcher': false
+  esbuild: false
 
 catalogs:
   create:
@@ -90,11 +89,12 @@ catalogs:
     tree-kill: ^1.2.2
     unconfig-core: ^7.5.0
 
-allowBuilds:
-  '@parcel/watcher': false
-  esbuild: false
-
 ignoreWorkspaceRootCheck: true
 minimumReleaseAge: 0
+
+overrides:
+  '@docsearch/react': '-'
+  rolldown: catalog:prod
+  vite: catalog:docs
 trustPolicy: no-downgrade
 trustPolicyIgnoreAfter: 10080 # 7 days

@@ -1,9 +1,10 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$ref": "#/definitions/UserConfig",
+  "$ref": "#/definitions/TsdownUserConfigDefinition",
   "definitions": {
-    "UserConfig": {
+    "TsdownUserConfigDefinition": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "entry": {
           "$ref": "#/definitions/TsdownInputOption",
@@ -2292,11 +2293,15 @@
           ],
           "description": "Enable `workspace` mode. This allows you to build multiple packages in a monorepo.",
           "markdownDescription": "Enable `workspace` mode. This allows you to build multiple packages in a\nmonorepo."
+        },
+        "$schema": {
+          "type": "string",
+          "description": "The schema to verify this document against.",
+          "markdownDescription": "The schema to verify this document against."
         }
       },
-      "additionalProperties": false,
-      "description": "Options for tsdown.",
-      "markdownDescription": "Options for tsdown."
+      "description": "Options for `tsdown`.",
+      "markdownDescription": "Options for `tsdown`."
     },
     "TsdownInputOption": {
       "$ref": "#/definitions/Arrayable%3C(string%7Calias-923471658-74155-74281-923471658-0-218972%3Cstring%2Cdef-alias-src_utils_types.ts-2744-2969-src_utils_types.ts-0-2970%3Cstring%3E578674576%3E)%3E",

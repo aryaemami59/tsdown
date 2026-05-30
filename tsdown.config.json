@@ -1,12 +1,72 @@
 {
+  "$schema": "./docs/public/tsdown.config.schema.json",
+  "alias": {},
   "attw": {
     "enabled": true,
     "ignoreRules": ["cjs-only-exports-default"],
     "level": "error"
   },
-  "checks": {},
-  "removeNodeProtocol": false,
+  "banner": {
+    "css": "",
+    "dts": "",
+    "js": ""
+  },
+  "bundle": true,
+  "checks": {
+    "cannotCallNamespace": true,
+    "circularDependency": false,
+    "commonJsVariableInEsm": true,
+    "configurationFieldConflict": true,
+    "couldNotCleanDirectory": true,
+    "duplicateShebang": true,
+    "emptyImportMeta": true,
+    "eval": true,
+    "filenameConflict": true,
+    "importIsUndefined": true,
+    "ineffectiveDynamicImport": true,
+    "largeBarrelModules": true,
+    "missingGlobalName": true,
+    "missingNameOptionForIifeExport": true,
+    "mixedExports": true,
+    "pluginTimings": true,
+    "preferBuiltinFeature": true,
+    "toleratedTransform": true,
+    "unresolvedEntry": true,
+    "unresolvedImport": true,
+    "unsupportedTsconfigOption": true
+  },
+  "cjsDefault": true,
   "clean": true,
+  "copy": [
+    {
+      "flatten": true,
+      "from": [""],
+      "rename": "",
+      "to": "dist",
+      "verbose": false
+    }
+  ],
+  "customLogger": {
+    "level": "warn",
+    "options": {
+      "allowClearScreen": true,
+      "console": {},
+      "customLogger": {
+        "level": "warn",
+        "options": {}
+      },
+      "failOnWarn": false
+    }
+  },
+  "cwd": "process.cwd()",
+  "define": {},
+  "deps": {
+    "alwaysBundle": [],
+    "neverBundle": [],
+    "onlyAllowBundle": false,
+    "onlyBundle": false,
+    "skipNodeModulesBundle": false
+  },
   "devtools": {
     "clean": true,
     "enabled": true,
@@ -33,6 +93,19 @@
   "entry": {
     "index": "src/index.ts"
   },
+  "env": {},
+  "envFile": "",
+  "envPrefix": "TSDOWN_",
+  "exe": false,
+  "exports": false,
+  "external": [],
+  "failOnWarn": false,
+  "fixedExtension": true,
+  "footer": {
+    "css": "",
+    "dts": "",
+    "js": ""
+  },
   "format": {
     "esm": {
       "pkg": {
@@ -41,19 +114,46 @@
       }
     }
   },
+  "fromVite": false,
+  "globImport": true,
+  "globalName": "",
+  "hash": true,
+  "ignoreWatch": [],
+  "injectStyle": false,
+  "inlineOnly": false,
+  "loader": {},
+  "logLevel": "info",
+  "minify": false,
+  "name": "",
+  "noExternal": [],
+  "nodeProtocol": false,
+  "onSuccess": "",
+  "outDir": "dist",
+  "platform": "node",
+  "publicDir": "public",
   "publint": {
     "enabled": true,
     "level": "warning"
   },
+  "removeNodeProtocol": false,
   "report": {
     "brotli": false,
     "enabled": true,
     "gzip": true,
     "maxCompressSize": 1000000
   },
+  "root": "",
+  "shims": false,
+  "skipNodeModulesBundle": false,
+  "sourcemap": false,
+  "target": false,
+  "treeshake": true,
   "tsconfig": "tsconfig.json",
+  "unbundle": false,
   "unused": {
     "depKinds": ["dependencies", "peerDependencies"]
   },
+  "watch": false,
+  "workspace": {},
   "write": true
 }

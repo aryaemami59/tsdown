@@ -22,6 +22,7 @@ const SCHEMAS_DIR = path.join(ROOT_DIR, 'docs', 'public')
 
 const rootNames = globSync(
   [
+    './**/*.?(c|m)ts?(x)',
     'src/**/*.?(c|m)ts?(x)',
     'packages/{css,exe}/src/**/*.?(c|m)ts?(x)',
     // '**/*.?(c|m)ts?(x)',
@@ -134,8 +135,8 @@ const entries = {
   tsdownConfig: {
     outputFile: 'tsdown.config',
     overrideConfig: {
-      path: 'src/index.ts',
-      type: ['*'],
+      path: 'scripts/schemas.ts',
+      type: ['TsdownUserConfigDefinition'],
     },
   },
 } as const satisfies Record<string, Entry>
@@ -152,7 +153,7 @@ const defaultSchemaGeneratorConfig = {
   jsDoc: 'extended',
   markdownDescription: true,
   minify: false,
-  path: 'src/**/*.ts',
+  path: './**/*.ts',
   skipTypeCheck: false,
   sortProps: true,
   strictTuples: true,
@@ -284,7 +285,7 @@ const schemas = objectConfig.map(
       // 'TsConfigJson.WatchOptions',
       // 'TsdownInputOption',
       // 'Workspace',
-      'UserConfig',
+      'TsdownUserConfigDefinition',
     ])
 
     // if (schema.definitions) {
